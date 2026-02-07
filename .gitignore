@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Environments
+.env
+.venv/
+venv/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# VS Code
+.vscode/
+
+# Data artifacts
+data/raw/*
+!data/raw/.gitkeep
+data/processed/
+artifacts/
+!artifacts/models/.gitkeep
+!artifacts/metrics/.gitkeep
+
+# Models
+models/
+
+# Logs
+logs/
