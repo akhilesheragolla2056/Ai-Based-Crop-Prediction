@@ -9,6 +9,7 @@ import streamlit as st
 
 from backend.crop_recommendation import ModelNotReady, recommend_crops
 from backend.fertilizer_recommendation import recommend_fertilizer
+from backend.market_prices import get_market_price  # Live market prices from API
 from backend.pesticide_recommendation import recommend_pesticide, supported_diseases
 from backend.yield_prediction import predict_yield
 from frontend.components.cards import info_card, list_card, metric_card
@@ -194,10 +195,8 @@ def get_text(key: str) -> str:
 
 
 def get_market_info(crop_name: str) -> dict:
-    """Get market data for a crop."""
-    key = crop_name.lower().strip()
-    default = {"price": 3000, "trend": "Stable", "demand": "Moderate"}
-    return MARKET_DATA.get(key, default)
+    """Get market data for a crop from live API with fallback."""
+    return get_market_price(crop_name)
 
 
 def get_water_info(crop_name: str) -> dict:
@@ -454,6 +453,38 @@ def apply_theme():
         border-radius: 4px;
     }
     
+    /* ═══════════════════════════════════════════════════════════════════════
+       LIVE BADGE ANIMATION
+    ═══════════════════════════════════════════════════════════════════════ */
+    @keyframes pulse-live {
+        0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
+        70% { box-shadow: 0 0 0 8px rgba(76, 175, 80, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+    }
+    
+    .live-badge {
+        background: linear-gradient(90deg, #4CAF50 0%, #66BB6A 100%);
+        color: white;
+        padding: 3px 8px;
+        border-radius: 6px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        margin-left: 8px;
+        animation: pulse-live 2s infinite;
+        display: inline-block;
+    }
+    
+    .msp-badge {
+        background: linear-gradient(90deg, #757575 0%, #9E9E9E 100%);
+        color: white;
+        padding: 3px 8px;
+        border-radius: 6px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        margin-left: 8px;
+        display: inline-block;
+    }
+    
     </style>
     """
     st.markdown(css, unsafe_allow_html=True)
@@ -524,11 +555,20 @@ def render_crop_cards(recommendations):
 
 
 def render_market_section(recommendations):
-    """Render market outlook with professional gold/amber theme."""
-    st.markdown(
-        f"<h2 class='section-header-market'>💰 {get_text('market_outlook')}</h2>",
-        unsafe_allow_html=True,
-    )
+    """Render market outlook with professional gold/amber theme and live API data."""
+    # Header with refresh button
+    header_col, refresh_col = st.columns([5, 1])
+    with header_col:
+        st.markdown(
+            f"<h2 class='section-header-market'>💰 {get_text('market_outlook')}</h2>",
+            unsafe_allow_html=True,
+        )
+    with refresh_col:
+        if st.button("🔄", key="refresh_prices", help="Refresh live prices"):
+            from backend.market_prices import refresh_price_cache
+
+            refresh_price_cache()
+            st.rerun()
 
     cols = st.columns(len(recommendations))
     for idx, rec in enumerate(recommendations):
@@ -544,28 +584,29 @@ def render_market_section(recommendations):
                 if market["trend"] == "Rising"
                 else ("#F44336" if market["trend"] == "Falling" else "#FF9800")
             )
-            # Card with gold/amber market theme
-            st.markdown(
-                f"""
-                <div style="
-                    background: linear-gradient(145deg, #FFF8E1 0%, #FFECB3 100%);
-                    border-left: 5px solid #F57C00;
-                    border-radius: 12px;
-                    padding: 1.2rem;
-                    margin-bottom: 0.5rem;
-                    box-shadow: 0 4px 15px rgba(245, 124, 0, 0.15);
-                ">
-                    <p style="font-weight: 700; font-size: 1.2rem; color: #E65100; margin: 0 0 0.5rem 0;">{rec.name.title()}</p>
-                    <p style="font-size: 2rem; font-weight: 800; color: #E65100; margin: 0.5rem 0;">₹{market["price"]:,}</p>
-                    <p style="color: {trend_color}; font-weight: 600;">{trend_icon} {market["trend"]}</p>
-                    <p style="color: #795548; font-size: 0.9rem;">{get_text("price")} {get_text("per_quintal")}</p>
-                    <div style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid rgba(245, 124, 0, 0.3);">
-                        <p style="color: #6D4C41; margin: 0;"><strong>{get_text("demand")}:</strong> {market["demand"]}</p>
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
+
+            # Build live badge
+            is_live = market.get("is_live", False)
+            source = market.get("source", "MSP Data")
+
+            # Use native Streamlit container with border for reliability
+            with st.container(border=True):
+                # Header row with crop name and badge
+                if is_live:
+                    st.markdown(f"**{rec.name.title()}** 🟢 `LIVE`")
+                else:
+                    st.markdown(f"**{rec.name.title()}** 📋 `MSP`")
+
+                # Price display
+                st.metric(
+                    label=f"{get_text('price')} ({get_text('per_quintal')})",
+                    value=f"₹{market['price']:,.0f}",
+                    delta=f"{trend_icon} {market['trend']}",
+                )
+
+                # Additional info
+                st.caption(f"📊 {get_text('demand')}: **{market['demand']}**")
+                st.caption(f"📡 {source}")
 
 
 def render_water_section(recommendations):
