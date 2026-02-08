@@ -402,7 +402,7 @@ def main():
     st.markdown(
         f"""
         <div style="text-align: center; padding: 1rem; color: {colors["muted_color"]};">
-            <p>Made with ❤️ for Indian Farmers | © 2024 FasalSaarthi</p>
+            <p>Made with ❤️ for Indian Farmers | © 2026 FasalSaarthi</p>
         </div>
         """,
         unsafe_allow_html=True,

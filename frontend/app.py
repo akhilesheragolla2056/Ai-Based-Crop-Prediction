@@ -895,7 +895,7 @@ def render_about_page():
     # Team Section
     st.subheader("👥 Our Team")
     st.write("Built with ❤️ for Indian farmers by the FasalSaarthi team")
-    st.caption("© 2024 FasalSaarthi. All rights reserved.")
+    st.caption("© 2026 FasalSaarthi. All rights reserved.")
 
 
 def render_home_page():
@@ -1104,6 +1104,12 @@ def main() -> None:
 
     # Render the main home page directly (no tabs)
     render_home_page()
+
+    # Footer
+    st.markdown("---")
+    st.caption(
+        "🌾 Built with ❤️ for Indian farmers | © 2026 FasalSaarthi. All rights reserved."
+    )
 
 
 if __name__ == "__main__":
