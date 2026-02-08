@@ -55,7 +55,9 @@ def _resolve_dataset_path(path: Path | None) -> Path:
 
 
 def _validate_schema(frame: pd.DataFrame) -> None:
-    missing = [column for column in FEATURE_COLUMNS + ("label",) if column not in frame.columns]
+    missing = [
+        column for column in FEATURE_COLUMNS + ("label",) if column not in frame.columns
+    ]
     if missing:
         raise DatasetSchemaError(f"Dataset is missing required columns: {missing}")
 

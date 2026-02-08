@@ -13,7 +13,9 @@ from src.data.dataset import FEATURE_COLUMNS
 __all__ = ["build_feature_pipeline"]
 
 
-def build_feature_pipeline(feature_names: Sequence[str] | None = None) -> ColumnTransformer:
+def build_feature_pipeline(
+    feature_names: Sequence[str] | None = None,
+) -> ColumnTransformer:
     """Create the preprocessing pipeline for numeric features."""
 
     numeric_features = list(feature_names or FEATURE_COLUMNS)

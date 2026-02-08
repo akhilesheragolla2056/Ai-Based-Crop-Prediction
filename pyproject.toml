@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "AI-based crop recommendation system with production-ready scaffolding"
 authors = [{ name = "Hackathon Team" }]
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.11,<3.12"
 dependencies = [
     "pandas>=2.2,<2.3",
     "numpy>=1.26,<2.0",

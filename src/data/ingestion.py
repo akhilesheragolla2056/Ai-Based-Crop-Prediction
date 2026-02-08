@@ -43,7 +43,10 @@ DATASET_MIRRORS: tuple[DatasetInfo, ...] = (
     ),
 )
 
-DEFAULT_EXPECTED_SHA256 = os.getenv("CROP_DATASET_SHA256")
+DEFAULT_EXPECTED_SHA256 = os.getenv(
+    "CROP_DATASET_SHA256",
+    "1c75a44aa8562f02d293baff342a2aa4bae442bfc9a7da478f4a45f307319813",
+)
 
 
 def _write_stream_to_file(url: str, target: Path) -> None:
