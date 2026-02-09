@@ -1,6 +1,8 @@
-"""FasalSaarthi – Professional AI Crop Recommendation Dashboard with Multi-language Support."""
-
 from __future__ import annotations
+from dotenv import load_dotenv
+
+load_dotenv()
+"""FasalSaarthi – Professional AI Crop Recommendation Dashboard with Multi-language Support."""
 
 from contextlib import contextmanager
 from typing import Mapping

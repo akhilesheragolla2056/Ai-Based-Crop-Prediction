@@ -32,6 +32,22 @@ Production-ready machine learning system that recommends the top three crops and
 4. Train the baseline model: `python scripts/train_model.py`.
 5. Launch the Streamlit app: `streamlit run app/main.py` (requires a trained model under `artifacts/models/`).
 
+### Weather API Setup
+
+The Streamlit UI supports auto-filling temperature, humidity, and rainfall using live weather providers while still allowing manual overrides. Configure one of the following environment variables before launching the app:
+
+- `OPENWEATHER_API_KEY` for [OpenWeather Current Weather](https://openweathermap.org/current)
+- `WEATHERBIT_API_KEY` for [Weatherbit Current Conditions](https://www.weatherbit.io/api/weather-current)
+
+Set the variable in your shell (or `.env`) and restart Streamlit:
+
+```powershell
+$env:OPENWEATHER_API_KEY = "your-key-here"
+streamlit run app/main.py
+```
+
+If neither key is set the live fetch button will show an error and the manual inputs remain available.
+
 ## Dataset Ingestion
 
 The dataset downloader checks a small set of known public mirrors. If they are unavailable, provide a fallback URL, checksum, or use the Kaggle workflow:
@@ -51,7 +67,7 @@ The dataset downloader checks a small set of known public mirrors. If they are u
 ## Roadmap
 
 - Integrate experiment tracking (MLflow or Weights & Biases).
-- Add weather-API enrichment for near-real-time predictions.
+- Enhance weather-driven insights with historical anomaly detection.
 - Build RESTful inference service and container orchestration manifests.
 - Implement continuous deployment pipeline targeting Azure Web Apps.
 
