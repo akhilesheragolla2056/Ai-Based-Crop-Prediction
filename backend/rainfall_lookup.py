@@ -41,19 +41,19 @@ RAINFALL_LOOKUP = {
     "ladakh": 102,
     "lakshadweep": 1672,
     "puducherry": 1240,
-    # Example districts (add more as needed)
+    # Major cities/districts (examples, add more as needed)
     "mumbai": 2420,
+    "pune": 722,
+    "nagpur": 1200,
     "hyderabad": 810,
-    "bengaluru": 970,
     "chennai": 1400,
+    "bengaluru": 970,
     "kolkata": 1582,
     "lucknow": 1012,
     "patna": 1050,
     "bhopal": 1140,
     "jaipur": 650,
     "kanpur": 900,
-    "nagpur": 1200,
-    "pune": 722,
     "ahmedabad": 782,
     "surat": 1200,
     "coimbatore": 700,
@@ -87,7 +87,7 @@ RAINFALL_LOOKUP = {
     "latur": 700,
     "sangli": 800,
     "satara": 900,
-    # Add more districts as needed
+    # Add more districts/cities as needed
 }
 
 

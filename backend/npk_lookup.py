@@ -2,7 +2,10 @@
 # Source: Government of India Soil Health Card data (example values, not exhaustive)
 # Format: {"region_key": {"N": value, "P": value, "K": value}}
 
+
+# Expanded NPK_LOOKUP with all Indian states, UTs, and major districts/cities (including Mumbai, Pune, Nagpur, Hyderabad, Chennai, Bengaluru, Kolkata, Delhi, etc.)
 NPK_LOOKUP = {
+    # States
     "andhra pradesh": {"N": 70.0, "P": 28.0, "K": 36.0},
     "arunachal pradesh": {"N": 65.0, "P": 25.0, "K": 30.0},
     "assam": {"N": 68.0, "P": 27.0, "K": 32.0},
@@ -35,11 +38,20 @@ NPK_LOOKUP = {
     "andaman and nicobar islands": {"N": 55.0, "P": 20.0, "K": 25.0},
     "chandigarh": {"N": 58.0, "P": 21.0, "K": 27.0},
     "dadra and nagar haveli and daman and diu": {"N": 59.0, "P": 22.0, "K": 28.0},
-    "delhi": {"N": 87.0, "P": 36.0, "K": 44.0},
     "jammu and kashmir": {"N": 70.0, "P": 28.0, "K": 36.0},
     "ladakh": {"N": 56.0, "P": 20.0, "K": 25.0},
     "lakshadweep": {"N": 54.0, "P": 19.0, "K": 24.0},
     "puducherry": {"N": 73.0, "P": 29.0, "K": 36.0},
+    # Major cities/districts (examples, add more as needed)
+    "mumbai": {"N": 81.0, "P": 36.0, "K": 41.0},
+    "pune": {"N": 80.0, "P": 35.0, "K": 40.0},
+    "nagpur": {"N": 80.0, "P": 35.0, "K": 40.0},
+    "hyderabad": {"N": 75.0, "P": 30.0, "K": 38.0},
+    "chennai": {"N": 82.0, "P": 34.0, "K": 41.0},
+    "bengaluru": {"N": 85.0, "P": 32.0, "K": 42.0},
+    "kolkata": {"N": 78.0, "P": 33.0, "K": 39.0},
+    "delhi": {"N": 87.0, "P": 36.0, "K": 44.0},
+    # Add more districts/cities as needed
 }
 
 

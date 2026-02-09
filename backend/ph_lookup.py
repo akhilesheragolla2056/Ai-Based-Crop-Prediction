@@ -41,19 +41,19 @@ PH_LOOKUP = {
     "ladakh": 7.3,
     "lakshadweep": 7.1,
     "puducherry": 6.7,
-    # Example districts (add more as needed)
+    # Major cities/districts (examples, add more as needed)
     "mumbai": 6.7,
+    "pune": 6.7,
+    "nagpur": 6.8,
     "hyderabad": 6.8,
-    "bengaluru": 6.6,
     "chennai": 6.5,
+    "bengaluru": 6.6,
     "kolkata": 6.1,
     "lucknow": 7.3,
     "patna": 7.2,
     "bhopal": 7.1,
     "jaipur": 7.8,
     "kanpur": 7.4,
-    "nagpur": 6.8,
-    "pune": 6.7,
     "ahmedabad": 7.8,
     "surat": 7.7,
     "coimbatore": 6.5,
@@ -87,7 +87,7 @@ PH_LOOKUP = {
     "latur": 6.8,
     "sangli": 6.8,
     "satara": 6.8,
-    # Add more districts as needed
+    # Add more districts/cities as needed
 }
 
 

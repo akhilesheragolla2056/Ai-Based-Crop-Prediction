@@ -1,22 +1,51 @@
 from __future__ import annotations
-
-DISEASE_SEVERITIES = ["Low", "Medium", "High"]
-"""Form components for capture of agronomic inputs."""
-
 from datetime import timezone
 from typing import Mapping
-
 import streamlit as st
-
 from backend.weather_service import (
     WeatherProviderError,
     WeatherSnapshot,
     get_weather_snapshot,
 )
-
 from backend.npk_lookup import get_npk_for_region
 from backend.rainfall_lookup import get_avg_rainfall_for_region
 from backend.ph_lookup import get_avg_ph_for_region
+
+MAJOR_CROPS_LOOKUP = {
+    # States
+    "telangana": ["cotton", "maize", "rice", "sorghum", "red gram"],
+    "andhra pradesh": ["rice", "maize", "groundnut", "cotton", "sugarcane"],
+    "maharashtra": ["cotton", "sugarcane", "soybean", "turmeric", "jowar"],
+    "punjab": ["wheat", "rice", "maize", "cotton", "barley"],
+    "karnataka": ["ragi", "jowar", "maize", "rice", "sugarcane"],
+    "tamil nadu": ["rice", "sugarcane", "cotton", "groundnut", "millets"],
+    "uttar pradesh": ["wheat", "rice", "sugarcane", "maize", "potato"],
+    "west bengal": ["rice", "jute", "potato", "sugarcane", "wheat"],
+    "bihar": ["rice", "wheat", "maize", "pulses", "potato"],
+    "gujarat": ["cotton", "groundnut", "bajra", "wheat", "rice"],
+    "kerala": ["rice", "coconut", "rubber", "banana", "pepper"],
+    "madhya pradesh": ["wheat", "soybean", "gram", "rice", "maize"],
+    "rajasthan": ["bajra", "wheat", "gram", "barley", "mustard"],
+    "odisha": ["rice", "pulses", "groundnut", "maize", "sugarcane"],
+    "jharkhand": ["rice", "maize", "pulses", "wheat", "oilseeds"],
+    "chhattisgarh": ["rice", "maize", "pulses", "oilseeds", "wheat"],
+    "haryana": ["wheat", "rice", "sugarcane", "cotton", "barley"],
+    "assam": ["rice", "jute", "tea", "pulses", "oilseeds"],
+    "uttarakhand": ["rice", "wheat", "maize", "barley", "pulses"],
+    # Major cities/districts
+    "mumbai": ["rice", "vegetables", "flowers", "fruits"],
+    "pune": ["sugarcane", "wheat", "rice", "vegetables"],
+    "nagpur": ["cotton", "soybean", "wheat", "oranges"],
+    "hyderabad": ["rice", "cotton", "maize", "vegetables"],
+    "chennai": ["rice", "groundnut", "millets", "vegetables"],
+    "bengaluru": ["ragi", "rice", "vegetables", "flowers"],
+    "kolkata": ["rice", "jute", "vegetables", "fruits"],
+    "delhi": ["wheat", "vegetables", "fruits", "flowers"],
+    # Add more as needed
+}
+
+DISEASE_SEVERITIES = ["Low", "Medium", "High"]
+"""Form components for capture of agronomic inputs."""
 
 DEFAULT_METRICS: Mapping[str, float] = {
     "N": 90.0,
@@ -44,10 +73,22 @@ CROPS = [
 
 
 def environmental_inputs(key_prefix: str = "env") -> dict[str, float]:
+
+    weather_meta_key = f"{key_prefix}_weather_meta"
     temp_key = f"{key_prefix}_temperature"
     humidity_key = f"{key_prefix}_humidity"
     rainfall_key = f"{key_prefix}_rainfall"
-    weather_meta_key = f"{key_prefix}_weather_meta"
+
+    # Show major crops for the region if available
+    region_display = ""
+    location_val = st.session_state.get(weather_meta_key, {}).get("location", "")
+    if "," in location_val:
+        region_display = location_val.split(",")[-1].strip().lower()
+    else:
+        region_display = location_val.strip().lower()
+    major_crops = MAJOR_CROPS_LOOKUP.get(region_display)
+    if major_crops:
+        st.info(f"Major crops for {region_display.title()}: {', '.join(major_crops)}")
 
     for state_key, default in (
         (temp_key, DEFAULT_METRICS["temperature"]),
