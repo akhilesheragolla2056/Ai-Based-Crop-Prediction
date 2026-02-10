@@ -1,24 +1,27 @@
 from __future__ import annotations
+import sys
+import os
+
+# Ensure project root is in sys.path for module imports
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
 from dotenv import load_dotenv
-
-load_dotenv()
-"""FasalSaarthi – Professional AI Crop Recommendation Dashboard with Multi-language Support."""
-
 from contextlib import contextmanager
 from types import SimpleNamespace
-from typing import Mapping
 import math
-
 import streamlit as st
-
 from backend.crop_recommendation import ModelNotReady, recommend_crops
 from backend.fertilizer_recommendation import recommend_fertilizer
 from backend.market_prices import get_market_price  # Live market prices from API
 from backend.pesticide_recommendation import recommend_pesticide, supported_diseases
 from backend.yield_prediction import predict_yield
-from frontend.components.cards import info_card, list_card, metric_card
+from frontend.components.cards import info_card, list_card
 from frontend.components.forms import DISEASE_SEVERITIES, environmental_inputs
 from frontend.components.layout import inject_theme
+
+load_dotenv()
+"""FasalSaarthi – Professional AI Crop Recommendation Dashboard with Multi-language Support."""
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -205,9 +208,23 @@ def get_market_info(crop_name: str) -> dict:
 
 def get_water_info(crop_name: str) -> dict:
     """Get water requirement data for a crop."""
+    from backend.utils import get_water_requirement_for_crop
+
+    avg_water = get_water_requirement_for_crop(crop_name)
     key = crop_name.lower().strip()
-    default = {"mm": "400-600", "cycles": "5-8", "stage": "Flowering"}
-    return WATER_REQUIREMENT.get(key, default)
+    fallback = WATER_REQUIREMENT.get(
+        key, {"mm": "400-600", "cycles": "5-8", "stage": "Flowering"}
+    )
+    if avg_water is not None:
+        # Use fallback's stage for critical stage if available
+        return {
+            "mm": f"{avg_water:.0f}",
+            "cycles": "-",
+            "stage": fallback.get("stage", "-"),
+            "source": "kaggle",
+        }
+    fallback["source"] = "fallback"
+    return fallback
 
 
 def build_regional_recommendations(
@@ -245,6 +262,7 @@ def build_regional_recommendations(
             )
         )
     return recommendations
+
 
 @contextmanager
 def spinner(label: str):
@@ -571,7 +589,9 @@ def render_crop_cards(recommendations):
     cols = st.columns(len(recommendations))
     scores = [getattr(rec, "score", None) for rec in recommendations]
     numeric_entries = [
-        (idx, score) for idx, score in enumerate(scores) if isinstance(score, (int, float))
+        (idx, score)
+        for idx, score in enumerate(scores)
+        if isinstance(score, (int, float))
     ]
     is_probability_like = (
         len(numeric_entries) == len(recommendations)
@@ -612,7 +632,11 @@ def render_crop_cards(recommendations):
         with cols[idx]:
             suitability_label = "Medium"
             raw_suitability = getattr(rec, "suitability", "")
-            if isinstance(raw_suitability, str) and raw_suitability.lower() in ("low", "medium", "high"):
+            if isinstance(raw_suitability, str) and raw_suitability.lower() in (
+                "low",
+                "medium",
+                "high",
+            ):
                 suitability_label = raw_suitability.title()
             elif is_probability_like and idx in rank_map:
                 suitability_label = rank_map[idx]
@@ -673,11 +697,7 @@ def render_market_section(recommendations):
                 if market["trend"] == "Rising"
                 else ("📉" if market["trend"] == "Falling" else "📊")
             )
-            trend_color = (
-                "#4CAF50"
-                if market["trend"] == "Rising"
-                else ("#F44336" if market["trend"] == "Falling" else "#FF9800")
-            )
+            # trend_color is not used, so removed
 
             # Build live badge
             is_live = market.get("is_live", False)
@@ -713,8 +733,15 @@ def render_water_section(recommendations):
     cols = st.columns(len(recommendations))
     for idx, rec in enumerate(recommendations):
         water = get_water_info(rec.name)
+        label = (
+            "Daily Water Requirement"
+            if water.get("source") == "kaggle"
+            else "Seasonal Water Requirement"
+        )
+        seasonal_label = (
+            label if water.get("source") == "kaggle" else get_text("seasonal_need")
+        )
         with cols[idx]:
-            # Card with blue water theme
             st.markdown(
                 f"""
                 <div style="
@@ -726,9 +753,10 @@ def render_water_section(recommendations):
                     box-shadow: 0 4px 15px rgba(2, 119, 189, 0.15);
                 ">
                     <p style="font-weight: 700; font-size: 1.2rem; color: #01579B; margin: 0 0 0.5rem 0;">{rec.name.title()}</p>
+                    <p style="font-size: 1rem; color: #0288D1; margin: 0;">{label}</p>
                     <p style="font-size: 2rem; font-weight: 800; color: #01579B; margin: 0.5rem 0;">{water["mm"]} mm</p>
                     <p style="color: #0288D1; font-weight: 600;">🔄 {water["cycles"]} {get_text("irrigations")}</p>
-                    <p style="color: #546E7A; font-size: 0.9rem;">{get_text("seasonal_need")}</p>
+                    <p style="color: #546E7A; font-size: 0.9rem;">{seasonal_label}</p>
                     <div style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid rgba(2, 119, 189, 0.3);">
                         <p style="color: #D84315; margin: 0; font-weight: 500;">⚠️ {get_text("critical_stage")}: {water["stage"]}</p>
                     </div>
@@ -787,14 +815,39 @@ def render_fertilizer_section(top_crop, features, fert_plan):
 def render_yield_section(top_crop, features):
     """Render yield projection with professional teal theme."""
     st.markdown(
-        f"<h2 class='section-header-yield'>📈 {get_text('yield_projection')}</h2>",
+        f"<h2 class='section-header-yield'>📈 {get_text('yield_projection')} <span style='font-size:1.1rem;color:#004D40;'>(for {top_crop.title()})</span></h2>",
         unsafe_allow_html=True,
     )
 
     projection = predict_yield(top_crop, features)
     market = get_market_info(top_crop)
-    price = market["price"]
+    price = market.get("price")
+    # Defensive: handle None values
+    if projection.estimated_output is None or price is None:
+        st.error(
+            "Yield projection or price data is unavailable for this crop and location.\nReason: {projection.reasoning}"
+        )
+        st.info(f"Debug info: features used: {features}")
+        return
     estimated_revenue = projection.estimated_output * price
+
+    # Use suitability/score to set yield category and confidence
+    suitability = None
+    if "main_top_crops" in st.session_state and st.session_state["main_top_crops"]:
+        for rec in st.session_state["main_top_crops"]:
+            if rec.lower() == top_crop.lower():
+                suitability = "High"
+                break
+    # If suitability is high, override
+    if suitability == "High":
+        projection = projection.__class__(
+            crop=projection.crop,
+            level="High",
+            estimated_output=projection.estimated_output,
+            confidence=0.9,
+            reasoning=projection.reasoning,
+            weather_notes=projection.weather_notes,
+        )
 
     level_icon = (
         "🌟"

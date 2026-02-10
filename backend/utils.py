@@ -7,6 +7,27 @@ from pathlib import Path
 from typing import Mapping
 
 import joblib
+import pandas as pd
+import os
+
+
+# Load water requirements from Kaggle dataset
+def load_water_requirements(csv_path=None):
+    if csv_path is None:
+        csv_path = os.path.join("data", "raw", "DATASET - Sheet1.csv")
+    return pd.read_csv(csv_path)
+
+
+# Get average water requirement for a crop
+def get_water_requirement_for_crop(crop_name, df=None):
+    if df is None:
+        df = load_water_requirements()
+    rows = df[df["CROP TYPE"].str.lower() == crop_name.lower()]
+    if not rows.empty:
+        avg_water = rows["WATER REQUIREMENT"].mean()
+        return avg_water
+    return None
+
 
 from src.features import (
     generate_soil_health_tips,
