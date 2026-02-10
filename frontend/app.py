@@ -5,6 +5,7 @@ load_dotenv()
 """FasalSaarthi – Professional AI Crop Recommendation Dashboard with Multi-language Support."""
 
 from contextlib import contextmanager
+from types import SimpleNamespace
 from typing import Mapping
 
 import streamlit as st
@@ -207,6 +208,42 @@ def get_water_info(crop_name: str) -> dict:
     default = {"mm": "400-600", "cycles": "5-8", "stage": "Flowering"}
     return WATER_REQUIREMENT.get(key, default)
 
+
+def build_regional_recommendations(
+    crops: list[str],
+    scores: dict[str, float] | None,
+    region: str | None,
+    source: str | None,
+):
+    if not crops:
+        return []
+    score_map = scores or {}
+    recommendations = []
+    for idx, crop in enumerate(crops[:3]):
+        score = score_map.get(crop, 0.5)
+        if source == "synthetic":
+            rationale = (
+                f"Synthetic fallback based on overall dataset for {region.title()}."
+                if region
+                else "Synthetic fallback based on overall dataset."
+            )
+            suitability = "Synthetic match"
+        else:
+            rationale = (
+                f"Commonly grown in {region.title()} based on dataset distribution."
+                if region
+                else "Commonly grown in this region based on dataset distribution."
+            )
+            suitability = "Regional match"
+        recommendations.append(
+            SimpleNamespace(
+                name=crop,
+                score=score,
+                suitability=suitability,
+                rationale=rationale,
+            )
+        )
+    return recommendations
 
 @contextmanager
 def spinner(label: str):
@@ -531,8 +568,40 @@ def render_crop_cards(recommendations):
     st.success(get_text("top_crops_msg"))
 
     cols = st.columns(len(recommendations))
+    scores = [getattr(rec, "score", None) for rec in recommendations]
+    numeric_scores = [s for s in scores if isinstance(s, (int, float))]
+    is_probability_like = (
+        len(numeric_scores) == len(recommendations)
+        and 0 <= min(numeric_scores) <= max(numeric_scores) <= 1
+        and 0.95 <= sum(numeric_scores) <= 1.05
+    )
+    rank_map: dict[int, str] = {}
+    if is_probability_like:
+        ranked = sorted(
+            [(idx, scores[idx]) for idx in range(len(scores))],
+            key=lambda x: x[1],
+            reverse=True,
+        )
+        for rank, (idx, _) in enumerate(ranked):
+            rank_map[idx] = "High" if rank == 0 else ("Medium" if rank == 1 else "Low")
+
     for idx, rec in enumerate(recommendations):
         with cols[idx]:
+            suitability_label = "Medium"
+            raw_suitability = getattr(rec, "suitability", "")
+            if isinstance(raw_suitability, str) and raw_suitability.lower() in ("low", "medium", "high"):
+                suitability_label = raw_suitability.title()
+            elif is_probability_like and idx in rank_map:
+                suitability_label = rank_map[idx]
+            else:
+                score = getattr(rec, "score", None)
+                if isinstance(score, (int, float)):
+                    if score >= 0.6:
+                        suitability_label = "High"
+                    elif score >= 0.35:
+                        suitability_label = "Medium"
+                    else:
+                        suitability_label = "Low"
             medal = "🥇" if idx == 0 else ("🥈" if idx == 1 else "🥉")
             # Card with green crop theme
             st.markdown(
@@ -548,7 +617,7 @@ def render_crop_cards(recommendations):
                     <h3 style="color: #1B5E20; margin: 0 0 0.5rem 0;">{medal} #{idx + 1}</h3>
                     <p style="font-weight: 700; font-size: 1.3rem; color: #2E7D32; margin: 0.3rem 0;">{rec.name.title()}</p>
                     <p style="font-size: 2rem; font-weight: 800; color: #1B5E20; margin: 0.5rem 0;">{rec.score:.0%}</p>
-                    <p style="color: #388E3C; font-weight: 600;">📈 {rec.suitability}</p>
+                    <p style="color: #388E3C; font-weight: 600;">📈 {suitability_label} suitability</p>
                     <p style="color: #555; font-size: 0.85rem;">{get_text("suitability")}</p>
                 </div>
                 """,
@@ -927,6 +996,10 @@ def render_home_page():
     # ═══════════════════════════════════════════════════════════════════════════
     if st.session_state.get("show_results"):
         features = st.session_state.get("features", features)
+        regional_crops = st.session_state.get("main_top_crops", [])
+        regional_scores = st.session_state.get("main_top_crops_scores", {})
+        regional_region = st.session_state.get("main_autofill_region")
+        regional_source = st.session_state.get("main_top_crops_source")
 
         with spinner("Analysing your field profile..."):
             try:
@@ -935,30 +1008,36 @@ def render_home_page():
                 st.error(str(exc))
                 return
 
-        if not response.recommendations:
+        if not response.recommendations and not regional_crops:
             st.warning("Model returned no recommendations. Check input values.")
             return
 
-        top_crop = response.recommendations[0].name
+        recommendations = response.recommendations
+        if regional_crops:
+            recommendations = build_regional_recommendations(
+                regional_crops, regional_scores, regional_region, regional_source
+            )
+
+        top_crop = recommendations[0].name
 
         st.markdown("---")
 
         # Section 1: Crop Recommendation
-        render_crop_cards(response.recommendations)
+        render_crop_cards(recommendations)
 
         with st.expander(f"💡 {get_text('why_crops')}", expanded=False):
-            for rec in response.recommendations:
+            for rec in recommendations:
                 info_card(rec.name, rec.rationale, icon="📌")
 
         st.markdown("---")
 
         # Section 2: Market Outlook
-        render_market_section(response.recommendations)
+        render_market_section(recommendations)
 
         st.markdown("---")
 
         # Section 3: Water Requirement
-        render_water_section(response.recommendations)
+        render_water_section(recommendations)
         list_card(get_text("weather_advisory"), list(response.weather_notes), icon="☁️")
 
         st.markdown("---")

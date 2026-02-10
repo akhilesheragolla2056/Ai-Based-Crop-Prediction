@@ -1,15 +1,14 @@
 from __future__ import annotations
 from datetime import timezone
 from typing import Mapping
+import math
 import streamlit as st
 from backend.weather_service import (
     WeatherProviderError,
     WeatherSnapshot,
     get_weather_snapshot,
 )
-from backend.npk_lookup import get_npk_for_region
 from backend.rainfall_lookup import get_avg_rainfall_for_region
-from backend.ph_lookup import get_avg_ph_for_region
 
 MAJOR_CROPS_LOOKUP = {
     # States
@@ -73,157 +72,17 @@ CROPS = [
 
 
 def environmental_inputs(key_prefix: str = "env") -> dict[str, float]:
-
     weather_meta_key = f"{key_prefix}_weather_meta"
     temp_key = f"{key_prefix}_temperature"
     humidity_key = f"{key_prefix}_humidity"
     rainfall_key = f"{key_prefix}_rainfall"
 
-    # Show major crops for the region if available
-    region_display = ""
-    location_val = st.session_state.get(weather_meta_key, {}).get("location", "")
-    if "," in location_val:
-        region_display = location_val.split(",")[-1].strip().lower()
-    else:
-        region_display = location_val.strip().lower()
-    major_crops = MAJOR_CROPS_LOOKUP.get(region_display)
-    if major_crops:
-        st.info(f"Major crops for {region_display.title()}: {', '.join(major_crops)}")
-
-    for state_key, default in (
-        (temp_key, DEFAULT_METRICS["temperature"]),
-        (humidity_key, DEFAULT_METRICS["humidity"]),
-        (rainfall_key, DEFAULT_METRICS["rainfall"]),
-    ):
-        if state_key not in st.session_state:
-            st.session_state[state_key] = default
-
-    if weather_meta_key not in st.session_state:
-        st.session_state[weather_meta_key] = {}
-
-    with st.expander("🌤 Auto-fill weather", expanded=False):
-        location = st.text_input(
-            "Location (City, State)",
-            value=st.session_state[weather_meta_key].get("location", ""),
-            key=f"{key_prefix}_weather_location",
-            help="Example: Pune, Maharashtra",
-        )
-
-        if st.button("Fetch live weather", key=f"{key_prefix}_weather_fetch"):
-            try:
-                snapshot: WeatherSnapshot = get_weather_snapshot(location)
-            except WeatherProviderError as exc:
-                st.error(str(exc))
-            else:
-                st.session_state[temp_key] = round(snapshot.temperature_c, 2)
-                st.session_state[humidity_key] = round(snapshot.humidity_pct, 2)
-                # Rainfall fallback logic
-                region = ""
-                if "," in location:
-                    region = location.split(",")[-1].strip().lower()
-                else:
-                    region = location.strip().lower()
-                rainfall_val = round(snapshot.rainfall_mm, 2)
-                if rainfall_val == 0:
-                    avg_rainfall = get_avg_rainfall_for_region(region)
-                    if avg_rainfall:
-                        st.session_state[rainfall_key] = avg_rainfall
-                        st.info(
-                            f"No recent rainfall reported. Using average annual rainfall for {region.title()}: {avg_rainfall} mm. You may override this value."
-                        )
-                    else:
-                        st.session_state[rainfall_key] = 0.0
-                        st.warning(
-                            "No rainfall data found for this region. Please enter manually."
-                        )
-                else:
-                    st.session_state[rainfall_key] = rainfall_val
-                st.session_state[weather_meta_key] = {
-                    "location": location,
-                    "provider": snapshot.provider,
-                    "observed_at": snapshot.observed_at.isoformat(),
-                }
-                # Auto-fill NPK if region found
-                npk = get_npk_for_region(region)
-                if npk:
-                    st.session_state[f"{key_prefix}_nitrogen"] = npk["N"]
-                    st.session_state[f"{key_prefix}_phosphorus"] = npk["P"]
-                    st.session_state[f"{key_prefix}_potassium"] = npk["K"]
-                    st.success(
-                        f"Auto-filled NPK for {region.title()} (N={npk['N']}, P={npk['P']}, K={npk['K']})"
-                    )
-                else:
-                    st.info("No NPK data found for this region. Please enter manually.")
-                # Auto-fill pH if region found
-                avg_ph = get_avg_ph_for_region(region)
-                if avg_ph:
-                    st.session_state[f"{key_prefix}_ph"] = avg_ph
-                    st.success(f"Auto-filled soil pH for {region.title()}: {avg_ph}")
-                else:
-                    st.info(
-                        "No soil pH data found for this region. Please enter manually."
-                    )
-                observed_local = snapshot.observed_at.astimezone(timezone.utc)
-                st.success(
-                    f"Loaded weather from {snapshot.provider.title()} (observed {observed_local.strftime('%Y-%m-%d %H:%M')} UTC)."
-                )
-
-    # Layout for N, P, K, temperature, humidity, rainfall
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        n_value = st.number_input(
-            "Nitrogen (N)",
-            min_value=0.0,
-            max_value=2000.0,
-            value=DEFAULT_METRICS["N"],
-            key=f"{key_prefix}_nitrogen",
-        )
-        rainfall = st.number_input(
-            "Rainfall (mm)",
-            min_value=0.0,
-            max_value=4000.0,
-            value=float(st.session_state[rainfall_key]),
-            key=rainfall_key,
-        )
-    with col2:
-        p_value = st.number_input(
-            "Phosphorus (P)",
-            min_value=0.0,
-            max_value=2000.0,
-            value=DEFAULT_METRICS["P"],
-            key=f"{key_prefix}_phosphorus",
-        )
-        temperature = st.number_input(
-            "Temperature (°C)",
-            min_value=0.0,
-            max_value=50.0,
-            value=st.session_state[temp_key],
-            key=temp_key,
-        )
-    with col3:
-        k_value = st.number_input(
-            "Potassium (K)",
-            min_value=0.0,
-            max_value=2000.0,
-            value=DEFAULT_METRICS["K"],
-            key=f"{key_prefix}_potassium",
-        )
-        humidity = st.number_input(
-            "Humidity (%)",
-            min_value=0.0,
-            max_value=100.0,
-            value=st.session_state[humidity_key],
-            key=humidity_key,
-        )
-
-    # Soil pH - Beautiful gradient slider
-    # Custom CSS to style the Streamlit slider with gradient background
     st.markdown(
         """
     <style>
         /* Custom pH slider styling - gradient track */
         .stSlider [data-baseweb="slider"] {
-            background: linear-gradient(to right, #ff6b6b 0%, #feca57 25%, #48dbfb 50%, #1dd1a1 75%, #5f27cd 100%) !important;
+            background: linear-gradient(to right, #ff6b6b 0%%, #feca57 25%%, #48dbfb 50%%, #1dd1a1 75%%, #5f27cd 100%%) !important;
             height: 8px !important;
             border-radius: 4px !important;
         }
@@ -258,19 +117,366 @@ def environmental_inputs(key_prefix: str = "env") -> dict[str, float]:
     """,
         unsafe_allow_html=True,
     )
+    # Removed custom Environmental & Soil Inputs header block as requested
 
-    # pH Slider
+    for state_key, default in (
+        (temp_key, DEFAULT_METRICS["temperature"]),
+        (humidity_key, DEFAULT_METRICS["humidity"]),
+        (rainfall_key, DEFAULT_METRICS["rainfall"]),
+    ):
+        if state_key not in st.session_state:
+            st.session_state[state_key] = default
+
+    for key, default in (
+        (f"{key_prefix}_nitrogen", DEFAULT_METRICS["N"]),
+        (f"{key_prefix}_phosphorus", DEFAULT_METRICS["P"]),
+        (f"{key_prefix}_potassium", DEFAULT_METRICS["K"]),
+        (f"{key_prefix}_ph", DEFAULT_METRICS["ph"]),
+    ):
+        if key not in st.session_state:
+            st.session_state[key] = default
+
+    if weather_meta_key not in st.session_state:
+        st.session_state[weather_meta_key] = {}
+
+    with st.expander("🌤️ Auto-fill weather & region data", expanded=False):
+        location = st.text_input(
+            "Location (City, State)",
+            value=st.session_state[weather_meta_key].get("location", ""),
+            key=f"{key_prefix}_weather_location",
+            help="Example: Pune, Maharashtra",
+        )
+
+        if st.button("Fetch live weather", key=f"{key_prefix}_weather_fetch"):
+            try:
+                snapshot: WeatherSnapshot = get_weather_snapshot(location)
+            except WeatherProviderError as exc:
+                st.error(str(exc))
+            else:
+                st.session_state[f"{key_prefix}_force_autofill"] = True
+                st.session_state[f"{key_prefix}_force_autofill_location"] = location
+                st.session_state[temp_key] = round(snapshot.temperature_c, 2)
+                st.session_state[humidity_key] = round(snapshot.humidity_pct, 2)
+                # Rainfall fallback logic
+                region = ""
+                if "," in location:
+                    region = location.split(",")[-1].strip().lower()
+                else:
+                    region = location.strip().lower()
+                rainfall_val = round(snapshot.rainfall_mm, 2)
+                if rainfall_val == 0:
+                    avg_rainfall = get_avg_rainfall_for_region(region)
+                    if avg_rainfall:
+                        st.session_state[rainfall_key] = avg_rainfall
+                        st.info(
+                            f"No recent rainfall reported. Using average annual rainfall for {region.title()}: {avg_rainfall} mm. You may override this value."
+                        )
+                    else:
+                        st.session_state[rainfall_key] = 0.0
+                        st.warning(
+                            "No rainfall data found for this region. Please enter manually."
+                        )
+                else:
+                    st.session_state[rainfall_key] = rainfall_val
+                st.session_state[weather_meta_key] = {
+                    "location": location,
+                    "provider": snapshot.provider,
+                    "observed_at": snapshot.observed_at.isoformat(),
+                }
+                # NPK/pH are now handled by the dataset-based AutoFetch logic below.
+                observed_local = snapshot.observed_at.astimezone(timezone.utc)
+                st.success(
+                    f"Loaded weather from {snapshot.provider.title()} (observed {observed_local.strftime('%Y-%m-%d %H:%M')} UTC)."
+                )
+
+    # AutoFetch: Use region-aware dataset to suggest top 3 crops for the state.
+    import pandas as pd
+
+    dataset_region_path = "data/raw/crop_recommendation_region_augmented.csv"
+    def _normalize_region(text: str) -> str:
+        cleaned = "".join(ch if ch.isalnum() or ch.isspace() else " " for ch in text.lower())
+        return " ".join(cleaned.split())
+
+    location_input = st.session_state.get(f"{key_prefix}_weather_location", "")
+    location_val = location_input.strip().lower()
+    location_match = _normalize_region(location_input)
+    city_display = ""
+    region_display = ""
+    if "," in location_input:
+        parts = [part.strip() for part in location_input.split(",") if part.strip()]
+        parts = [_normalize_region(part) for part in parts if part]
+        if parts:
+            city_display = parts[0]
+            region_display = parts[-1]
+            if region_display in {"india", "bharat"} and len(parts) >= 2:
+                region_display = parts[-2]
+    else:
+        region_display = location_match
+
+    try:
+        df_region = pd.read_csv(dataset_region_path, comment="#")
+        df_region["region"] = df_region["region"].astype(str).str.strip().str.lower()
+        df_region["label"] = df_region["label"].astype(str).str.strip().str.lower()
+
+        region_key = region_display
+        region_df = (
+            df_region[df_region["region"] == region_key]
+            if region_key
+            else df_region.iloc[0:0]
+        )
+        if region_df.empty and city_display:
+            region_key = city_display
+            region_df = df_region[df_region["region"] == region_key]
+        if region_df.empty and location_match:
+            region_candidates = (
+                df_region["region"].dropna().astype(str).str.strip().str.lower().unique().tolist()
+            )
+            matches = [
+                candidate
+                for candidate in region_candidates
+                if f" {candidate} " in f" {location_match} "
+            ]
+            if matches:
+                region_key = max(matches, key=len)
+                region_df = df_region[df_region["region"] == region_key]
+
+        top_crops: list[str] = []
+        top_scores: dict[str, float] = {}
+        source = ""
+
+        if not region_df.empty:
+            crop_counts = region_df["label"].value_counts()
+            if crop_counts.nunique() == 1:
+                ordered = list(dict.fromkeys(region_df["label"].tolist()))
+                top_crops = ordered[:3]
+            else:
+                top_crops = crop_counts.head(3).index.tolist()
+            source = "dataset"
+            st.info(f"Top 3 crops for {region_key.title()}: {', '.join(top_crops)}")
+
+        if top_crops:
+            st.session_state[f"{key_prefix}_top_crops"] = top_crops
+            st.session_state[f"{key_prefix}_top_crops_scores"] = {}
+            st.session_state[f"{key_prefix}_top_crops_source"] = source
+
+            static_fields = [
+                "N",
+                "P",
+                "K",
+                "ph",
+                "rainfall",
+                "temperature",
+                "humidity",
+            ]
+            dominant_crop = region_df["label"].iloc[0] if not region_df.empty else top_crops[0]
+            crop_df = region_df[region_df["label"] == dominant_crop]
+            dom_vals: dict[str, float] = {}
+            for field in static_fields:
+                if field in crop_df.columns and not crop_df.empty:
+                    series = pd.to_numeric(crop_df[field], errors="coerce").dropna()
+                    if not series.empty:
+                        dom_vals[field] = float(series.mean())
+                    else:
+                        dom_vals[field] = DEFAULT_METRICS.get(field, 0.0)
+                else:
+                    dom_vals[field] = DEFAULT_METRICS.get(field, 0.0)
+
+            last_autofill_key = f"{key_prefix}_autofill_region"
+            previous_region = st.session_state.get(last_autofill_key)
+            previous_location = st.session_state.get(f"{key_prefix}_autofill_location_raw")
+            signature = (
+                region_key,
+                dominant_crop,
+                round(dom_vals["N"], 4),
+                round(dom_vals["P"], 4),
+                round(dom_vals["K"], 4),
+                round(dom_vals["ph"], 4),
+                round(dom_vals["temperature"], 4),
+                round(dom_vals["humidity"], 4),
+                round(dom_vals["rainfall"], 4),
+            )
+            previous_signature = st.session_state.get(f"{key_prefix}_autofill_signature")
+            location_changed = previous_location != location_input
+            signature_changed = previous_signature != signature
+            force_autofill = bool(
+                st.session_state.get(f"{key_prefix}_force_autofill")
+                and st.session_state.get(f"{key_prefix}_force_autofill_location") == location_input
+            )
+            if previous_region != region_key or location_changed or signature_changed or force_autofill:
+                st.session_state[f"{key_prefix}_nitrogen"] = dom_vals["N"]
+                st.session_state[f"{key_prefix}_phosphorus"] = dom_vals["P"]
+                st.session_state[f"{key_prefix}_potassium"] = dom_vals["K"]
+                st.session_state[f"{key_prefix}_ph"] = dom_vals["ph"]
+                st.success(
+                    f"Auto-filled NPK for {region_key.title()} from dataset "
+                    f"(N={dom_vals['N']:.2f}, P={dom_vals['P']:.2f}, K={dom_vals['K']:.2f})"
+                )
+                st.success(
+                    f"Auto-filled soil pH for {region_key.title()} from dataset: {dom_vals['ph']:.2f}"
+                )
+                weather_meta = st.session_state.get(weather_meta_key, {})
+                live_location = weather_meta.get("location", "").strip().lower()
+                has_live_weather = bool(
+                    weather_meta.get("provider") and live_location == location_val
+                )
+                if not has_live_weather:
+                    st.session_state[temp_key] = dom_vals["temperature"]
+                    st.session_state[humidity_key] = dom_vals["humidity"]
+                    st.session_state[rainfall_key] = dom_vals["rainfall"]
+                st.session_state[last_autofill_key] = region_key
+                st.session_state[f"{key_prefix}_autofill_location_raw"] = location_input
+                st.session_state[f"{key_prefix}_autofill_signature"] = signature
+                st.session_state.pop(f"{key_prefix}_force_autofill", None)
+                st.session_state.pop(f"{key_prefix}_force_autofill_location", None)
+
+            # Compute dataset-based suitability scores from current inputs
+            current_inputs = {
+                "N": float(st.session_state.get(f"{key_prefix}_nitrogen", DEFAULT_METRICS["N"])),
+                "P": float(st.session_state.get(f"{key_prefix}_phosphorus", DEFAULT_METRICS["P"])),
+                "K": float(st.session_state.get(f"{key_prefix}_potassium", DEFAULT_METRICS["K"])),
+                "ph": float(st.session_state.get(f"{key_prefix}_ph", DEFAULT_METRICS["ph"])),
+                "temperature": float(st.session_state.get(temp_key, DEFAULT_METRICS["temperature"])),
+                "humidity": float(st.session_state.get(humidity_key, DEFAULT_METRICS["humidity"])),
+                "rainfall": float(st.session_state.get(rainfall_key, DEFAULT_METRICS["rainfall"])),
+            }
+            crop_pool = region_df[region_df["label"].isin(top_crops)]
+            ranges: dict[str, float] = {}
+            for field in static_fields:
+                series = pd.to_numeric(crop_pool[field], errors="coerce").dropna()
+                if series.empty:
+                    ranges[field] = 1.0
+                else:
+                    min_v = float(series.min())
+                    max_v = float(series.max())
+                    span = max_v - min_v
+                    ranges[field] = span if math.isfinite(span) and span > 0 else 1.0
+            distances: dict[str, float] = {}
+            for crop in top_crops:
+                crop_df = region_df[region_df["label"] == crop]
+                means = (
+                    crop_df[static_fields]
+                    .apply(pd.to_numeric, errors="coerce")
+                    .mean(numeric_only=True)
+                )
+                diffs = []
+                for field in static_fields:
+                    mean_val = float(means.get(field, current_inputs[field]))
+                    if not math.isfinite(mean_val):
+                        mean_val = current_inputs[field]
+                    range_val = ranges.get(field, 1.0)
+                    if not math.isfinite(range_val) or range_val <= 0:
+                        range_val = 1.0
+                    diff = abs(current_inputs[field] - mean_val) / range_val
+                    diffs.append(diff)
+                avg_diff = sum(diffs) / len(diffs) if diffs else 1.0
+                if not math.isfinite(avg_diff):
+                    avg_diff = 10.0
+                distances[crop] = avg_diff
+
+            # Convert distances to suitability scores using a softmax over negative distance.
+            scores: dict[str, float] = {}
+            if distances:
+                exps = {crop: math.exp(-dist) for crop, dist in distances.items()}
+                total = sum(exps.values())
+                if total > 0:
+                    scores = {crop: exps[crop] / total for crop in top_crops}
+                else:
+                    scores = {crop: 1.0 / len(top_crops) for crop in top_crops}
+            else:
+                scores = {crop: 0.5 for crop in top_crops}
+
+            st.session_state[f"{key_prefix}_top_crops_scores"] = scores
+        else:
+            st.session_state.pop(f"{key_prefix}_top_crops", None)
+            st.session_state.pop(f"{key_prefix}_top_crops_scores", None)
+            st.session_state.pop(f"{key_prefix}_top_crops_source", None)
+            if location_match:
+                st.warning(
+                    "Location not found in AutoFetch dataset. Try a state/UT or capital city."
+                )
+    except Exception as e:
+        st.warning(f"AutoFetch failed: {e}")
+
+    st.markdown(
+        "<h5 style='margin-top:1.5em; color:#388e3c;'>Macronutrients (NPK)</h5>",
+        unsafe_allow_html=True,
+    )
+    col1, col2, col3 = st.columns([1.1, 1, 1.1])
+    with col1:
+        n_value = st.number_input(
+            "🧪 Nitrogen (N)",
+            min_value=0.0,
+            max_value=200.0,
+            step=1.0,
+            key=f"{key_prefix}_nitrogen",
+            help="Essential for leaf growth. Typical range: 0-200.",
+        )
+    with col2:
+        p_value = st.number_input(
+            "🧪 Phosphorus (P)",
+            min_value=0.0,
+            max_value=200.0,
+            step=1.0,
+            key=f"{key_prefix}_phosphorus",
+            help="Important for root and flower development. Typical range: 0-200.",
+        )
+    with col3:
+        k_value = st.number_input(
+            "🧪 Potassium (K)",
+            min_value=0.0,
+            max_value=200.0,
+            step=1.0,
+            key=f"{key_prefix}_potassium",
+            help="Aids overall plant health. Typical range: 0-200.",
+        )
+
+    st.markdown(
+        "<h5 style='margin-top:1.5em; color:#388e3c;'>Weather & Climate</h5>",
+        unsafe_allow_html=True,
+    )
+    col4, col5, col6 = st.columns([1.1, 1, 1.1])
+    with col4:
+        temperature = st.number_input(
+            "🌡️ Temperature (°C)",
+            min_value=-10.0,
+            max_value=60.0,
+            step=0.5,
+            key=temp_key,
+            help="Average temperature in Celsius.",
+        )
+    with col5:
+        humidity = st.number_input(
+            "💧 Humidity (%)",
+            min_value=0.0,
+            max_value=100.0,
+            step=1.0,
+            key=humidity_key,
+            help="Relative humidity percentage.",
+        )
+    with col6:
+        rainfall = st.number_input(
+            "🌧️ Rainfall (mm)",
+            min_value=0.0,
+            max_value=5000.0,
+            step=1.0,
+            key=rainfall_key,
+            help="Total rainfall in millimeters.",
+        )
+
+    st.markdown(
+        "<h5 style='margin-top:1.5em; color:#388e3c;'>Soil pH</h5>",
+        unsafe_allow_html=True,
+    )
     ph_value = st.slider(
-        "Soil pH",
+        "🧪 Soil pH",
         min_value=3.5,
         max_value=9.5,
         value=DEFAULT_METRICS["ph"],
         step=0.1,
         format="%.1f",
         key=f"{key_prefix}_ph",
+        help="Soil pH affects nutrient availability. 6.5 is neutral.",
     )
-
-    # pH scale labels
     scale_cols = st.columns(3)
     with scale_cols[0]:
         st.caption("3.5 (Acidic)")
