@@ -9,6 +9,7 @@ from backend.weather_service import (
     get_weather_snapshot,
 )
 from backend.rainfall_lookup import get_avg_rainfall_for_region
+from utils.soil_profiles import SOIL_REGION_OPTIONS, get_soil_profile
 
 MAJOR_CROPS_LOOKUP = {
     # States
@@ -76,6 +77,7 @@ def environmental_inputs(key_prefix: str = "env") -> dict[str, float]:
     temp_key = f"{key_prefix}_temperature"
     humidity_key = f"{key_prefix}_humidity"
     rainfall_key = f"{key_prefix}_rainfall"
+    input_method_key = f"{key_prefix}_soil_input_method"
 
     st.markdown(
         """
@@ -118,6 +120,29 @@ def environmental_inputs(key_prefix: str = "env") -> dict[str, float]:
         unsafe_allow_html=True,
     )
     # Removed custom Environmental & Soil Inputs header block as requested
+    if input_method_key not in st.session_state:
+        st.session_state[input_method_key] = "Manual Input"
+
+    input_method = st.radio(
+        "Soil Data Input Method:",
+        ["Manual Input", "Auto Fetch by Location", "Regional Soil Profile"],
+        key=input_method_key,
+    )
+
+    regional_profile_key = None
+    if input_method == "Regional Soil Profile":
+        region_labels = [label for label, _ in SOIL_REGION_OPTIONS]
+        selected_label = st.selectbox(
+            "Select Soil Region",
+            region_labels,
+            key=f"{key_prefix}_soil_region_select",
+        )
+        label_to_key = {label: key for label, key in SOIL_REGION_OPTIONS}
+        regional_profile_key = label_to_key.get(selected_label)
+        st.caption(
+            "Regional soil profiles use government-averaged values for reference. "
+            "For best accuracy, manual soil testing is recommended."
+        )
 
     for state_key, default in (
         (temp_key, DEFAULT_METRICS["temperature"]),
@@ -139,55 +164,56 @@ def environmental_inputs(key_prefix: str = "env") -> dict[str, float]:
     if weather_meta_key not in st.session_state:
         st.session_state[weather_meta_key] = {}
 
-    with st.expander("🌤️ Auto-fill weather & region data", expanded=False):
-        location = st.text_input(
-            "Location (City, State)",
-            value=st.session_state[weather_meta_key].get("location", ""),
-            key=f"{key_prefix}_weather_location",
-            help="Example: Pune, Maharashtra",
-        )
+    if input_method == "Auto Fetch by Location":
+        with st.expander("🌤️ Auto-fill weather & region data", expanded=False):
+            location = st.text_input(
+                "Location (City, State)",
+                value=st.session_state[weather_meta_key].get("location", ""),
+                key=f"{key_prefix}_weather_location",
+                help="Example: Pune, Maharashtra",
+            )
 
-        if st.button("Fetch live weather", key=f"{key_prefix}_weather_fetch"):
-            try:
-                snapshot: WeatherSnapshot = get_weather_snapshot(location)
-            except WeatherProviderError as exc:
-                st.error(str(exc))
-            else:
-                st.session_state[f"{key_prefix}_force_autofill"] = True
-                st.session_state[f"{key_prefix}_force_autofill_location"] = location
-                st.session_state[temp_key] = round(snapshot.temperature_c, 2)
-                st.session_state[humidity_key] = round(snapshot.humidity_pct, 2)
-                # Rainfall fallback logic
-                region = ""
-                if "," in location:
-                    region = location.split(",")[-1].strip().lower()
+            if st.button("Fetch live weather", key=f"{key_prefix}_weather_fetch"):
+                try:
+                    snapshot: WeatherSnapshot = get_weather_snapshot(location)
+                except WeatherProviderError as exc:
+                    st.error(str(exc))
                 else:
-                    region = location.strip().lower()
-                rainfall_val = round(snapshot.rainfall_mm, 2)
-                if rainfall_val == 0:
-                    avg_rainfall = get_avg_rainfall_for_region(region)
-                    if avg_rainfall:
-                        st.session_state[rainfall_key] = avg_rainfall
-                        st.info(
-                            f"No recent rainfall reported. Using average annual rainfall for {region.title()}: {avg_rainfall} mm. You may override this value."
-                        )
+                    st.session_state[f"{key_prefix}_force_autofill"] = True
+                    st.session_state[f"{key_prefix}_force_autofill_location"] = location
+                    st.session_state[temp_key] = round(snapshot.temperature_c, 2)
+                    st.session_state[humidity_key] = round(snapshot.humidity_pct, 2)
+                    # Rainfall fallback logic
+                    region = ""
+                    if "," in location:
+                        region = location.split(",")[-1].strip().lower()
                     else:
-                        st.session_state[rainfall_key] = 0.0
-                        st.warning(
-                            "No rainfall data found for this region. Please enter manually."
-                        )
-                else:
-                    st.session_state[rainfall_key] = rainfall_val
-                st.session_state[weather_meta_key] = {
-                    "location": location,
-                    "provider": snapshot.provider,
-                    "observed_at": snapshot.observed_at.isoformat(),
-                }
-                # NPK/pH are now handled by the dataset-based AutoFetch logic below.
-                observed_local = snapshot.observed_at.astimezone(timezone.utc)
-                st.success(
-                    f"Loaded weather from {snapshot.provider.title()} (observed {observed_local.strftime('%Y-%m-%d %H:%M')} UTC)."
-                )
+                        region = location.strip().lower()
+                    rainfall_val = round(snapshot.rainfall_mm, 2)
+                    if rainfall_val == 0:
+                        avg_rainfall = get_avg_rainfall_for_region(region)
+                        if avg_rainfall:
+                            st.session_state[rainfall_key] = avg_rainfall
+                            st.info(
+                                f"No recent rainfall reported. Using average annual rainfall for {region.title()}: {avg_rainfall} mm. You may override this value."
+                            )
+                        else:
+                            st.session_state[rainfall_key] = 0.0
+                            st.warning(
+                                "No rainfall data found for this region. Please enter manually."
+                            )
+                    else:
+                        st.session_state[rainfall_key] = rainfall_val
+                    st.session_state[weather_meta_key] = {
+                        "location": location,
+                        "provider": snapshot.provider,
+                        "observed_at": snapshot.observed_at.isoformat(),
+                    }
+                    # NPK/pH are now handled by the dataset-based AutoFetch logic below.
+                    observed_local = snapshot.observed_at.astimezone(timezone.utc)
+                    st.success(
+                        f"Loaded weather from {snapshot.provider.title()} (observed {observed_local.strftime('%Y-%m-%d %H:%M')} UTC)."
+                    )
 
     # AutoFetch: Use region-aware dataset to suggest top 3 crops for the state.
     import pandas as pd
@@ -252,7 +278,6 @@ def environmental_inputs(key_prefix: str = "env") -> dict[str, float]:
             else:
                 top_crops = crop_counts.head(3).index.tolist()
             source = "dataset"
-            st.info(f"Top 3 crops for {region_key.title()}: {', '.join(top_crops)}")
 
         if top_crops:
             st.session_state[f"{key_prefix}_top_crops"] = top_crops
@@ -397,6 +422,20 @@ def environmental_inputs(key_prefix: str = "env") -> dict[str, float]:
     except Exception as e:
         st.warning(f"AutoFetch failed: {e}")
 
+    if input_method == "Regional Soil Profile" and regional_profile_key:
+        profile = get_soil_profile(regional_profile_key)
+        if profile:
+            last_region_key = f"{key_prefix}_regional_profile_region"
+            previous_region = st.session_state.get(last_region_key)
+            if previous_region != regional_profile_key:
+                st.session_state[f"{key_prefix}_nitrogen"] = profile["N"]
+                st.session_state[f"{key_prefix}_phosphorus"] = profile["P"]
+                st.session_state[f"{key_prefix}_potassium"] = profile["K"]
+                st.session_state[f"{key_prefix}_ph"] = profile["ph"]
+                st.session_state[last_region_key] = regional_profile_key
+        else:
+            st.warning("Regional soil profile not found. Please select another region.")
+
     st.markdown(
         "<h5 style='margin-top:1.5em; color:#388e3c;'>Macronutrients (NPK)</h5>",
         unsafe_allow_html=True,
@@ -471,7 +510,6 @@ def environmental_inputs(key_prefix: str = "env") -> dict[str, float]:
         "🧪 Soil pH",
         min_value=3.5,
         max_value=9.5,
-        value=DEFAULT_METRICS["ph"],
         step=0.1,
         format="%.1f",
         key=f"{key_prefix}_ph",

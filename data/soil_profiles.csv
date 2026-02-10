@@ -1,0 +1,7 @@
+region,n_avg,p_avg,k_avg,ph
+coastal,85,35,40,6.8
+deccan_plateau,75,30,38,6.6
+alluvial,90,40,45,7.0
+black_soil,80,35,45,7.5
+arid,60,25,30,8.0
+north_east_hill,70,30,35,6.2

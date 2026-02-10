@@ -7,6 +7,7 @@ load_dotenv()
 from contextlib import contextmanager
 from types import SimpleNamespace
 from typing import Mapping
+import math
 
 import streamlit as st
 
@@ -569,12 +570,34 @@ def render_crop_cards(recommendations):
 
     cols = st.columns(len(recommendations))
     scores = [getattr(rec, "score", None) for rec in recommendations]
-    numeric_scores = [s for s in scores if isinstance(s, (int, float))]
+    numeric_entries = [
+        (idx, score) for idx, score in enumerate(scores) if isinstance(score, (int, float))
+    ]
     is_probability_like = (
-        len(numeric_scores) == len(recommendations)
-        and 0 <= min(numeric_scores) <= max(numeric_scores) <= 1
-        and 0.95 <= sum(numeric_scores) <= 1.05
+        len(numeric_entries) == len(recommendations)
+        and all(0 <= score <= 1 for _, score in numeric_entries)
+        and 0.95 <= sum(score for _, score in numeric_entries) <= 1.05
     )
+    percent_values: dict[int, int] = {}
+    if numeric_entries:
+        total_score = sum(score for _, score in numeric_entries)
+        if total_score <= 0:
+            normalized = [(idx, 1 / len(numeric_entries)) for idx, _ in numeric_entries]
+        else:
+            normalized = [(idx, score / total_score) for idx, score in numeric_entries]
+        scaled = [(idx, score * 100) for idx, score in normalized]
+        floored = {idx: math.floor(value) for idx, value in scaled}
+        remainder = 100 - sum(floored.values())
+        if remainder < 0:
+            remainder = 0
+        fractions = sorted(
+            scaled,
+            key=lambda item: item[1] - math.floor(item[1]),
+            reverse=True,
+        )
+        for idx, _ in fractions[:remainder]:
+            floored[idx] += 1
+        percent_values = floored
     rank_map: dict[int, str] = {}
     if is_probability_like:
         ranked = sorted(
@@ -616,7 +639,7 @@ def render_crop_cards(recommendations):
                 ">
                     <h3 style="color: #1B5E20; margin: 0 0 0.5rem 0;">{medal} #{idx + 1}</h3>
                     <p style="font-weight: 700; font-size: 1.3rem; color: #2E7D32; margin: 0.3rem 0;">{rec.name.title()}</p>
-                    <p style="font-size: 2rem; font-weight: 800; color: #1B5E20; margin: 0.5rem 0;">{rec.score:.0%}</p>
+                    <p style="font-size: 2rem; font-weight: 800; color: #1B5E20; margin: 0.5rem 0;">{percent_values.get(idx, int(round((rec.score or 0) * 100)))}%</p>
                     <p style="color: #388E3C; font-weight: 600;">📈 {suitability_label} suitability</p>
                     <p style="color: #555; font-size: 0.85rem;">{get_text("suitability")}</p>
                 </div>
