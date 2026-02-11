@@ -1,0 +1,1141 @@
+{
+  "apple": {
+    "name": "Apple",
+    "type": "Perennial (temperate)",
+    "season": "Spring-Summer",
+    "duration": "180-210 days (fruit development); orchard perennial",
+    "stages": [
+      {"name": "Land preparation", "days": "0-20", "activities": "Pit digging, soil amendment, and planting layout."},
+      {"name": "Planting & establishment", "days": "20-60", "activities": "Plant grafted saplings, staking, and initial irrigation."},
+      {"name": "Vegetative growth", "days": "60-120", "activities": "Training, pruning, and canopy management."},
+      {"name": "Flowering", "days": "120-150", "activities": "Pollination support and pest scouting."},
+      {"name": "Maturity & harvest", "days": "150-210", "activities": "Fruit sizing, color break, and harvesting."}
+    ],
+    "fertilizer": {
+      "basal": "FYM 20-30 kg/tree with balanced NPK as per soil test.",
+      "top_dressing": [
+        "Spring: Split N dose to support vegetative growth.",
+        "After fruit set: Apply N and K to support fruit development."
+      ],
+      "fertilizers": ["Urea", "DAP", "MOP", "Calcium nitrate"],
+      "organic": "Well-decomposed FYM and compost."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Flowering: Maintain soil moisture for good fruit set.",
+        "Fruit development: Regular irrigation to avoid stress.",
+        "Pre-harvest: Avoid severe moisture stress."
+      ],
+      "frequency": "10-15 day interval in dry season.",
+      "notes": "Mulching helps conserve moisture and improves fruit quality."
+    },
+    "pests": {
+      "common_pests": ["Codling moth", "Woolly aphid", "Leaf miner"],
+      "common_diseases": ["Apple scab", "Powdery mildew"],
+      "prevention": "Prune for air flow, remove infected leaves, and maintain orchard sanitation.",
+      "pesticides": ["Captan", "Mancozeb", "Imidacloprid"]
+    },
+    "harvest": {
+      "indicators": "Fruit color develops and seeds turn brown.",
+      "yield": "10-20 t/ha",
+      "post_harvest": "Harvest carefully, grade, and pre-cool before storage."
+    }
+  },
+  "banana": {
+    "name": "Banana",
+    "type": "Perennial (short duration)",
+    "season": "Year-round (best in monsoon/spring)",
+    "duration": "300-360 days",
+    "stages": [
+      {"name": "Land preparation", "days": "0-20", "activities": "Deep ploughing, pit digging, and basal manure."},
+      {"name": "Planting & establishment", "days": "20-60", "activities": "Plant suckers/tissue-culture plants and provide initial irrigation."},
+      {"name": "Vegetative growth", "days": "60-180", "activities": "Desuckering, weeding, and nutrient management."},
+      {"name": "Shooting & flowering", "days": "180-240", "activities": "Support plants, manage pests, and maintain moisture."},
+      {"name": "Bunch filling & harvest", "days": "240-330", "activities": "Bagging, irrigation, and harvesting mature bunches."}
+    ],
+    "fertilizer": {
+      "basal": "FYM 20-25 t/ha plus NPK 200:60:200 kg/ha.",
+      "top_dressing": [
+        "Monthly splits of N and K from 2-8 months.",
+        "Micronutrients if deficiency appears."
+      ],
+      "fertilizers": ["Urea", "DAP", "MOP", "Magnesium sulfate"],
+      "organic": "Compost/FYM 20-25 t/ha."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Establishment: Light, frequent irrigation.",
+        "Vegetative: Regular irrigation to avoid stress.",
+        "Bunch filling: High moisture demand.",
+        "Pre-harvest: Avoid excess water."
+      ],
+      "frequency": "Drip 2-5 L/plant/day early, 10-15 L/plant/day at bunch filling.",
+      "notes": "Avoid waterlogging; mulching improves moisture retention."
+    },
+    "pests": {
+      "common_pests": ["Pseudostem borer", "Rhizome weevil", "Aphid"],
+      "common_diseases": ["Panama wilt", "Sigatoka", "Bunchy top"],
+      "prevention": "Use clean planting material, remove infected plants, and keep field clean.",
+      "pesticides": ["Emamectin benzoate", "Imidacloprid", "Propiconazole"]
+    },
+    "harvest": {
+      "indicators": "Fingers are full sized with rounded angles.",
+      "yield": "25-40 t/ha",
+      "post_harvest": "Dehand, wash, and cool quickly before transport."
+    }
+  },
+  "blackgram": {
+    "name": "Blackgram",
+    "type": "Kharif/Summer",
+    "season": "Monsoon/Summer",
+    "duration": "70-90 days",
+    "stages": [
+      {"name": "Land preparation", "days": "0-5", "activities": "Fine tilth and basal manure."},
+      {"name": "Sowing", "days": "5-12", "activities": "Line sowing with proper spacing."},
+      {"name": "Vegetative growth", "days": "12-35", "activities": "Weeding and thinning."},
+      {"name": "Flowering & pod set", "days": "35-55", "activities": "Pest scouting and moisture management."},
+      {"name": "Maturity & harvest", "days": "55-85", "activities": "Harvest when pods turn brown/black."}
+    ],
+    "fertilizer": {
+      "basal": "N:P:K 15:30:0 kg/ha.",
+      "top_dressing": ["Usually not required; seed inoculation recommended."],
+      "fertilizers": ["DAP", "SSP"],
+      "organic": "FYM 3-5 t/ha."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Establishment: Light irrigation if dry.",
+        "Flowering/pod filling: Critical irrigation."
+      ],
+      "frequency": "7-10 day interval in summer.",
+      "notes": "Avoid waterlogging."
+    },
+    "pests": {
+      "common_pests": ["Pod borer", "Whitefly"],
+      "common_diseases": ["Yellow mosaic", "Leaf spot"],
+      "prevention": "Clean seed, proper spacing, and timely sowing.",
+      "pesticides": ["Imidacloprid", "Mancozeb"]
+    },
+    "harvest": {
+      "indicators": "Pods dry and turn black.",
+      "yield": "0.8-1.3 t/ha",
+      "post_harvest": "Dry grain to about 12% moisture."
+    }
+  }
+,
+  "chickpea": {
+    "name": "Chickpea",
+    "type": "Rabi",
+    "season": "Winter",
+    "duration": "100-120 days",
+    "stages": [
+      {"name": "Land preparation", "days": "0-7", "activities": "Fine tilth and seedbed preparation."},
+      {"name": "Sowing", "days": "7-15", "activities": "Line sowing with treated seed."},
+      {"name": "Vegetative growth", "days": "15-45", "activities": "Weeding and thinning."},
+      {"name": "Flowering & pod formation", "days": "45-75", "activities": "Pest scouting and moisture management."},
+      {"name": "Maturity & harvest", "days": "75-110", "activities": "Harvest when pods turn yellow and dry."}
+    ],
+    "fertilizer": {
+      "basal": "N:P:K 20:40:0 kg/ha.",
+      "top_dressing": ["Usually not required; seed inoculation recommended."],
+      "fertilizers": ["DAP", "SSP"],
+      "organic": "FYM 5 t/ha."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Pre-sowing: One irrigation if soil is dry.",
+        "Flowering/pod filling: 1-2 irrigations if moisture stress occurs."
+      ],
+      "frequency": "Low water requirement; irrigate only if needed.",
+      "notes": "Avoid waterlogging."
+    },
+    "pests": {
+      "common_pests": ["Pod borer", "Aphid"],
+      "common_diseases": ["Wilt", "Dry root rot"],
+      "prevention": "Seed treatment and crop rotation.",
+      "pesticides": ["Emamectin benzoate", "Trichoderma (bio)"]
+    },
+    "harvest": {
+      "indicators": "Plants turn yellow and pods dry.",
+      "yield": "1.2-2.0 t/ha",
+      "post_harvest": "Dry pods, thresh, and store in clean bins."
+    }
+  },
+  "coconut": {
+    "name": "Coconut",
+    "type": "Perennial",
+    "season": "Year-round",
+    "duration": "Perennial; nuts harvested every 45-60 days",
+    "stages": [
+      {"name": "Land preparation", "days": "0-30", "activities": "Pit digging and soil amendment."},
+      {"name": "Planting & establishment", "days": "30-120", "activities": "Plant seedlings, provide shade and irrigation."},
+      {"name": "Vegetative growth", "days": "120-360", "activities": "Weeding, mulching, and nutrient management."},
+      {"name": "Flowering & nut set", "days": "360-540", "activities": "Pest monitoring and nutrient support."},
+      {"name": "Nut development & harvest", "days": "540-720", "activities": "Regular harvest of mature nuts."}
+    ],
+    "fertilizer": {
+      "basal": "FYM 20-25 kg/palm with balanced NPK.",
+      "top_dressing": ["Apply NPK in 2-3 splits per year."],
+      "fertilizers": ["Urea", "DAP", "MOP"],
+      "organic": "FYM/compost 20-25 kg/palm."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Dry season: Regular irrigation to avoid stress.",
+        "Nut development: Maintain steady moisture."
+      ],
+      "frequency": "40-60 L/palm/week in dry months or drip irrigation.",
+      "notes": "Mulch basin to conserve moisture."
+    },
+    "pests": {
+      "common_pests": ["Rhinoceros beetle", "Red palm weevil", "Coconut mite"],
+      "common_diseases": ["Bud rot", "Root wilt"],
+      "prevention": "Crown sanitation, pheromone traps, and field hygiene.",
+      "pesticides": ["Imidacloprid", "Copper oxychloride"]
+    },
+    "harvest": {
+      "indicators": "Mature nuts are brown and firm.",
+      "yield": "80-120 nuts/palm/year",
+      "post_harvest": "Store in a ventilated area to avoid mold."
+    }
+  },
+  "coffee": {
+    "name": "Coffee",
+    "type": "Perennial",
+    "season": "Monsoon planting; harvest Nov-Feb",
+    "duration": "240-300 days for berry development",
+    "stages": [
+      {"name": "Land preparation", "days": "0-30", "activities": "Pit digging, shade regulation, and soil amendment."},
+      {"name": "Planting & establishment", "days": "30-120", "activities": "Plant seedlings and provide shade and irrigation."},
+      {"name": "Flowering", "days": "120-150", "activities": "Blossom showers and pest scouting."},
+      {"name": "Berry development", "days": "150-270", "activities": "Nutrient support and moisture management."},
+      {"name": "Harvest & processing", "days": "270-300", "activities": "Pick ripe cherries and process promptly."}
+    ],
+    "fertilizer": {
+      "basal": "FYM 10-15 t/ha with balanced NPK splits.",
+      "top_dressing": ["Apply NPK pre- and post-monsoon."],
+      "fertilizers": ["Urea", "DAP", "MOP"],
+      "organic": "Compost and mulch."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Flowering: Blossom irrigation in dry months.",
+        "Berry set: Backing irrigation to reduce drop."
+      ],
+      "frequency": "2-3 irrigations in dry months.",
+      "notes": "Shade regulation reduces moisture stress."
+    },
+    "pests": {
+      "common_pests": ["Coffee berry borer", "Stem borer"],
+      "common_diseases": ["Leaf rust", "Berry disease"],
+      "prevention": "Sanitation and shade management.",
+      "pesticides": ["Beauveria bassiana", "Copper oxychloride"]
+    },
+    "harvest": {
+      "indicators": "Cherries turn bright red and firm.",
+      "yield": "0.8-1.5 t/ha clean coffee",
+      "post_harvest": "Pulp, ferment, wash, and dry to safe moisture."
+    }
+  },
+  "cotton": {
+    "name": "Cotton",
+    "type": "Kharif",
+    "season": "Monsoon",
+    "duration": "150-180 days",
+    "stages": [
+      {"name": "Land preparation", "days": "0-10", "activities": "Deep ploughing and ridge formation."},
+      {"name": "Sowing", "days": "10-25", "activities": "Seed treatment and sowing with spacing."},
+      {"name": "Vegetative growth", "days": "25-60", "activities": "Weeding, thinning, and nutrient application."},
+      {"name": "Flowering", "days": "60-100", "activities": "Moisture management and pest scouting."},
+      {"name": "Maturity & harvest", "days": "100-160", "activities": "Boll opening and multiple pickings."}
+    ],
+    "fertilizer": {
+      "basal": "N:P:K 30:20:20 kg/ha.",
+      "top_dressing": [
+        "Square formation: N 20-30 kg/ha.",
+        "Flowering: N 20-30 kg/ha.",
+        "Boll development: K 20-30 kg/ha."
+      ],
+      "fertilizers": ["Urea", "DAP", "MOP", "SSP"],
+      "organic": "Compost/FYM 5 t/ha."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Establishment: Light irrigation after sowing.",
+        "Squaring: Ensure moisture.",
+        "Flowering: Critical irrigation.",
+        "Boll formation: Avoid stress."
+      ],
+      "frequency": "10-15 day interval; shorter in sandy soils.",
+      "notes": "Avoid waterlogging; stress reduces boll set."
+    },
+    "pests": {
+      "common_pests": ["Bollworm", "Whitefly", "Aphid", "Jassid"],
+      "common_diseases": ["Bacterial blight", "Leaf curl"],
+      "prevention": "Resistant varieties and balanced nutrition.",
+      "pesticides": ["Emamectin benzoate", "Imidacloprid", "Copper oxychloride"]
+    },
+    "harvest": {
+      "indicators": "Bolls open with fluffy lint.",
+      "yield": "1.5-3.0 t/ha seed cotton",
+      "post_harvest": "Pick clean, dry before storage."
+    }
+  }
+,
+  "flowers": {
+    "name": "Flowers",
+    "type": "Varies",
+    "season": "All seasons depending on crop",
+    "duration": "60-120 days (varies)",
+    "stages": [
+      {"name": "Land preparation", "days": "0-10", "activities": "Fine tilth, bed preparation, and manure application."},
+      {"name": "Sowing/Transplanting", "days": "10-20", "activities": "Planting with proper spacing and initial irrigation."},
+      {"name": "Vegetative growth", "days": "20-50", "activities": "Weeding and nutrient management."},
+      {"name": "Flowering", "days": "50-80", "activities": "Bud management and pest scouting."},
+      {"name": "Harvest", "days": "80-110", "activities": "Harvest at bud or half-bloom stage."}
+    ],
+    "fertilizer": {
+      "basal": "Balanced NPK as per crop and soil test.",
+      "top_dressing": ["Split N and K during vegetative and bud stages."],
+      "fertilizers": ["Urea", "DAP", "MOP"],
+      "organic": "Compost/FYM."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Post-planting: Keep soil moist.",
+        "Flowering: Regular irrigation to maintain quality."
+      ],
+      "frequency": "3-7 day interval depending on soil.",
+      "notes": "Avoid waterlogging; drip irrigation preferred."
+    },
+    "pests": {
+      "common_pests": ["Aphids", "Thrips", "Mites"],
+      "common_diseases": ["Damping off", "Powdery mildew"],
+      "prevention": "Clean nursery and field sanitation.",
+      "pesticides": ["Imidacloprid", "Sulphur"]
+    },
+    "harvest": {
+      "indicators": "Bud or half-bloom stage for longer vase life.",
+      "yield": "Varies by flower crop",
+      "post_harvest": "Cool and hydrate stems quickly."
+    }
+  },
+  "fruits": {
+    "name": "Fruits",
+    "type": "Varies (orchard)",
+    "season": "Perennial",
+    "duration": "Varies by fruit",
+    "stages": [
+      {"name": "Land preparation", "days": "0-30", "activities": "Pit digging, soil amendment, and layout."},
+      {"name": "Planting & establishment", "days": "30-120", "activities": "Planting, staking, and initial irrigation."},
+      {"name": "Flowering", "days": "120-160", "activities": "Pollination support and pest scouting."},
+      {"name": "Fruit development", "days": "160-260", "activities": "Nutrient and moisture management."},
+      {"name": "Harvest", "days": "260-320", "activities": "Harvest at maturity index."}
+    ],
+    "fertilizer": {
+      "basal": "FYM with balanced NPK as per soil test.",
+      "top_dressing": ["Split doses pre- and post-flowering."],
+      "fertilizers": ["Urea", "DAP", "MOP"],
+      "organic": "FYM/compost."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Flowering/fruit set: Maintain soil moisture.",
+        "Fruit development: Regular irrigation."
+      ],
+      "frequency": "10-15 day interval in dry season.",
+      "notes": "Mulching improves moisture conservation."
+    },
+    "pests": {
+      "common_pests": ["Fruit fly", "Mealybug"],
+      "common_diseases": ["Anthracnose", "Canker"],
+      "prevention": "Pruning and sanitation.",
+      "pesticides": ["Imidacloprid", "Copper oxychloride"]
+    },
+    "harvest": {
+      "indicators": "Color change and firmness as per crop.",
+      "yield": "Varies by fruit crop",
+      "post_harvest": "Grade and store in cool conditions."
+    }
+  },
+  "grapes": {
+    "name": "Grapes",
+    "type": "Perennial",
+    "season": "Winter pruning; summer harvest",
+    "duration": "120-150 days after pruning",
+    "stages": [
+      {"name": "Pruning & bud break", "days": "0-15", "activities": "Pruning and bud break management."},
+      {"name": "Shoot growth", "days": "15-45", "activities": "Canopy management and nutrient support."},
+      {"name": "Flowering", "days": "45-60", "activities": "Pest scouting and irrigation."},
+      {"name": "Berry development", "days": "60-120", "activities": "Moisture and nutrient management."},
+      {"name": "Maturity & harvest", "days": "120-150", "activities": "Harvest at target brix."}
+    ],
+    "fertilizer": {
+      "basal": "FYM 10-15 t/ha with balanced NPK.",
+      "top_dressing": ["Split N and K at shoot growth and berry set."],
+      "fertilizers": ["Urea", "DAP", "MOP", "Potassium sulfate"],
+      "organic": "FYM/compost."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Bud break: Light irrigation.",
+        "Berry growth: Frequent drip irrigation.",
+        "Pre-harvest: Reduce irrigation to improve quality."
+      ],
+      "frequency": "3-5 day interval on drip.",
+      "notes": "Avoid excess water near harvest to prevent cracking."
+    },
+    "pests": {
+      "common_pests": ["Mealybug", "Thrips"],
+      "common_diseases": ["Powdery mildew", "Downy mildew"],
+      "prevention": "Canopy management and sanitation.",
+      "pesticides": ["Sulphur", "Copper oxychloride", "Imidacloprid"]
+    },
+    "harvest": {
+      "indicators": "Brix 16-20 and berry softening.",
+      "yield": "20-30 t/ha",
+      "post_harvest": "Pre-cool and pack carefully."
+    }
+  },
+  "jowar": {
+    "name": "Jowar",
+    "type": "Kharif/Rabi",
+    "season": "Monsoon/Winter",
+    "duration": "100-120 days",
+    "stages": [
+      {"name": "Land preparation", "days": "0-7", "activities": "Fine tilth and basal manure."},
+      {"name": "Sowing", "days": "7-15", "activities": "Line sowing with proper spacing."},
+      {"name": "Vegetative growth", "days": "15-45", "activities": "Weeding and top dressing."},
+      {"name": "Flowering", "days": "45-65", "activities": "Critical irrigation and pest scouting."},
+      {"name": "Maturity & harvest", "days": "65-100", "activities": "Harvest when grains are hard."}
+    ],
+    "fertilizer": {
+      "basal": "N:P:K 40:20:20 kg/ha.",
+      "top_dressing": ["30-35 days: N 20-30 kg/ha."],
+      "fertilizers": ["Urea", "DAP", "MOP"],
+      "organic": "FYM 5 t/ha."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Establishment: Light irrigation if dry.",
+        "Flowering: Critical irrigation."
+      ],
+      "frequency": "Mostly rainfed; 1-2 irrigations if dry.",
+      "notes": "Avoid moisture stress at flowering."
+    },
+    "pests": {
+      "common_pests": ["Shoot fly", "Stem borer"],
+      "common_diseases": ["Anthracnose", "Grain mold"],
+      "prevention": "Timely sowing and seed treatment.",
+      "pesticides": ["Imidacloprid", "Mancozeb"]
+    },
+    "harvest": {
+      "indicators": "Panicles dry and grains hard.",
+      "yield": "2-3 t/ha",
+      "post_harvest": "Dry grain to about 12% moisture."
+    }
+  },
+  "jute": {
+    "name": "Jute",
+    "type": "Kharif",
+    "season": "Monsoon",
+    "duration": "120-150 days",
+    "stages": [
+      {"name": "Land preparation", "days": "0-10", "activities": "Fine tilth and raised beds if needed."},
+      {"name": "Sowing", "days": "10-20", "activities": "Broadcast or line sowing with thinning."},
+      {"name": "Vegetative growth", "days": "20-70", "activities": "Weeding and top dressing."},
+      {"name": "Flowering", "days": "70-100", "activities": "Moisture management and pest control."},
+      {"name": "Maturity & harvest", "days": "100-130", "activities": "Harvest at 50% flowering for best fiber."}
+    ],
+    "fertilizer": {
+      "basal": "N:P:K 40:20:20 kg/ha.",
+      "top_dressing": ["30-45 days: N 20-30 kg/ha."],
+      "fertilizers": ["Urea", "DAP", "MOP"],
+      "organic": "FYM 5 t/ha."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Early growth: Maintain moist soil.",
+        "Mid-season: Irrigate if dry spell occurs."
+      ],
+      "frequency": "2-3 irrigations if rainfall is low.",
+      "notes": "Avoid waterlogging for fiber quality."
+    },
+    "pests": {
+      "common_pests": ["Jute semilooper", "Stem weevil"],
+      "common_diseases": ["Stem rot", "Root rot"],
+      "prevention": "Clean field, balanced nutrition, and proper spacing.",
+      "pesticides": ["Chlorantraniliprole", "Carbendazim"]
+    },
+    "harvest": {
+      "indicators": "50% flowering stage for fiber crop.",
+      "yield": "2-3 t/ha fiber",
+      "post_harvest": "Retting and fiber extraction in clean water."
+    }
+  }
+,
+  "kidneybeans": {
+    "name": "Kidneybeans",
+    "type": "Rabi/Kharif (cool)",
+    "season": "Winter/Monsoon (cool)",
+    "duration": "90-120 days",
+    "stages": [
+      {"name": "Land preparation", "days": "0-7", "activities": "Fine tilth and basal manure."},
+      {"name": "Sowing", "days": "7-15", "activities": "Line sowing with treated seed."},
+      {"name": "Vegetative growth", "days": "15-40", "activities": "Weeding and nutrient management."},
+      {"name": "Flowering & pod set", "days": "40-70", "activities": "Pest scouting and moisture management."},
+      {"name": "Maturity & harvest", "days": "70-100", "activities": "Harvest when pods dry and brown."}
+    ],
+    "fertilizer": {
+      "basal": "N:P:K 20:40:20 kg/ha.",
+      "top_dressing": ["Branching: N 15-20 kg/ha."],
+      "fertilizers": ["Urea", "DAP", "MOP"],
+      "organic": "FYM 5 t/ha."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Establishment: Light irrigation if dry.",
+        "Flowering/pod filling: Critical irrigation."
+      ],
+      "frequency": "7-10 day interval in dry weather.",
+      "notes": "Avoid excess moisture to prevent disease."
+    },
+    "pests": {
+      "common_pests": ["Pod borer", "Aphid"],
+      "common_diseases": ["Rust", "Anthracnose"],
+      "prevention": "Clean seed and proper spacing.",
+      "pesticides": ["Emamectin benzoate", "Mancozeb"]
+    },
+    "harvest": {
+      "indicators": "Pods dry and brown.",
+      "yield": "1.0-1.8 t/ha",
+      "post_harvest": "Dry grain to about 12% moisture."
+    }
+  },
+  "lentil": {
+    "name": "Lentil",
+    "type": "Rabi",
+    "season": "Winter",
+    "duration": "100-120 days",
+    "stages": [
+      {"name": "Land preparation", "days": "0-7", "activities": "Fine tilth and seedbed preparation."},
+      {"name": "Sowing", "days": "7-15", "activities": "Line sowing with treated seed."},
+      {"name": "Vegetative growth", "days": "15-45", "activities": "Weeding and thinning."},
+      {"name": "Flowering & pod set", "days": "45-75", "activities": "Pest scouting and moisture management."},
+      {"name": "Maturity & harvest", "days": "75-110", "activities": "Harvest when plants turn yellow."}
+    ],
+    "fertilizer": {
+      "basal": "N:P:K 20:40:0 kg/ha.",
+      "top_dressing": ["Usually not required."],
+      "fertilizers": ["DAP", "SSP"],
+      "organic": "FYM 3-5 t/ha."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Pre-sowing: One irrigation if soil is dry.",
+        "Flowering/pod filling: 1-2 irrigations if needed."
+      ],
+      "frequency": "Low water requirement.",
+      "notes": "Avoid waterlogging."
+    },
+    "pests": {
+      "common_pests": ["Aphid", "Pod borer"],
+      "common_diseases": ["Rust", "Wilt"],
+      "prevention": "Seed treatment and crop rotation.",
+      "pesticides": ["Imidacloprid", "Mancozeb"]
+    },
+    "harvest": {
+      "indicators": "Pods dry and plants turn yellow.",
+      "yield": "1.0-1.5 t/ha",
+      "post_harvest": "Dry and thresh carefully."
+    }
+  },
+  "maize": {
+    "name": "Maize",
+    "type": "Kharif/Rabi",
+    "season": "Monsoon/Winter",
+    "duration": "90-120 days",
+    "stages": [
+      {"name": "Land preparation", "days": "0-7", "activities": "Deep ploughing and ridge formation."},
+      {"name": "Sowing", "days": "7-15", "activities": "Seed placement 3-5 cm and basal fertilizer."},
+      {"name": "Vegetative growth", "days": "15-45", "activities": "Thinning, weeding, and top dressing."},
+      {"name": "Flowering (tasseling/silking)", "days": "45-65", "activities": "Critical irrigation and pest scouting."},
+      {"name": "Maturity & harvest", "days": "65-100", "activities": "Grain filling and dry down."}
+    ],
+    "fertilizer": {
+      "basal": "N:P:K 40:20:20 kg/ha.",
+      "top_dressing": [
+        "Knee-high stage: N 30-40 kg/ha.",
+        "Tasseling: N 20-30 kg/ha."
+      ],
+      "fertilizers": ["Urea", "DAP", "MOP", "Zinc sulfate (optional)"],
+      "organic": "FYM/compost 5 t/ha."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Establishment: Light irrigation after sowing.",
+        "Knee-high: Ensure adequate moisture.",
+        "Tasseling/silking: Critical irrigation.",
+        "Grain filling: One irrigation if dry."
+      ],
+      "frequency": "7-10 day interval depending on soil.",
+      "notes": "Moisture stress at silking reduces yield sharply."
+    },
+    "pests": {
+      "common_pests": ["Fall armyworm", "Stem borer", "Cutworm"],
+      "common_diseases": ["Leaf blight", "Downy mildew", "Rust"],
+      "prevention": "Seed treatment and clean field sanitation.",
+      "pesticides": ["Spinosad", "Emamectin benzoate", "Mancozeb"]
+    },
+    "harvest": {
+      "indicators": "Husks brown and grains hard.",
+      "yield": "3-6 t/ha",
+      "post_harvest": "Dry grain to 12-13% moisture."
+    }
+  },
+  "mango": {
+    "name": "Mango",
+    "type": "Perennial",
+    "season": "Summer (harvest)",
+    "duration": "90-120 days (fruit development); orchard perennial",
+    "stages": [
+      {"name": "Land preparation", "days": "0-30", "activities": "Pit digging and soil amendment."},
+      {"name": "Planting & establishment", "days": "30-120", "activities": "Plant grafted saplings and provide irrigation."},
+      {"name": "Vegetative flush", "days": "120-180", "activities": "Pruning and canopy management."},
+      {"name": "Flowering", "days": "180-210", "activities": "Pollination support and pest scouting."},
+      {"name": "Fruit development & harvest", "days": "210-300", "activities": "Nutrient support and harvesting mature fruits."}
+    ],
+    "fertilizer": {
+      "basal": "FYM 20-30 kg/tree with balanced NPK.",
+      "top_dressing": ["Apply N and K after flowering."],
+      "fertilizers": ["Urea", "DAP", "MOP"],
+      "organic": "Compost/FYM."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Post-flowering: Light irrigation.",
+        "Fruit development: Regular irrigation.",
+        "Pre-harvest: Avoid excess irrigation."
+      ],
+      "frequency": "15-20 day interval in dry season.",
+      "notes": "Avoid irrigation just before flowering to induce bloom."
+    },
+    "pests": {
+      "common_pests": ["Mango hopper", "Fruit fly", "Mealybug"],
+      "common_diseases": ["Powdery mildew", "Anthracnose"],
+      "prevention": "Pruning, sanitation, and bagging if needed.",
+      "pesticides": ["Imidacloprid", "Spinosad", "Mancozeb"]
+    },
+    "harvest": {
+      "indicators": "Shoulders rise and color change appears.",
+      "yield": "5-10 t/ha",
+      "post_harvest": "De-sap, wash, and pack carefully."
+    }
+  }
+,
+  "mothbeans": {
+    "name": "Mothbeans",
+    "type": "Kharif (arid)",
+    "season": "Monsoon",
+    "duration": "60-75 days",
+    "stages": [
+      {"name": "Land preparation", "days": "0-5", "activities": "Fine tilth and basal manure."},
+      {"name": "Sowing", "days": "5-12", "activities": "Broadcast or line sowing."},
+      {"name": "Vegetative growth", "days": "12-30", "activities": "Weeding and moisture conservation."},
+      {"name": "Flowering & pod set", "days": "30-50", "activities": "Pest scouting."},
+      {"name": "Maturity & harvest", "days": "50-70", "activities": "Harvest when pods dry."}
+    ],
+    "fertilizer": {
+      "basal": "N:P:K 10:20:0 kg/ha.",
+      "top_dressing": ["Usually not required."],
+      "fertilizers": ["DAP", "SSP"],
+      "organic": "FYM 3-5 t/ha."
+    },
+    "irrigation": {
+      "stage_wise": ["Mostly rainfed; one irrigation if long dry spell occurs."],
+      "frequency": "Minimal.",
+      "notes": "Drought tolerant but avoid waterlogging."
+    },
+    "pests": {
+      "common_pests": ["Pod borer", "Aphid"],
+      "common_diseases": ["Yellow mosaic", "Leaf spot"],
+      "prevention": "Seed treatment and clean fields.",
+      "pesticides": ["Imidacloprid", "Mancozeb"]
+    },
+    "harvest": {
+      "indicators": "Pods dry and dark.",
+      "yield": "0.6-1.0 t/ha",
+      "post_harvest": "Dry and store grain safely."
+    }
+  },
+  "mungbean": {
+    "name": "Mungbean",
+    "type": "Kharif/Summer",
+    "season": "Monsoon/Summer",
+    "duration": "60-70 days",
+    "stages": [
+      {"name": "Land preparation", "days": "0-5", "activities": "Fine tilth and basal manure."},
+      {"name": "Sowing", "days": "5-12", "activities": "Line sowing with treated seed."},
+      {"name": "Vegetative growth", "days": "12-30", "activities": "Weeding and thinning."},
+      {"name": "Flowering & pod set", "days": "30-45", "activities": "Critical irrigation and pest scouting."},
+      {"name": "Maturity & harvest", "days": "45-65", "activities": "Harvest when pods turn black."}
+    ],
+    "fertilizer": {
+      "basal": "N:P:K 15:30:0 kg/ha.",
+      "top_dressing": ["Usually not required; seed inoculation recommended."],
+      "fertilizers": ["DAP", "SSP"],
+      "organic": "FYM 3-5 t/ha."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Establishment: Light irrigation if dry.",
+        "Flowering/pod filling: Critical irrigation."
+      ],
+      "frequency": "7-10 day interval in summer.",
+      "notes": "Avoid moisture stress at flowering."
+    },
+    "pests": {
+      "common_pests": ["Pod borer", "Whitefly"],
+      "common_diseases": ["Yellow mosaic", "Powdery mildew"],
+      "prevention": "Resistant varieties and timely sowing.",
+      "pesticides": ["Imidacloprid", "Emamectin benzoate", "Sulphur"]
+    },
+    "harvest": {
+      "indicators": "Pods turn black and dry.",
+      "yield": "0.8-1.2 t/ha",
+      "post_harvest": "Dry and thresh carefully."
+    }
+  },
+  "muskmelon": {
+    "name": "Muskmelon",
+    "type": "Zaid",
+    "season": "Summer",
+    "duration": "70-90 days",
+    "stages": [
+      {"name": "Land preparation", "days": "0-7", "activities": "Raised beds and basal manure."},
+      {"name": "Sowing", "days": "7-15", "activities": "Direct sowing with proper spacing."},
+      {"name": "Vining", "days": "15-30", "activities": "Weeding and vine training."},
+      {"name": "Flowering & fruit set", "days": "30-45", "activities": "Irrigation and pest scouting."},
+      {"name": "Fruit development & harvest", "days": "45-75", "activities": "Maintain moisture and harvest at maturity."}
+    ],
+    "fertilizer": {
+      "basal": "N:P:K 40:20:20 kg/ha.",
+      "top_dressing": ["Vining: N 20 kg/ha.", "Fruit set: K 20-30 kg/ha."],
+      "fertilizers": ["Urea", "DAP", "MOP"],
+      "organic": "Compost 5 t/ha."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Germination: Light irrigation.",
+        "Vining: Regular moisture.",
+        "Fruit development: Steady moisture.",
+        "Pre-harvest: Reduce irrigation."
+      ],
+      "frequency": "5-7 day interval.",
+      "notes": "Excess moisture near harvest reduces sweetness."
+    },
+    "pests": {
+      "common_pests": ["Fruit fly", "Aphid", "Thrips"],
+      "common_diseases": ["Powdery mildew", "Fusarium wilt"],
+      "prevention": "Raised beds and sanitation.",
+      "pesticides": ["Spinosad", "Mancozeb", "Trichoderma (bio)"]
+    },
+    "harvest": {
+      "indicators": "Netting developed and aroma present.",
+      "yield": "15-25 t/ha",
+      "post_harvest": "Harvest at full slip stage and handle gently."
+    }
+  },
+  "orange": {
+    "name": "Orange",
+    "type": "Perennial",
+    "season": "Bahar-based (winter/monsoon flowering)",
+    "duration": "210-300 days",
+    "stages": [
+      {"name": "Land preparation", "days": "0-30", "activities": "Pit digging and soil amendment."},
+      {"name": "Planting & establishment", "days": "30-120", "activities": "Plant saplings and provide irrigation."},
+      {"name": "Vegetative flush", "days": "120-180", "activities": "Pruning and canopy management."},
+      {"name": "Flowering", "days": "180-210", "activities": "Pollination support and pest scouting."},
+      {"name": "Fruit development & harvest", "days": "210-300", "activities": "Nutrient support and harvesting mature fruits."}
+    ],
+    "fertilizer": {
+      "basal": "FYM 20-25 kg/tree with balanced NPK.",
+      "top_dressing": ["Apply N and K after flowering."],
+      "fertilizers": ["Urea", "DAP", "MOP"],
+      "organic": "FYM/compost."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Flowering: Maintain soil moisture.",
+        "Fruit set: Regular irrigation.",
+        "Pre-harvest: Avoid stress."
+      ],
+      "frequency": "10-15 day interval in dry months.",
+      "notes": "Water stress increases fruit drop."
+    },
+    "pests": {
+      "common_pests": ["Citrus psylla", "Fruit fly"],
+      "common_diseases": ["Canker", "Gummosis"],
+      "prevention": "Pruning and orchard sanitation.",
+      "pesticides": ["Imidacloprid", "Copper oxychloride"]
+    },
+    "harvest": {
+      "indicators": "Uniform color and good juice content.",
+      "yield": "10-20 t/ha",
+      "post_harvest": "Grade and store in cool conditions."
+    }
+  },
+  "papaya": {
+    "name": "Papaya",
+    "type": "Perennial (short duration)",
+    "season": "Year-round",
+    "duration": "240-300 days",
+    "stages": [
+      {"name": "Land preparation", "days": "0-10", "activities": "Raised beds and basal manure."},
+      {"name": "Transplanting", "days": "10-30", "activities": "Transplant seedlings and provide irrigation."},
+      {"name": "Vegetative growth", "days": "30-120", "activities": "Weeding and nutrient management."},
+      {"name": "Flowering", "days": "120-180", "activities": "Pest scouting and moisture management."},
+      {"name": "Fruit development & harvest", "days": "180-270", "activities": "Maintain moisture and harvest at maturity."}
+    ],
+    "fertilizer": {
+      "basal": "FYM 10-15 t/ha plus NPK 200:200:200 kg/ha.",
+      "top_dressing": ["Split N and K monthly after establishment."],
+      "fertilizers": ["Urea", "DAP", "MOP"],
+      "organic": "Compost and neem cake."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Establishment: Light frequent irrigation.",
+        "Flowering/fruiting: Regular irrigation."
+      ],
+      "frequency": "5-7 day interval; drip preferred.",
+      "notes": "Avoid waterlogging to prevent root diseases."
+    },
+    "pests": {
+      "common_pests": ["Fruit fly", "Aphid", "Mealybug"],
+      "common_diseases": ["Papaya mosaic", "Powdery mildew"],
+      "prevention": "Rogue infected plants and maintain clean nursery.",
+      "pesticides": ["Spinosad", "Imidacloprid", "Sulphur"]
+    },
+    "harvest": {
+      "indicators": "Yellow color break on fruit.",
+      "yield": "40-60 t/ha",
+      "post_harvest": "Handle gently and avoid latex stains."
+    }
+  }
+,
+  "pigeonpeas": {
+    "name": "Pigeonpeas",
+    "type": "Kharif",
+    "season": "Monsoon",
+    "duration": "160-200 days",
+    "stages": [
+      {"name": "Land preparation", "days": "0-10", "activities": "Fine tilth and basal manure."},
+      {"name": "Sowing", "days": "10-20", "activities": "Line sowing with treated seed."},
+      {"name": "Vegetative growth", "days": "20-70", "activities": "Weeding and thinning."},
+      {"name": "Flowering & pod formation", "days": "70-120", "activities": "Pest scouting and moisture management."},
+      {"name": "Maturity & harvest", "days": "120-180", "activities": "Harvest when pods dry and brown."}
+    ],
+    "fertilizer": {
+      "basal": "N:P:K 20:40:0 kg/ha.",
+      "top_dressing": ["Usually not required."],
+      "fertilizers": ["DAP", "SSP"],
+      "organic": "FYM 5 t/ha."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Establishment: Light irrigation if dry.",
+        "Flowering/pod filling: One irrigation if needed."
+      ],
+      "frequency": "Mostly rainfed.",
+      "notes": "Sensitive to waterlogging."
+    },
+    "pests": {
+      "common_pests": ["Pod borer", "Pod fly", "Sucking pests"],
+      "common_diseases": ["Wilt", "Sterility mosaic"],
+      "prevention": "Resistant varieties and field sanitation.",
+      "pesticides": ["Emamectin benzoate", "Imidacloprid"]
+    },
+    "harvest": {
+      "indicators": "Pods dry and brown.",
+      "yield": "1.0-1.6 t/ha",
+      "post_harvest": "Dry and thresh carefully."
+    }
+  },
+  "pomegranate": {
+    "name": "Pomegranate",
+    "type": "Perennial",
+    "season": "Bahar-based",
+    "duration": "180-200 days per bahar",
+    "stages": [
+      {"name": "Land preparation", "days": "0-30", "activities": "Pit digging and soil amendment."},
+      {"name": "Planting & establishment", "days": "30-120", "activities": "Plant saplings and provide irrigation."},
+      {"name": "Vegetative flush", "days": "120-160", "activities": "Pruning and canopy management."},
+      {"name": "Flowering", "days": "160-190", "activities": "Pollination support and pest scouting."},
+      {"name": "Fruit development & harvest", "days": "190-260", "activities": "Moisture management and harvest."}
+    ],
+    "fertilizer": {
+      "basal": "FYM 20-25 kg/tree with balanced NPK.",
+      "top_dressing": ["Apply N and K at flowering and fruit set."],
+      "fertilizers": ["Urea", "DAP", "MOP"],
+      "organic": "Compost/FYM."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Flowering: Light irrigation.",
+        "Fruit development: Regular irrigation.",
+        "Pre-harvest: Reduce excess irrigation."
+      ],
+      "frequency": "7-10 day interval on drip.",
+      "notes": "Avoid water stress to reduce fruit cracking."
+    },
+    "pests": {
+      "common_pests": ["Fruit borer", "Mealybug", "Thrips"],
+      "common_diseases": ["Bacterial blight", "Anthracnose"],
+      "prevention": "Canopy management and avoid overhead irrigation.",
+      "pesticides": ["Emamectin benzoate", "Copper oxychloride"]
+    },
+    "harvest": {
+      "indicators": "Deep color and metallic sound.",
+      "yield": "10-15 t/ha",
+      "post_harvest": "Handle carefully to avoid rind damage."
+    }
+  },
+  "rice": {
+    "name": "Rice",
+    "type": "Kharif",
+    "season": "Monsoon",
+    "duration": "120-150 days",
+    "stages": [
+      {"name": "Land preparation", "days": "0-10", "activities": "Puddling, leveling, bunding, and nursery prep."},
+      {"name": "Sowing/Transplanting", "days": "10-30", "activities": "Nursery raising and transplanting seedlings."},
+      {"name": "Vegetative growth", "days": "30-60", "activities": "Tillering, weeding, and top dressing."},
+      {"name": "Flowering", "days": "60-90", "activities": "Panicle initiation and pest scouting."},
+      {"name": "Maturity & harvest", "days": "90-120", "activities": "Drain field and harvest."}
+    ],
+    "fertilizer": {
+      "basal": "N:P:K 40:20:20 kg/ha.",
+      "top_dressing": [
+        "Tillering: N 20-30 kg/ha.",
+        "Panicle initiation: N 20-30 kg/ha."
+      ],
+      "fertilizers": ["Urea", "DAP", "MOP", "SSP (optional)"],
+      "organic": "FYM/compost 5-10 t/ha."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Transplanting: Maintain 2-3 cm standing water.",
+        "Vegetative: Maintain 2-5 cm water.",
+        "Flowering: Avoid moisture stress.",
+        "Maturity: Drain 10-15 days before harvest."
+      ],
+      "frequency": "Shallow flooding or alternate wetting and drying.",
+      "notes": "Most sensitive to stress at flowering and grain filling."
+    },
+    "pests": {
+      "common_pests": ["Stem borer", "Leaf folder", "Brown planthopper"],
+      "common_diseases": ["Blast", "Bacterial leaf blight", "Sheath blight"],
+      "prevention": "Resistant varieties and balanced nitrogen use.",
+      "pesticides": ["Chlorantraniliprole", "Fipronil", "Tricyclazole", "Copper oxychloride"]
+    },
+    "harvest": {
+      "indicators": "80-85% grains hard and straw-colored.",
+      "yield": "3-5 t/ha irrigated; 2-3 t/ha rainfed",
+      "post_harvest": "Dry grain to 13-14% moisture before storage."
+    }
+  },
+  "soybean": {
+    "name": "Soybean",
+    "type": "Kharif",
+    "season": "Monsoon",
+    "duration": "90-110 days",
+    "stages": [
+      {"name": "Land preparation", "days": "0-7", "activities": "Fine tilth and basal manure."},
+      {"name": "Sowing", "days": "7-15", "activities": "Line sowing with treated seed."},
+      {"name": "Vegetative growth", "days": "15-40", "activities": "Weeding and thinning."},
+      {"name": "Flowering & pod set", "days": "40-70", "activities": "Moisture management and pest scouting."},
+      {"name": "Maturity & harvest", "days": "70-100", "activities": "Harvest when pods are brown."}
+    ],
+    "fertilizer": {
+      "basal": "N:P:K 20:60:40 kg/ha.",
+      "top_dressing": ["Usually not required; inoculate with Rhizobium."],
+      "fertilizers": ["DAP", "MOP", "SSP"],
+      "organic": "FYM 5 t/ha."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Establishment: Light irrigation if dry.",
+        "Flowering/pod filling: Critical irrigation."
+      ],
+      "frequency": "2-3 irrigations in dry spells.",
+      "notes": "Avoid waterlogging."
+    },
+    "pests": {
+      "common_pests": ["Girdle beetle", "Pod borer"],
+      "common_diseases": ["Rust", "Yellow mosaic"],
+      "prevention": "Seed treatment and crop rotation.",
+      "pesticides": ["Imidacloprid", "Mancozeb"]
+    },
+    "harvest": {
+      "indicators": "Leaves yellow and pods dry.",
+      "yield": "1.5-2.5 t/ha",
+      "post_harvest": "Dry to about 12% moisture."
+    }
+  },
+  "sugarcane": {
+    "name": "Sugarcane",
+    "type": "Perennial (annual crop)",
+    "season": "Spring/Autumn",
+    "duration": "300-360 days",
+    "stages": [
+      {"name": "Land preparation", "days": "0-30", "activities": "Deep ploughing and furrow preparation."},
+      {"name": "Planting", "days": "0-30", "activities": "Setts placement and irrigation."},
+      {"name": "Tillering", "days": "30-120", "activities": "Weeding and nutrient management."},
+      {"name": "Grand growth", "days": "120-240", "activities": "High water and nutrient demand."},
+      {"name": "Maturity & harvest", "days": "240-360", "activities": "Harvest at optimum brix."}
+    ],
+    "fertilizer": {
+      "basal": "N:P:K 150:60:60 kg/ha.",
+      "top_dressing": ["Split N at 45 and 90 days."],
+      "fertilizers": ["Urea", "DAP", "MOP"],
+      "organic": "FYM 10-15 t/ha."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Establishment: Light irrigation.",
+        "Tillering/grand growth: Frequent irrigation.",
+        "Maturity: Reduce irrigation."
+      ],
+      "frequency": "10-15 day interval; drip preferred.",
+      "notes": "Avoid prolonged waterlogging."
+    },
+    "pests": {
+      "common_pests": ["Early shoot borer", "Top borer"],
+      "common_diseases": ["Red rot", "Smut"],
+      "prevention": "Use healthy seed cane and field sanitation.",
+      "pesticides": ["Chlorantraniliprole", "Carbendazim"]
+    },
+    "harvest": {
+      "indicators": "Brix increases and leaves dry.",
+      "yield": "70-100 t/ha",
+      "post_harvest": "Harvest at right maturity and transport quickly."
+    }
+  }
+,
+  "turmeric": {
+    "name": "Turmeric",
+    "type": "Kharif",
+    "season": "Monsoon",
+    "duration": "210-240 days",
+    "stages": [
+      {"name": "Land preparation", "days": "0-15", "activities": "Raised beds and basal manure."},
+      {"name": "Planting", "days": "15-25", "activities": "Plant rhizomes with spacing."},
+      {"name": "Vegetative growth", "days": "25-120", "activities": "Weeding and nutrient management."},
+      {"name": "Rhizome development", "days": "120-200", "activities": "Maintain moisture and control pests."},
+      {"name": "Maturity & harvest", "days": "200-230", "activities": "Harvest when leaves yellow and dry."}
+    ],
+    "fertilizer": {
+      "basal": "N:P:K 60:50:120 kg/ha.",
+      "top_dressing": ["Split N and K at 60 and 120 days."],
+      "fertilizers": ["Urea", "DAP", "MOP"],
+      "organic": "FYM 20-25 t/ha."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Establishment: Light frequent irrigation.",
+        "Rhizome development: Maintain moisture."
+      ],
+      "frequency": "7-10 day interval.",
+      "notes": "Avoid waterlogging to prevent rhizome rot."
+    },
+    "pests": {
+      "common_pests": ["Shoot borer", "Rhizome scale"],
+      "common_diseases": ["Leaf spot", "Rhizome rot"],
+      "prevention": "Seed rhizome treatment and proper drainage.",
+      "pesticides": ["Chlorantraniliprole", "Mancozeb"]
+    },
+    "harvest": {
+      "indicators": "Leaves yellow and dry.",
+      "yield": "20-25 t/ha fresh rhizome",
+      "post_harvest": "Boil, dry, and polish."
+    }
+  },
+  "vegetables": {
+    "name": "Vegetables",
+    "type": "Varies",
+    "season": "All seasons",
+    "duration": "45-120 days",
+    "stages": [
+      {"name": "Land preparation", "days": "0-10", "activities": "Bed preparation and basal manure."},
+      {"name": "Sowing/Transplanting", "days": "10-20", "activities": "Planting with proper spacing."},
+      {"name": "Vegetative growth", "days": "20-45", "activities": "Weeding and nutrient management."},
+      {"name": "Flowering/Fruiting", "days": "45-80", "activities": "Moisture management and pest scouting."},
+      {"name": "Harvest", "days": "80-110", "activities": "Harvest at marketable maturity."}
+    ],
+    "fertilizer": {
+      "basal": "Balanced NPK as per crop and soil test.",
+      "top_dressing": ["Split N and K at vegetative and fruiting stages."],
+      "fertilizers": ["Urea", "DAP", "MOP"],
+      "organic": "Compost/FYM."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Post-planting: Light frequent irrigation.",
+        "Flowering/fruiting: Critical irrigation."
+      ],
+      "frequency": "3-7 day interval depending on soil.",
+      "notes": "Avoid water stress to reduce blossom drop."
+    },
+    "pests": {
+      "common_pests": ["Fruit borer", "Aphid", "Whitefly"],
+      "common_diseases": ["Damping off", "Leaf spot"],
+      "prevention": "Crop rotation and sanitation.",
+      "pesticides": ["Emamectin benzoate", "Mancozeb"]
+    },
+    "harvest": {
+      "indicators": "Marketable size and color.",
+      "yield": "Varies by vegetable crop",
+      "post_harvest": "Cool quickly and handle gently."
+    }
+  },
+  "watermelon": {
+    "name": "Watermelon",
+    "type": "Zaid",
+    "season": "Summer",
+    "duration": "80-100 days",
+    "stages": [
+      {"name": "Land preparation", "days": "0-7", "activities": "Raised beds and basal manure."},
+      {"name": "Sowing", "days": "7-15", "activities": "Direct sowing with proper spacing."},
+      {"name": "Vining", "days": "15-35", "activities": "Weeding and vine training."},
+      {"name": "Flowering & fruit set", "days": "35-50", "activities": "Irrigation and pest scouting."},
+      {"name": "Fruit development & harvest", "days": "50-80", "activities": "Maintain moisture and harvest at maturity."}
+    ],
+    "fertilizer": {
+      "basal": "N:P:K 40:20:20 kg/ha.",
+      "top_dressing": ["Vining: N 20-30 kg/ha.", "Fruit set: K 20-30 kg/ha."],
+      "fertilizers": ["Urea", "DAP", "MOP"],
+      "organic": "Compost 5 t/ha."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Germination: Light irrigation.",
+        "Vining: Regular moisture.",
+        "Fruit set: Critical irrigation.",
+        "Pre-harvest: Reduce irrigation for sweetness."
+      ],
+      "frequency": "5-7 day interval; drip preferred.",
+      "notes": "Avoid waterlogging and sudden drought."
+    },
+    "pests": {
+      "common_pests": ["Fruit fly", "Red pumpkin beetle", "Aphid"],
+      "common_diseases": ["Powdery mildew", "Downy mildew"],
+      "prevention": "Crop rotation and sanitation.",
+      "pesticides": ["Spinosad", "Imidacloprid", "Sulphur"]
+    },
+    "harvest": {
+      "indicators": "Tendril dry and dull sound on tapping.",
+      "yield": "20-30 t/ha",
+      "post_harvest": "Harvest in cool hours and avoid sun exposure."
+    }
+  }
+}

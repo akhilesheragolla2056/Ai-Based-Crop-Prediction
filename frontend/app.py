@@ -19,6 +19,7 @@ from backend.yield_prediction import predict_yield
 from frontend.components.cards import info_card, list_card
 from frontend.components.forms import DISEASE_SEVERITIES, environmental_inputs
 from frontend.components.layout import inject_theme
+from utils.crop_guide import get_crop_details
 
 load_dotenv()
 """FasalSaarthi – Professional AI Crop Recommendation Dashboard with Multi-language Support."""
@@ -299,7 +300,56 @@ def apply_theme():
         transform: translateY(-2px) !important;
         box-shadow: 0 6px 20px rgba(27, 94, 32, 0.4) !important;
     }
-    
+
+    /* Crop card "View Details" buttons only */
+    [class*="st-key-view_crop_details_"] .stButton > button {
+        background: linear-gradient(145deg, #1B5E20 0%, #2E7D32 100%) !important;
+        color: #FFFFFF !important;
+        border: 1px solid #1B5E20 !important;
+        border-radius: 10px !important;
+        font-weight: 700 !important;
+        min-height: 2.6rem !important;
+        box-shadow: 0 4px 14px rgba(27, 94, 32, 0.25) !important;
+        transition: all 0.2s ease !important;
+    }
+
+    [class*="st-key-view_crop_details_"] .stButton > button:hover {
+        background: linear-gradient(145deg, #2E7D32 0%, #388E3C 100%) !important;
+        border-color: #2E7D32 !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 6px 16px rgba(27, 94, 32, 0.32) !important;
+    }
+
+    [class*="st-key-view_crop_details_"] .stButton > button:focus {
+        box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.35) !important;
+    }
+
+    /* Crop detail back navigation buttons only */
+    [class*="st-key-back_to_recommendations"] .stButton > button,
+    [class*="st-key-back_to_home_missing_details"] .stButton > button {
+        background: linear-gradient(145deg, #1B5E20 0%, #2E7D32 100%) !important;
+        color: #FFFFFF !important;
+        border: 1px solid #1B5E20 !important;
+        border-radius: 10px !important;
+        font-weight: 700 !important;
+        min-height: 2.5rem !important;
+        box-shadow: 0 4px 14px rgba(27, 94, 32, 0.24) !important;
+        transition: all 0.2s ease !important;
+    }
+
+    [class*="st-key-back_to_recommendations"] .stButton > button:hover,
+    [class*="st-key-back_to_home_missing_details"] .stButton > button:hover {
+        background: linear-gradient(145deg, #2E7D32 0%, #388E3C 100%) !important;
+        border-color: #2E7D32 !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 6px 16px rgba(27, 94, 32, 0.32) !important;
+    }
+
+    [class*="st-key-back_to_recommendations"] .stButton > button:focus,
+    [class*="st-key-back_to_home_missing_details"] .stButton > button:focus {
+        box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.35) !important;
+    }
+
     /* Tabs styling */
     .stTabs [data-baseweb="tab"][aria-selected="true"] {
         background: linear-gradient(135deg, #1B5E20 0%, #4CAF50 100%) !important;
@@ -670,6 +720,125 @@ def render_crop_cards(recommendations):
                 """,
                 unsafe_allow_html=True,
             )
+            if st.button(
+                f"View Details - {rec.name.title()}",
+                key=f"view_crop_details_{idx}_{rec.name.lower()}",
+                use_container_width=True,
+            ):
+                st.session_state["page"] = "crop_detail"
+                st.session_state["selected_crop"] = rec.name
+                st.rerun()
+
+
+def render_crop_details_page(selected_crop: str) -> None:
+    """Render full-page detailed crop guide for the selected crop."""
+    details = get_crop_details(selected_crop)
+    if not details:
+        st.info(f"Detailed guide not available for {selected_crop.title()}.")
+        if st.button("⬅ Back to Recommendations", key="back_to_home_missing_details"):
+            st.session_state["page"] = "home"
+            st.session_state["selected_crop"] = None
+            st.rerun()
+        return
+
+    if st.button("⬅ Back to Recommendations", key="back_to_recommendations"):
+        st.session_state["page"] = "home"
+        st.session_state["selected_crop"] = None
+        st.rerun()
+
+    title = details.get("name", selected_crop.title())
+    st.markdown(f"# {title} - Crop Guide")
+    st.caption("Read-only advisory. Recommendations remain unchanged.")
+
+    st.markdown("## 1) Basic Info")
+    basic_lines = [
+        f"Crop name: {title}",
+        f"Crop type: {details.get('type', 'Not specified')}",
+        f"Suitable season: {details.get('season', 'Not specified')}",
+        f"Typical duration: {details.get('duration', 'Not specified')}",
+    ]
+    st.markdown("\n".join(f"- {line}" for line in basic_lines))
+
+    st.markdown("## 2) Plantation Stages")
+    stages = details.get("stages", [])
+    if stages:
+        stage_lines = []
+        for stage in stages:
+            name = stage.get("name", "Stage")
+            days = stage.get("days", "NA")
+            activities = stage.get("activities", "")
+            if activities:
+                stage_lines.append(f"{name} ({days}): {activities}")
+            else:
+                stage_lines.append(f"{name} ({days})")
+        st.markdown("\n".join(f"{idx + 1}. {line}" for idx, line in enumerate(stage_lines)))
+    else:
+        st.write("Stage details not available.")
+
+    st.markdown("## 3) Fertilizer Schedule")
+    fert = details.get("fertilizer", {})
+    fert_lines = []
+    if fert.get("basal"):
+        fert_lines.append(f"Basal dose: {fert['basal']}")
+    top_dress = fert.get("top_dressing", [])
+    if top_dress:
+        fert_lines.append("Top dressing: " + "; ".join(top_dress))
+    fertilizers = fert.get("fertilizers", [])
+    if fertilizers:
+        fert_lines.append("Recommended fertilizers: " + ", ".join(fertilizers))
+    if fert.get("organic"):
+        fert_lines.append(f"Organic alternatives: {fert['organic']}")
+    if fert_lines:
+        st.markdown("\n".join(f"- {line}" for line in fert_lines))
+    else:
+        st.write("Fertilizer guidance not available.")
+
+    st.markdown("## 4) Irrigation Guide")
+    irr = details.get("irrigation", {})
+    irr_lines = []
+    stage_wise = irr.get("stage_wise", [])
+    if stage_wise:
+        irr_lines.append("Stage-wise water: " + " | ".join(stage_wise))
+    if irr.get("frequency"):
+        irr_lines.append(f"Irrigation frequency: {irr['frequency']}")
+    if irr.get("notes"):
+        irr_lines.append(f"Special notes: {irr['notes']}")
+    if irr_lines:
+        st.markdown("\n".join(f"- {line}" for line in irr_lines))
+    else:
+        st.write("Irrigation guidance not available.")
+
+    st.markdown("## 5) Pest & Disease Control")
+    pest = details.get("pests", {})
+    pest_lines = []
+    pests_list = pest.get("common_pests", [])
+    diseases_list = pest.get("common_diseases", [])
+    if pests_list:
+        pest_lines.append("Common pests: " + ", ".join(pests_list))
+    if diseases_list:
+        pest_lines.append("Common diseases: " + ", ".join(diseases_list))
+    if pest.get("prevention"):
+        pest_lines.append(f"Preventive measures: {pest['prevention']}")
+    if pest.get("pesticides"):
+        pest_lines.append("Suggested pesticides: " + ", ".join(pest["pesticides"]))
+    if pest_lines:
+        st.markdown("\n".join(f"- {line}" for line in pest_lines))
+    else:
+        st.write("Pest and disease details not available.")
+
+    st.markdown("## 6) Harvest & Yield")
+    harvest = details.get("harvest", {})
+    harvest_lines = []
+    if harvest.get("indicators"):
+        harvest_lines.append(f"Harvest indicators: {harvest['indicators']}")
+    if harvest.get("yield"):
+        harvest_lines.append(f"Expected yield range: {harvest['yield']}")
+    if harvest.get("post_harvest"):
+        harvest_lines.append(f"Post-harvest tips: {harvest['post_harvest']}")
+    if harvest_lines:
+        st.markdown("\n".join(f"- {line}" for line in harvest_lines))
+    else:
+        st.write("Harvest details not available.")
 
 
 def render_market_section(recommendations):
@@ -825,7 +994,7 @@ def render_yield_section(top_crop, features):
     # Defensive: handle None values
     if projection.estimated_output is None or price is None:
         st.error(
-            "Yield projection or price data is unavailable for this crop and location.\nReason: {projection.reasoning}"
+            f"Yield projection or price data is unavailable for this crop and location.\nReason: {projection.reasoning}"
         )
         st.info(f"Debug info: features used: {features}")
         return
@@ -849,15 +1018,46 @@ def render_yield_section(top_crop, features):
             weather_notes=projection.weather_notes,
         )
 
+    confidence_value = projection.confidence
+    if isinstance(confidence_value, (int, float)):
+        confidence_text = (
+            f"{confidence_value:.0%}"
+            if 0 <= confidence_value <= 1
+            else f"{confidence_value:.0f}%"
+        )
+    else:
+        confidence_text = "N/A"
+
+    if projection.level in ("High", "Medium", "Low"):
+        level_value = projection.level
+    elif isinstance(confidence_value, (int, float)):
+        if confidence_value >= 0.8:
+            level_value = "High"
+        elif confidence_value >= 0.65:
+            level_value = "Medium"
+        else:
+            level_value = "Low"
+    else:
+        level_value = "Medium"
+    reasoning_text = (
+        projection.reasoning
+        if projection.reasoning
+        else "Yield explanation is currently unavailable."
+    )
+
     level_icon = (
         "🌟"
-        if projection.level == "High"
-        else ("📊" if projection.level == "Medium" else "⚠️")
+        if level_value == "High"
+        else ("📊" if level_value == "Medium" else ("⚠️" if level_value == "Low" else "❔"))
     )
     level_color = (
         "#1B5E20"
-        if projection.level == "High"
-        else ("#F57C00" if projection.level == "Medium" else "#D32F2F")
+        if level_value == "High"
+        else (
+            "#F57C00"
+            if level_value == "Medium"
+            else ("#D32F2F" if level_value == "Low" else "#607D8B")
+        )
     )
 
     cols = st.columns(3)
@@ -891,8 +1091,8 @@ def render_yield_section(top_crop, features):
                 text-align: center;
             ">
                 <p style="color: #004D40; font-size: 0.9rem; margin: 0;">{level_icon} {get_text("yield_category")}</p>
-                <p style="font-size: 2.5rem; font-weight: 800; color: {level_color}; margin: 0.5rem 0;">{projection.level}</p>
-                <p style="color: #00897B; font-weight: 600;">{get_text("confidence")}: {projection.confidence:.0%}</p>
+                <p style="font-size: 2.5rem; font-weight: 800; color: {level_color}; margin: 0.5rem 0;">{level_value}</p>
+                <p style="color: #00897B; font-weight: 600;">{get_text("confidence")}: {confidence_text}</p>
             </div>
             """,
             unsafe_allow_html=True,
@@ -916,7 +1116,7 @@ def render_yield_section(top_crop, features):
             unsafe_allow_html=True,
         )
 
-    st.caption(f"📝 {projection.reasoning}")
+    st.caption(f"📝 {reasoning_text}")
 
     if projection.weather_notes:
         st.divider()
@@ -1047,6 +1247,18 @@ def render_about_page():
 
 def render_home_page():
     """Render the main Home page content."""
+    if "page" not in st.session_state:
+        st.session_state["page"] = "home"
+    if "selected_crop" not in st.session_state:
+        st.session_state["selected_crop"] = None
+
+    if st.session_state["page"] == "crop_detail":
+        selected_crop = st.session_state.get("selected_crop")
+        if not selected_crop:
+            st.session_state["page"] = "home"
+            st.rerun()
+        render_crop_details_page(selected_crop)
+        return
     # ═══════════════════════════════════════════════════════════════════════════
     # INPUT SECTION
     # ═══════════════════════════════════════════════════════════════════════════
@@ -1066,6 +1278,7 @@ def render_home_page():
     if recommend_btn:
         st.session_state["show_results"] = True
         st.session_state["features"] = features
+        st.session_state["recompute_recommendations"] = True
 
     # ═══════════════════════════════════════════════════════════════════════════
     # RESULTS SECTION
@@ -1077,12 +1290,18 @@ def render_home_page():
         regional_region = st.session_state.get("main_autofill_region")
         regional_source = st.session_state.get("main_top_crops_source")
 
-        with spinner("Analysing your field profile..."):
-            try:
-                response = recommend_crops(features)
-            except ModelNotReady as exc:
-                st.error(str(exc))
-                return
+        cached_response = st.session_state.get("recommendation_response")
+        should_recompute = st.session_state.pop("recompute_recommendations", False)
+        if cached_response is None or should_recompute:
+            with spinner("Analysing your field profile..."):
+                try:
+                    response = recommend_crops(features)
+                except ModelNotReady as exc:
+                    st.error(str(exc))
+                    return
+            st.session_state["recommendation_response"] = response
+        else:
+            response = cached_response
 
         if not response.recommendations and not regional_crops:
             st.warning("Model returned no recommendations. Check input values.")
@@ -1101,9 +1320,6 @@ def render_home_page():
         # Section 1: Crop Recommendation
         render_crop_cards(recommendations)
 
-        with st.expander(f"💡 {get_text('why_crops')}", expanded=False):
-            for rec in recommendations:
-                info_card(rec.name, rec.rationale, icon="📌")
 
         st.markdown("---")
 
