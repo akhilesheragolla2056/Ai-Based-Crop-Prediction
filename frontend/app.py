@@ -1,6 +1,10 @@
 from __future__ import annotations
 import sys
 import os
+import json
+import html
+import re
+from pathlib import Path
 
 # Ensure project root is in sys.path for module imports
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -19,9 +23,11 @@ from backend.yield_prediction import predict_yield
 from frontend.components.cards import info_card, list_card
 from frontend.components.forms import DISEASE_SEVERITIES, environmental_inputs
 from frontend.components.layout import inject_theme
+from modules.ai_chatbot import generate_crop_response, load_context_data
 from utils.crop_guide import get_crop_details
 
 load_dotenv()
+AI_CHAT_HISTORY_PATH = Path(PROJECT_ROOT) / "data" / "ai_chat_history.json"
 """FasalSaarthi – Professional AI Crop Recommendation Dashboard with Multi-language Support."""
 
 
@@ -58,6 +64,8 @@ TRANSLATIONS = {
         "trend": "Trend",
         "demand": "Demand",
         "seasonal_need": "Seasonal Need",
+        "soil_type": "Soil Type",
+        "water_source": "Water Source",
         "irrigations": "Irrigations",
         "critical_stage": "Critical Stage",
         "suitability": "Suitability",
@@ -104,6 +112,8 @@ TRANSLATIONS = {
         "trend": "रुझान",
         "demand": "मांग",
         "seasonal_need": "मौसमी आवश्यकता",
+        "soil_type": "मिट्टी का प्रकार",
+        "water_source": "जल स्रोत",
         "irrigations": "सिंचाई",
         "critical_stage": "महत्वपूर्ण चरण",
         "suitability": "उपयुक्तता",
@@ -195,6 +205,62 @@ WATER_REQUIREMENT = {
     "muskmelon": {"mm": "400-500", "cycles": "5-6", "stage": "Fruit development"},
 }
 
+SOIL_TYPE_FALLBACK = {
+    "rice": "Clay soil, Alluvial soil",
+    "wheat": "Loamy soil",
+    "maize": "Loamy soil",
+    "cotton": "Black soil",
+    "groundnut": "Sandy loam",
+    "sugarcane": "Loamy soil, Alluvial soil",
+    "banana": "Loamy soil",
+    "apple": "Well-drained loamy soil",
+    "mango": "Well-drained loamy soil",
+    "grapes": "Sandy loam",
+    "coffee": "Well-drained loamy soil",
+    "jute": "Alluvial soil",
+    "coconut": "Sandy loam",
+    "papaya": "Well-drained loamy soil",
+    "orange": "Sandy loam",
+    "chickpea": "Sandy loam",
+    "kidneybeans": "Loamy soil",
+    "pigeonpeas": "Well-drained loamy soil",
+    "mothbeans": "Sandy soil",
+    "mungbean": "Sandy loam",
+    "blackgram": "Loamy soil",
+    "lentil": "Loamy soil",
+    "pomegranate": "Well-drained loamy soil",
+    "watermelon": "Sandy loam",
+    "muskmelon": "Sandy loam",
+}
+
+WATER_SOURCE_FALLBACK = {
+    "rice": "Irrigated",
+    "wheat": "Irrigated",
+    "maize": "Rainfed/Irrigated",
+    "cotton": "Rainfed/Irrigated",
+    "groundnut": "Rainfed/Irrigated",
+    "sugarcane": "Irrigated",
+    "banana": "Irrigated",
+    "apple": "Irrigated",
+    "mango": "Rainfed/Irrigated",
+    "grapes": "Irrigated",
+    "coffee": "Rainfed/Irrigated",
+    "jute": "Rainfed",
+    "coconut": "Rainfed/Irrigated",
+    "papaya": "Irrigated",
+    "orange": "Irrigated",
+    "chickpea": "Rainfed",
+    "kidneybeans": "Rainfed",
+    "pigeonpeas": "Rainfed",
+    "mothbeans": "Rainfed",
+    "mungbean": "Rainfed/Irrigated",
+    "blackgram": "Rainfed/Irrigated",
+    "lentil": "Rainfed",
+    "pomegranate": "Irrigated",
+    "watermelon": "Irrigated",
+    "muskmelon": "Irrigated",
+}
+
 
 def get_text(key: str) -> str:
     """Get translated text based on current language."""
@@ -208,24 +274,52 @@ def get_market_info(crop_name: str) -> dict:
 
 
 def get_water_info(crop_name: str) -> dict:
-    """Get water requirement data for a crop."""
+    """Get seasonal water requirement data with static fallback metadata."""
     from backend.utils import get_water_requirement_for_crop
 
-    avg_water = get_water_requirement_for_crop(crop_name)
     key = crop_name.lower().strip()
-    fallback = WATER_REQUIREMENT.get(
-        key, {"mm": "400-600", "cycles": "5-8", "stage": "Flowering"}
+    static_water = WATER_REQUIREMENT.get(
+        key, {"mm": "N/A", "cycles": "-", "stage": "Not available"}
     )
-    if avg_water is not None:
-        # Use fallback's stage for critical stage if available
+    static_soil = SOIL_TYPE_FALLBACK.get(key, "Loamy soil")
+    static_water_source = WATER_SOURCE_FALLBACK.get(key, "Irrigated")
+
+    water_data = get_water_requirement_for_crop(crop_name)
+    if water_data is None:
         return {
-            "mm": f"{avg_water:.0f}",
-            "cycles": "-",
-            "stage": fallback.get("stage", "-"),
-            "source": "kaggle",
+            "mm": static_water.get("mm", "N/A"),
+            "cycles": static_water.get("cycles", "-"),
+            "stage": static_water.get("stage", "Not available"),
+            "soil_type": static_soil,
+            "water_source": static_water_source,
+            "source": "static",
         }
-    fallback["source"] = "fallback"
-    return fallback
+
+    seasonal_mm = water_data.get("seasonal_mm")
+    seasonal_mm_max = water_data.get("seasonal_mm_max")
+    if seasonal_mm is None:
+        return {
+            "mm": static_water.get("mm", "N/A"),
+            "cycles": static_water.get("cycles", "-"),
+            "stage": static_water.get("stage", "Not available"),
+            "soil_type": static_soil,
+            "water_source": static_water_source,
+            "source": "static",
+        }
+
+    if seasonal_mm_max is not None and seasonal_mm_max > seasonal_mm:
+        mm_text = f"{seasonal_mm:.0f}-{seasonal_mm_max:.0f}"
+    else:
+        mm_text = f"{seasonal_mm:.0f}"
+
+    return {
+        "mm": mm_text,
+        "cycles": static_water.get("cycles", "-"),
+        "stage": static_water.get("stage", "Not available"),
+        "soil_type": water_data.get("soil_type") or static_soil,
+        "water_source": water_data.get("water_source") or static_water_source,
+        "source": "dataset",
+    }
 
 
 def build_regional_recommendations(
@@ -725,6 +819,15 @@ def render_crop_cards(recommendations):
                 key=f"view_crop_details_{idx}_{rec.name.lower()}",
                 use_container_width=True,
             ):
+                # Persist form mode/selection across page switches where widgets are not rendered.
+                st.session_state["main_soil_input_method_persist"] = st.session_state.get(
+                    "main_soil_input_method",
+                    st.session_state.get("main_soil_input_method_persist", "Manual Input"),
+                )
+                st.session_state["main_soil_region_select_persist"] = st.session_state.get(
+                    "main_soil_region_select",
+                    st.session_state.get("main_soil_region_select_persist"),
+                )
                 st.session_state["page"] = "crop_detail"
                 st.session_state["selected_crop"] = rec.name
                 st.rerun()
@@ -732,16 +835,28 @@ def render_crop_cards(recommendations):
 
 def render_crop_details_page(selected_crop: str) -> None:
     """Render full-page detailed crop guide for the selected crop."""
+    def _restore_home_form_state() -> None:
+        if "main_soil_input_method_persist" in st.session_state:
+            st.session_state["main_soil_input_method"] = st.session_state[
+                "main_soil_input_method_persist"
+            ]
+        if "main_soil_region_select_persist" in st.session_state:
+            st.session_state["main_soil_region_select"] = st.session_state[
+                "main_soil_region_select_persist"
+            ]
+
     details = get_crop_details(selected_crop)
     if not details:
         st.info(f"Detailed guide not available for {selected_crop.title()}.")
         if st.button("⬅ Back to Recommendations", key="back_to_home_missing_details"):
+            _restore_home_form_state()
             st.session_state["page"] = "home"
             st.session_state["selected_crop"] = None
             st.rerun()
         return
 
     if st.button("⬅ Back to Recommendations", key="back_to_recommendations"):
+        _restore_home_form_state()
         st.session_state["page"] = "home"
         st.session_state["selected_crop"] = None
         st.rerun()
@@ -902,14 +1017,7 @@ def render_water_section(recommendations):
     cols = st.columns(len(recommendations))
     for idx, rec in enumerate(recommendations):
         water = get_water_info(rec.name)
-        label = (
-            "Daily Water Requirement"
-            if water.get("source") == "kaggle"
-            else "Seasonal Water Requirement"
-        )
-        seasonal_label = (
-            label if water.get("source") == "kaggle" else get_text("seasonal_need")
-        )
+        label = "Seasonal Water Requirement"
         with cols[idx]:
             st.markdown(
                 f"""
@@ -925,7 +1033,8 @@ def render_water_section(recommendations):
                     <p style="font-size: 1rem; color: #0288D1; margin: 0;">{label}</p>
                     <p style="font-size: 2rem; font-weight: 800; color: #01579B; margin: 0.5rem 0;">{water["mm"]} mm</p>
                     <p style="color: #0288D1; font-weight: 600;">🔄 {water["cycles"]} {get_text("irrigations")}</p>
-                    <p style="color: #546E7A; font-size: 0.9rem;">{seasonal_label}</p>
+                    <p style="color: #546E7A; font-size: 0.95rem; margin: 0.2rem 0 0.35rem 0;">🌱 {get_text("soil_type")}: {water["soil_type"]}</p>
+                    <p style="color: #546E7A; font-size: 0.9rem;">💧 {get_text("water_source")}: {water["water_source"]}</p>
                     <div style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid rgba(2, 119, 189, 0.3);">
                         <p style="color: #D84315; margin: 0; font-weight: 500;">⚠️ {get_text("critical_stage")}: {water["stage"]}</p>
                     </div>
@@ -1245,6 +1354,286 @@ def render_about_page():
     st.caption("© 2026 FasalSaarthi. All rights reserved.")
 
 
+def _load_ai_search_history() -> list[str]:
+    if not AI_CHAT_HISTORY_PATH.exists():
+        return []
+    try:
+        with AI_CHAT_HISTORY_PATH.open("r", encoding="utf-8") as handle:
+            data = json.load(handle)
+    except Exception:
+        return []
+    if not isinstance(data, list):
+        return []
+    return [str(item).strip() for item in data if str(item).strip()]
+
+
+def _save_ai_search_history(history: list[str]) -> None:
+    try:
+        AI_CHAT_HISTORY_PATH.parent.mkdir(parents=True, exist_ok=True)
+        with AI_CHAT_HISTORY_PATH.open("w", encoding="utf-8") as handle:
+            json.dump(history[:50], handle, ensure_ascii=False, indent=2)
+    except Exception:
+        pass
+
+
+def _format_assistant_response_html(raw_text: str) -> str:
+    text = html.unescape(str(raw_text or ""))
+    lines = text.splitlines()
+    parts: list[str] = []
+    in_list = False
+
+    for raw_line in lines:
+        line = raw_line.strip()
+        if not line:
+            if in_list:
+                parts.append("</ul>")
+                in_list = False
+            parts.append("<div class='ai-gap'></div>")
+            continue
+
+        # Remove markdown symbols and normalize plain text lines.
+        cleaned = line.replace("**", "")
+        cleaned = re.sub(r"^#{1,6}\s*", "", cleaned)
+        is_bullet = bool(re.match(r"^[-*?]\s+", cleaned))
+        cleaned = re.sub(r"^[-*?]\s+", "", cleaned)
+        cleaned = re.sub(r"[#*`]", "", cleaned).strip()
+
+        if not cleaned:
+            continue
+
+        # Promote short lines as section titles.
+        section_like = bool(
+            re.match(r"^[A-Za-z][A-Za-z0-9 /&()_-]{1,47}$", cleaned)
+            and len(cleaned.split()) <= 4
+            and len(cleaned) <= 48
+        )
+        is_section = (
+            line.startswith("#")
+            or (cleaned.endswith(":") and len(cleaned) <= 64)
+            or section_like
+        )
+
+        if is_section:
+            if in_list:
+                parts.append("</ul>")
+                in_list = False
+            parts.append(f"<div class='ai-section'>{html.escape(cleaned.rstrip(':'))}</div>")
+            continue
+
+        # Highlight inline key/value labels such as "Land preparation: ...".
+        key_html = None
+        if ":" in cleaned:
+            left_raw, right_raw = cleaned.split(":", 1)
+            left = left_raw.strip()
+            right = right_raw.strip()
+            if left and right and len(left) <= 32 and len(left.split()) <= 4:
+                left_html = html.escape(left)
+                right_html = html.escape(right)
+                key_html = f"<span class='ai-key'>{left_html}:</span> {right_html}"
+
+        if is_bullet:
+            if not in_list:
+                parts.append("<ul class='ai-list'>")
+                in_list = True
+            parts.append(f"<li>{key_html if key_html else html.escape(cleaned)}</li>")
+            continue
+
+        if in_list:
+            parts.append("</ul>")
+            in_list = False
+        parts.append(
+            f"<div class='ai-line'>{key_html if key_html else html.escape(cleaned)}</div>"
+        )
+
+    if in_list:
+        parts.append("</ul>")
+    if not parts:
+        return "<div class='ai-line'>No advisory available.</div>"
+    return "".join(parts)
+
+
+def render_ai_crop_assistant_page() -> None:
+    """Render isolated AI Crop Assistant chat interface."""
+    st.title("AI Crop Assistant")
+    st.caption(
+        "Ask agriculture-related questions about cultivation, fertilizer, pests, irrigation, season, soil, and harvest."
+    )
+
+    st.markdown(
+        """
+        <div style="
+            background: linear-gradient(145deg, #E8F5E9 0%, #C8E6C9 100%);
+            border-left: 5px solid #2E7D32;
+            border-radius: 10px;
+            padding: 0.9rem 1rem;
+            margin-bottom: 1rem;
+            color: #1B5E20;
+            font-weight: 600;
+        ">
+            Dataset-grounded advisory mode is active.
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        """
+        <style>
+            .ai-shell {
+                border: 1px solid rgba(134, 239, 172, 0.22);
+                border-radius: 16px;
+                padding: 0.65rem;
+                background:
+                    radial-gradient(circle at 10% 12%, rgba(134, 239, 172, 0.12) 0 4px, transparent 5px),
+                    radial-gradient(circle at 76% 30%, rgba(134, 239, 172, 0.10) 0 3px, transparent 4px),
+                    radial-gradient(circle at 42% 68%, rgba(134, 239, 172, 0.08) 0 3px, transparent 4px),
+                    linear-gradient(180deg, rgba(16, 24, 40, 0.45), rgba(17, 24, 39, 0.20));
+                margin-bottom: 0.8rem;
+            }
+            .ai-user-bubble {
+                background: linear-gradient(135deg, #e6f6ea 0%, #d2f1da 100%);
+                border: 1px solid #86d39a;
+                border-radius: 16px 16px 4px 16px;
+                padding: 0.8rem 1rem;
+                color: #12411b;
+                font-weight: 600;
+                box-shadow: 0 6px 16px rgba(20, 78, 26, 0.12);
+            }
+            .ai-bot-bubble {
+                background: linear-gradient(135deg, #0d1a34 0%, #101a2a 100%);
+                border: 1px solid rgba(94, 234, 212, 0.22);
+                border-radius: 16px 16px 16px 4px;
+                padding: 0.95rem 1.05rem;
+                box-shadow: 0 8px 18px rgba(15, 23, 42, 0.35);
+            }
+            .ai-bot-title {
+                color: #9ae6b4;
+                font-weight: 700;
+                margin-bottom: 0.6rem;
+                letter-spacing: 0.2px;
+                font-size: 1.03rem;
+            }
+            .ai-section {
+                font-weight: 700;
+                color: #d1fae5;
+                margin: 0.62rem 0 0.42rem 0;
+                background: rgba(16, 185, 129, 0.14);
+                border-left: 3px solid rgba(134, 239, 172, 0.95);
+                border-radius: 8px;
+                padding: 0.34rem 0.55rem;
+            }
+            .ai-key {
+                font-weight: 700;
+                color: #a7f3d0;
+            }
+            .ai-line {
+                color: #e5ecf5;
+                line-height: 1.55;
+                margin: 0.15rem 0;
+            }
+            .ai-list {
+                margin: 0.28rem 0 0.4rem 0;
+                padding-left: 1.1rem;
+                color: #e5ecf5;
+            }
+            .ai-list li {
+                margin: 0.24rem 0;
+                line-height: 1.5;
+            }
+            .ai-gap {
+                height: 0.4rem;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    if "ai_chat_messages" not in st.session_state:
+        st.session_state["ai_chat_messages"] = [
+            {
+                "role": "assistant",
+                "content": (
+                    "I am your Crop Advisory Assistant. Ask a crop-specific question, for example: "
+                    "'fertilizer plan for cotton in kharif'."
+                ),
+            }
+        ]
+    if "ai_chat_search_history" not in st.session_state:
+        st.session_state["ai_chat_search_history"] = _load_ai_search_history()
+
+    clear_col, clear_history_col, hint_col = st.columns([1, 1, 4])
+    with clear_col:
+        if st.button("Clear Chat", key="ai_chat_clear", use_container_width=True):
+            st.session_state["ai_chat_messages"] = [
+                {
+                    "role": "assistant",
+                    "content": (
+                        "Chat cleared. Ask me about crop cultivation, fertilizer, pests, water, season, soil, or harvest."
+                    ),
+                }
+            ]
+            st.rerun()
+    with clear_history_col:
+        if st.button("Clear History", key="ai_history_clear", use_container_width=True):
+            st.session_state["ai_chat_search_history"] = []
+            _save_ai_search_history([])
+            st.rerun()
+    with hint_col:
+        st.write(
+            "Try: `best season for wheat`, `pest control in rice`, `irrigation schedule for banana`."
+        )
+
+    selected_history_query = None
+    history = st.session_state.get("ai_chat_search_history", [])
+    if history:
+        with st.expander("Recent Searches", expanded=False):
+            for idx, item in enumerate(history[:12]):
+                if st.button(item, key=f"ai_history_item_{idx}", use_container_width=True):
+                    selected_history_query = item
+
+    for message in st.session_state["ai_chat_messages"]:
+        role = message.get("role", "assistant")
+        content = message.get("content", "")
+        if role == "user":
+            left, right = st.columns([3, 5])
+            with right:
+                st.markdown(
+                    f"<div class='ai-shell'><div class='ai-user-bubble'>You: {html.escape(content)}</div></div>",
+                    unsafe_allow_html=True,
+                )
+        else:
+            left, right = st.columns([5, 3])
+            with left:
+                formatted = _format_assistant_response_html(content)
+                st.markdown(
+                    f"<div class='ai-shell'><div class='ai-bot-bubble'><div class='ai-bot-title'>Crop Advisory Assistant</div>{formatted}</div></div>",
+                    unsafe_allow_html=True,
+                )
+
+    typed_query = st.chat_input("Ask your agriculture question...")
+    user_query = typed_query or selected_history_query
+    if user_query:
+        st.session_state["ai_chat_messages"].append(
+            {"role": "user", "content": user_query}
+        )
+
+        history = st.session_state.get("ai_chat_search_history", [])
+        history = [item for item in history if item.lower() != user_query.lower()]
+        history.insert(0, user_query)
+        st.session_state["ai_chat_search_history"] = history[:50]
+        _save_ai_search_history(st.session_state["ai_chat_search_history"])
+
+        with st.spinner("Preparing advisory..."):
+            context_data = dict(load_context_data())
+            context_data["conversation"] = st.session_state["ai_chat_messages"][-10:]
+            answer = generate_crop_response(user_query, context_data)
+
+        st.session_state["ai_chat_messages"].append(
+            {"role": "assistant", "content": answer}
+        )
+        st.rerun()
+
+
 def render_home_page():
     """Render the main Home page content."""
     if "page" not in st.session_state:
@@ -1475,8 +1864,18 @@ def main() -> None:
     apply_theme()
     render_header()
 
-    # Render the main home page directly (no tabs)
-    render_home_page()
+    nav_choice = st.sidebar.radio(
+        "Navigation",
+        ["Home", "About", "🌿 AI Crop Assistant"],
+        key="main_navigation_choice",
+    )
+
+    if nav_choice == "Home":
+        render_home_page()
+    elif nav_choice == "About":
+        render_about_page()
+    else:
+        render_ai_crop_assistant_page()
 
     # Footer
     st.markdown("---")

@@ -11,22 +11,79 @@ import pandas as pd
 import os
 
 
-# Load water requirements from Kaggle dataset
+# Load seasonal water requirements from the crop recommendation dataset
 def load_water_requirements(csv_path=None):
     if csv_path is None:
-        csv_path = os.path.join("data", "raw", "DATASET - Sheet1.csv")
-    return pd.read_csv(csv_path)
+        csv_path = os.path.join("data", "raw", "Crop recommendation dataset.csv")
+    df = pd.read_csv(csv_path)
+    df.columns = [str(col).strip().upper() for col in df.columns]
+    return df
 
 
-# Get average water requirement for a crop
+# Get average seasonal water requirement for a crop
 def get_water_requirement_for_crop(crop_name, df=None):
     if df is None:
         df = load_water_requirements()
-    rows = df[df["CROP TYPE"].str.lower() == crop_name.lower()]
-    if not rows.empty:
-        avg_water = rows["WATER REQUIREMENT"].mean()
-        return avg_water
-    return None
+
+    crop_column = "CROPS" if "CROPS" in df.columns else None
+    water_column = "WATERREQUIRED" if "WATERREQUIRED" in df.columns else None
+    water_max_column = "WATERREQUIRED_MAX" if "WATERREQUIRED_MAX" in df.columns else None
+    soil_column = "SOIL" if "SOIL" in df.columns else None
+    water_source_column = "WATER_SOURCE" if "WATER_SOURCE" in df.columns else None
+    if not crop_column or not water_column:
+        return None
+
+    rows = df[df[crop_column].astype(str).str.lower() == crop_name.lower()]
+    if rows.empty:
+        return None
+
+    water_values = pd.to_numeric(rows[water_column], errors="coerce").dropna()
+    if water_values.empty:
+        return None
+
+    soil_type = None
+    if soil_column:
+        soil_values = (
+            rows[soil_column]
+            .dropna()
+            .astype(str)
+            .str.strip()
+        )
+        soil_values = [s for s in soil_values.tolist() if s]
+        if soil_values:
+            # Keep unique soil labels in observed order for readability.
+            soil_type = ", ".join(dict.fromkeys(soil_values))
+
+    water_source = None
+    if water_source_column:
+        water_source_values = (
+            rows[water_source_column]
+            .dropna()
+            .astype(str)
+            .str.strip()
+        )
+        water_source_values = [w for w in water_source_values.tolist() if w]
+        if water_source_values:
+            # Keep unique labels in observed order for readable display.
+            water_source = ", ".join(dict.fromkeys(water_source_values))
+
+    avg_water = float(water_values.mean())
+    if water_max_column and water_max_column in rows.columns:
+        max_values = pd.to_numeric(rows[water_max_column], errors="coerce").dropna()
+        if not max_values.empty:
+            avg_max = float(max_values.mean())
+            return {
+                "seasonal_mm": avg_water,
+                "seasonal_mm_max": avg_max,
+                "soil_type": soil_type,
+                "water_source": water_source,
+            }
+
+    return {
+        "seasonal_mm": avg_water,
+        "soil_type": soil_type,
+        "water_source": water_source,
+    }
 
 
 from src.features import (

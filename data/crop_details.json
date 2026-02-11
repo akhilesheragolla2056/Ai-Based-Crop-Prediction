@@ -435,6 +435,48 @@
       "post_harvest": "Dry grain to about 12% moisture."
     }
   },
+  "ragi": {
+    "name": "Ragi",
+    "type": "Kharif/Rabi (Finger Millet)",
+    "season": "Monsoon/Winter (region-specific)",
+    "duration": "100-120 days",
+    "stages": [
+      {"name": "Land preparation", "days": "0-10", "activities": "Prepare fine tilth, apply FYM/compost, and ensure good drainage."},
+      {"name": "Nursery/Direct sowing", "days": "10-25", "activities": "Transplant seedlings or line sow treated seed at recommended spacing."},
+      {"name": "Vegetative growth", "days": "25-55", "activities": "Weeding, gap filling, and first top dressing of nitrogen."},
+      {"name": "Ear emergence & flowering", "days": "55-80", "activities": "Maintain moisture and monitor for blast and stem borer."},
+      {"name": "Grain filling & harvest", "days": "80-115", "activities": "Harvest when ear heads turn brown and grains are hard."}
+    ],
+    "fertilizer": {
+      "basal": "Apply FYM 5-10 t/ha and N:P:K around 40:20:20 kg/ha (adjust by soil test).",
+      "top_dressing": [
+        "25-30 DAS: Apply first split of nitrogen.",
+        "45-50 DAS: Apply remaining nitrogen split before flowering."
+      ],
+      "fertilizers": ["Urea", "DAP", "MOP", "SSP"],
+      "organic": "Use compost/FYM and biofertilizers where available."
+    },
+    "irrigation": {
+      "stage_wise": [
+        "Establishment: Light irrigation after sowing/transplanting if rainfall is low.",
+        "Tillering to flowering: Avoid moisture stress; this is critical stage.",
+        "Grain filling: One protective irrigation in dry spell improves yield."
+      ],
+      "frequency": "Mostly rainfed; provide 2-4 irrigations during long dry spells.",
+      "notes": "Avoid standing water; ragi performs best in well-drained soils."
+    },
+    "pests": {
+      "common_pests": ["Stem borer", "Shoot fly", "Armyworm"],
+      "common_diseases": ["Blast", "Leaf spot", "Smuts"],
+      "prevention": "Use resistant varieties, seed treatment, clean field sanitation, and balanced nutrition.",
+      "pesticides": ["Mancozeb", "Tricyclazole", "Imidacloprid"]
+    },
+    "harvest": {
+      "indicators": "Ear heads turn straw-brown and grains become hard.",
+      "yield": "1.5-3.0 t/ha (variety and management dependent)",
+      "post_harvest": "Dry harvested ears well, thresh carefully, and store grain below safe moisture."
+    }
+  },
   "jute": {
     "name": "Jute",
     "type": "Kharif",

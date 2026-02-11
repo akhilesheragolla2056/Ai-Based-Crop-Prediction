@@ -94,6 +94,23 @@ def predict_yield(crop: str, features: Mapping[str, float]) -> YieldProjection:
                 reasoning=f"No historical data found, using static average yield.",
                 weather_notes=None,
             )
+        # Final fallback for crops missing in both crop_yield.csv and STATIC_YIELD.
+        # Use overall historical average to avoid blocking downstream UI sections.
+        global_yield = pd.to_numeric(df["Yield"], errors="coerce").dropna()
+        if not global_yield.empty:
+            fallback_yield = float(global_yield.mean())
+            fallback_confidence = 0.58
+            return YieldProjection(
+                crop=crop,
+                level=_level_from_confidence(fallback_confidence),
+                estimated_output=fallback_yield,
+                confidence=fallback_confidence,
+                reasoning=(
+                    f"No crop-specific yield data found for '{crop}'. "
+                    "Using overall historical average yield as fallback."
+                ),
+                weather_notes=None,
+            )
         return YieldProjection(
             crop=crop,
             level="Low",

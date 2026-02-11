@@ -78,6 +78,9 @@ def environmental_inputs(key_prefix: str = "env") -> dict[str, float]:
     humidity_key = f"{key_prefix}_humidity"
     rainfall_key = f"{key_prefix}_rainfall"
     input_method_key = f"{key_prefix}_soil_input_method"
+    input_method_persist_key = f"{key_prefix}_soil_input_method_persist"
+    soil_region_select_key = f"{key_prefix}_soil_region_select"
+    soil_region_persist_key = f"{key_prefix}_soil_region_select_persist"
 
     st.markdown(
         """
@@ -120,28 +123,40 @@ def environmental_inputs(key_prefix: str = "env") -> dict[str, float]:
         unsafe_allow_html=True,
     )
     # Removed custom Environmental & Soil Inputs header block as requested
+    if input_method_persist_key not in st.session_state:
+        st.session_state[input_method_persist_key] = "Manual Input"
     if input_method_key not in st.session_state:
-        st.session_state[input_method_key] = "Manual Input"
+        st.session_state[input_method_key] = st.session_state[input_method_persist_key]
 
     input_method = st.radio(
         "Soil Data Input Method:",
         ["Manual Input", "Auto Fetch by Location", "Regional Soil Profile"],
         key=input_method_key,
     )
+    st.session_state[input_method_persist_key] = input_method
 
     regional_profile_key = None
     if input_method == "Regional Soil Profile":
         region_labels = [label for label, _ in SOIL_REGION_OPTIONS]
+        if soil_region_persist_key not in st.session_state:
+            st.session_state[soil_region_persist_key] = region_labels[0]
+        persisted_region = st.session_state[soil_region_persist_key]
+        if persisted_region not in region_labels:
+            persisted_region = region_labels[0]
+            st.session_state[soil_region_persist_key] = persisted_region
+        if soil_region_select_key not in st.session_state:
+            st.session_state[soil_region_select_key] = persisted_region
         selected_label = st.selectbox(
-            "Select Soil Region",
+            "Select Soil Type (Dataset)",
             region_labels,
-            key=f"{key_prefix}_soil_region_select",
+            key=soil_region_select_key,
         )
+        st.session_state[soil_region_persist_key] = selected_label
         label_to_key = {label: key for label, key in SOIL_REGION_OPTIONS}
         regional_profile_key = label_to_key.get(selected_label)
         st.caption(
-            "Regional soil profiles use government-averaged values for reference. "
-            "For best accuracy, manual soil testing is recommended."
+            "Regional soil profile values are computed from Crop recommendation dataset rows "
+            "for the selected soil type. For best accuracy, manual soil testing is recommended."
         )
 
     for state_key, default in (
@@ -432,7 +447,65 @@ def environmental_inputs(key_prefix: str = "env") -> dict[str, float]:
                 st.session_state[f"{key_prefix}_phosphorus"] = profile["P"]
                 st.session_state[f"{key_prefix}_potassium"] = profile["K"]
                 st.session_state[f"{key_prefix}_ph"] = profile["ph"]
+                st.session_state[temp_key] = float(
+                    profile.get("temperature", DEFAULT_METRICS["temperature"])
+                )
+                st.session_state[humidity_key] = float(
+                    profile.get("humidity", DEFAULT_METRICS["humidity"])
+                )
+                st.session_state[rainfall_key] = float(
+                    profile.get("rainfall", DEFAULT_METRICS["rainfall"])
+                )
                 st.session_state[last_region_key] = regional_profile_key
+                st.success(
+                    "Auto-filled climate fields from dataset for selected soil type "
+                    f"(Temp={st.session_state[temp_key]:.2f}°C, "
+                    f"Humidity={st.session_state[humidity_key]:.2f}%, "
+                    f"Rainfall={st.session_state[rainfall_key]:.2f} mm)."
+                )
+
+            # Use Crop recommendation dataset directly to compute soil-specific top crops.
+            try:
+                soil_dataset_path = "data/raw/Crop recommendation dataset.csv"
+                soil_df = pd.read_csv(soil_dataset_path)
+                soil_df.columns = [str(col).strip().upper() for col in soil_df.columns]
+                if "SOIL" in soil_df.columns and "CROPS" in soil_df.columns:
+                    selected_soil_norm = _normalize_region(selected_label)
+                    soil_df["SOIL_NORM"] = (
+                        soil_df["SOIL"].astype(str).map(_normalize_region)
+                    )
+                    match_df = soil_df[soil_df["SOIL_NORM"] == selected_soil_norm]
+
+                    if not match_df.empty:
+                        crop_counts = (
+                            match_df["CROPS"]
+                            .astype(str)
+                            .str.strip()
+                            .str.lower()
+                            .value_counts()
+                        )
+                        top_crops = crop_counts.head(3).index.tolist()
+                        total = float(crop_counts.sum()) if not crop_counts.empty else 0.0
+                        scores = (
+                            {crop: float(crop_counts[crop] / total) for crop in top_crops}
+                            if total > 0
+                            else {crop: 1.0 / len(top_crops) for crop in top_crops}
+                        )
+
+                        st.session_state[f"{key_prefix}_top_crops"] = top_crops
+                        st.session_state[f"{key_prefix}_top_crops_scores"] = scores
+                        st.session_state[f"{key_prefix}_top_crops_source"] = "soil_dataset"
+                        st.session_state[f"{key_prefix}_autofill_region"] = selected_label
+                    else:
+                        st.session_state.pop(f"{key_prefix}_top_crops", None)
+                        st.session_state.pop(f"{key_prefix}_top_crops_scores", None)
+                        st.session_state.pop(f"{key_prefix}_top_crops_source", None)
+                        st.session_state[f"{key_prefix}_autofill_region"] = selected_label
+                        st.warning(
+                            "No crop records found for selected soil type in Crop recommendation dataset."
+                        )
+            except Exception as exc:
+                st.warning(f"Soil-based crop shortlist unavailable: {exc}")
         else:
             st.warning("Regional soil profile not found. Please select another region.")
 
