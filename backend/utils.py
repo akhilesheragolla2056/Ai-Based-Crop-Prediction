@@ -20,47 +20,39 @@ if SRC_PATH not in sys.path:
 try:
     from src.models import (
         CropDiseaseClassifier,
-        CropPredictor,
-        YieldEstimator,
-        load_pipeline,
-    )
-except ImportError:
-    try:
-        from backend.src.models import (
-            CropDiseaseClassifier,
-            CropPredictor,
-            YieldEstimator,
-            load_pipeline,
-        )
-    except ImportError:
-        import importlib.util
-        import sys as _sys
-        import os as _os
-
-        src_path = _os.path.abspath(
-            _os.path.join(_os.path.dirname(__file__), "..", "src")
-        )
-        if src_path not in _sys.path:
-            _sys.path.insert(0, src_path)
-        models_spec = importlib.util.find_spec("models")
-        if models_spec is None:
-            import sys as _sys
-
-            print("\n[ERROR] Cannot find 'models' module in src directory.")
-            print("sys.path:", _sys.path)
-            print("cwd:", _os.getcwd())
-            raise ImportError(
-                "Cannot find 'models' module in src directory.\n"
-                "Make sure the 'src' directory exists and contains a 'models' package.\n"
-                "Current sys.path and working directory are printed above for debugging.\n"
-                "If deploying, ensure your working directory is the project root and 'src' is a sibling of 'backend'."
+        try:
+            from src.models import (
+                CropDiseaseClassifier,
+                CropPredictor,
+                YieldEstimator,
+                load_pipeline,
             )
-        models = importlib.import_module("models")
-        CropDiseaseClassifier = models.CropDiseaseClassifier
-        CropPredictor = models.CropPredictor
-        YieldEstimator = models.YieldEstimator
-        load_pipeline = models.load_pipeline
+        except ImportError:
+            import importlib.util
+            import sys as _sys
+            import os as _os
 
+            src_path = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), "..", "src"))
+            if src_path not in _sys.path:
+                _sys.path.insert(0, src_path)
+            models_spec = importlib.util.find_spec("models")
+            if models_spec is None:
+                import sys as _sys
+
+                print("\n[ERROR] Cannot find 'models' module in src directory.")
+                print("sys.path:", _sys.path)
+                print("cwd:", _os.getcwd())
+                raise ImportError(
+                    "Cannot find 'models' module in src directory.\n"
+                    "Make sure the 'src' directory exists and contains a 'models' package.\n"
+                    "Current sys.path and working directory are printed above for debugging.\n"
+                    "If deploying, ensure your working directory is the project root and 'src' is a sibling of 'backend'."
+                )
+            models = importlib.import_module("models")
+            CropDiseaseClassifier = models.CropDiseaseClassifier
+            CropPredictor = models.CropPredictor
+            YieldEstimator = models.YieldEstimator
+            load_pipeline = models.load_pipeline
 """Shared backend helpers for loading models and normalising inputs."""
 
 # Ensure project root (parent of src) is on sys.path for module imports (must be first)
