@@ -1,33 +1,13 @@
 from __future__ import annotations
 
 """Shared backend helpers for loading models and normalising inputs."""
-# Ensure project root and src are on sys.path for module imports (must be first)
-import sys as _sys
-from pathlib import Path as _Path
+# Ensure src directory is on sys.path for module imports (must be first)
+import sys
+import os
 
-_PROJECT_ROOT_FOR_IMPORTS = _Path(__file__).resolve().parents[1]
-_SRC_PATH = _PROJECT_ROOT_FOR_IMPORTS / "src"
-if str(_PROJECT_ROOT_FOR_IMPORTS) not in _sys.path:
-    _sys.path.insert(0, str(_PROJECT_ROOT_FOR_IMPORTS))
-if _SRC_PATH.exists() and str(_SRC_PATH) not in _sys.path:
-    _sys.path.insert(0, str(_SRC_PATH))
-import importlib as _importlib
-
-_importlib.invalidate_caches()
-
-"""Shared backend helpers for loading models and normalising inputs."""
-
-# Ensure project root and src are on sys.path for module imports
-
-_PROJECT_ROOT_FOR_IMPORTS = _Path(__file__).resolve().parents[1]
-_SRC_PATH = _PROJECT_ROOT_FOR_IMPORTS / "src"
-if str(_PROJECT_ROOT_FOR_IMPORTS) not in _sys.path:
-    _sys.path.insert(0, str(_PROJECT_ROOT_FOR_IMPORTS))
-if _SRC_PATH.exists() and str(_SRC_PATH) not in _sys.path:
-    _sys.path.insert(0, str(_SRC_PATH))
-import importlib as _importlib
-
-_importlib.invalidate_caches()
+SRC_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
+if SRC_PATH not in sys.path:
+    sys.path.insert(0, SRC_PATH)
 
 from functools import lru_cache
 from pathlib import Path
@@ -105,12 +85,12 @@ def get_water_requirement_for_crop(crop_name, df=None):
     }
 
 
-from src.features import (
+from features import (
     generate_soil_health_tips,
     generate_weather_warnings,
     recommend_fertilizers,
 )
-from src.models import (
+from models import (
     CropDiseaseClassifier,
     CropPredictor,
     YieldEstimator,
