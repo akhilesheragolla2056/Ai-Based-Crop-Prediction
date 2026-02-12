@@ -86,17 +86,36 @@ def get_water_requirement_for_crop(crop_name, df=None):
     }
 
 
-from src.features import (
-    generate_soil_health_tips,
-    generate_weather_warnings,
-    recommend_fertilizers,
-)
-from src.models import (
-    CropDiseaseClassifier,
-    CropPredictor,
-    YieldEstimator,
-    load_pipeline,
-)
+try:
+    from src.features import (
+        generate_soil_health_tips,
+        generate_weather_warnings,
+        recommend_fertilizers,
+    )
+    from src.models import (
+        CropDiseaseClassifier,
+        CropPredictor,
+        YieldEstimator,
+        load_pipeline,
+    )
+except ModuleNotFoundError:
+    # Streamlit Cloud can run from a subdirectory; ensure project root is on sys.path.
+    import sys as _sys
+
+    _PROJECT_ROOT_FOR_IMPORTS = Path(__file__).resolve().parents[1]
+    if str(_PROJECT_ROOT_FOR_IMPORTS) not in _sys.path:
+        _sys.path.insert(0, str(_PROJECT_ROOT_FOR_IMPORTS))
+    from src.features import (
+        generate_soil_health_tips,
+        generate_weather_warnings,
+        recommend_fertilizers,
+    )
+    from src.models import (
+        CropDiseaseClassifier,
+        CropPredictor,
+        YieldEstimator,
+        load_pipeline,
+    )
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[1]
 _MODEL_FALLBACK = _PROJECT_ROOT / "models" / "trained_model.pkl"
