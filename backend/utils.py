@@ -141,14 +141,3 @@ def soil_health_insights(features: Mapping[str, float]) -> tuple[str, ...]:
 
 def weather_insights(features: Mapping[str, float], crop: str) -> tuple[str, ...]:
     return generate_weather_warnings(features, crop)
-            from src.features import (
-                generate_soil_health_tips,
-                generate_weather_warnings,
-                recommend_fertilizers,
-            )
-            from src.models import (
-                CropDiseaseClassifier,
-                CropPredictor,
-                YieldEstimator,
-                load_pipeline,
-            )
