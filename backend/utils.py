@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-"""Shared backend helpers for loading models and normalising inputs."""
-
-# Module-level imports (PEP 8 compliance)
 import sys
 import os
 from functools import lru_cache
@@ -10,12 +7,6 @@ from pathlib import Path
 from typing import Mapping
 import joblib
 import pandas as pd
-
-# Ensure project root (parent of src) is on sys.path for module imports (must be first)
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-if PROJECT_ROOT not in sys.path:
-    sys.path.insert(0, PROJECT_ROOT)
-
 from src.features import (
     generate_soil_health_tips,
     generate_weather_warnings,
@@ -27,8 +18,14 @@ from src.models import (
     load_pipeline,
 )
 
+"""Shared backend helpers for loading models and normalising inputs."""
 
-# Load seasonal water requirements from the crop recommendation dataset
+# Ensure project root (parent of src) is on sys.path for module imports (must be first)
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
+
 def load_water_requirements(csv_path=None):
     if csv_path is None:
         csv_path = os.path.join("data", "raw", "Crop recommendation dataset.csv")
@@ -95,29 +92,27 @@ def get_water_requirement_for_crop(crop_name, df=None):
     }
 
 
-from src.features import (
-    generate_soil_health_tips,
-    generate_weather_warnings,
-    recommend_fertilizers,
-)
-from src.models import (
-    CropDiseaseClassifier,
-    CropPredictor,
-    YieldEstimator,
-    load_pipeline,
-)
-
 _PROJECT_ROOT = Path(__file__).resolve().parents[1]
 _MODEL_FALLBACK = _PROJECT_ROOT / "models" / "trained_model.pkl"
 
 
+class ModelNotReady(RuntimeError):
+    """Raised when a required trained asset is missing."""
 
+
+@lru_cache(maxsize=1)
+def get_crop_predictor(top_k: int = 3) -> CropPredictor:
+    """Return a cached crop predictor instance."""
+    try:
+        pipeline = load_pipeline()
+    except FileNotFoundError as exc:
         if _MODEL_FALLBACK.exists():
             pipeline = joblib.load(_MODEL_FALLBACK)
         else:
             raise ModelNotReady(
                 "Crop recommendation model is missing. Run scripts/train_model.py first."
             ) from exc
+    return CropPredictor(pipeline, top_k=top_k)
     return CropPredictor(pipeline, top_k=top_k)
 
 
