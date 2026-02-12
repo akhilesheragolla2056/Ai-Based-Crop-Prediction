@@ -1,5 +1,7 @@
 # AI-Based Crop Recommendation Platform
 
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://streamlit.io/cloud)
+
 Production-ready machine learning system that recommends the top three crops and expected yield category based on soil nutrients and climate indicators. Designed for rapid hackathon demos with a clear path to market deployment.
 
 ## Key Features
@@ -51,10 +53,13 @@ If neither key is set the live fetch button will show an error and the manual in
 ## Deployment
 
 Streamlit Community Cloud:
-1. Push this repository to GitHub.
-2. Create a new Streamlit app and set the main file to `app/main.py`.
-3. Add `OPENWEATHER_API_KEY` or `WEATHERBIT_API_KEY` in the Streamlit secrets.
-4. Confirm `artifacts/models/crop_recommender.joblib` is committed so the app can start.
+1. Push this repository to GitHub (private or public).
+2. Open Streamlit Cloud and click `New app`.
+3. Select the repo + branch, then set **Main file path** to `app/main.py`.
+4. Click **Advanced settings** and add secrets:
+   - `OPENWEATHER_API_KEY = "your-key"` or `WEATHERBIT_API_KEY = "your-key"`
+5. Deploy and wait for the build to finish.
+6. If the app fails to start, confirm `artifacts/models/crop_recommender.joblib` is in the repo.
 
 Docker (Render, Railway, Fly, or any container host):
 1. Build the image with `Dockerfile` and run `./start.sh` as the container command.
