@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-import importlib
 import sys
 from pathlib import Path
+import runpy
 
 import streamlit as st
 
@@ -18,17 +18,14 @@ if str(PROJECT_ROOT) not in sys.path:
 def main() -> None:
     """Forward execution to frontend.app while providing helpful messaging."""
 
-    try:
-        frontend_module = importlib.import_module("frontend.app")
-    except ModuleNotFoundError as exc:
+    if not FRONTEND_APP.exists():
         st.error(
-            "frontend.app is missing or failed to import. Launch streamlit run frontend/app.py instead."
+            "frontend/app.py is missing. Launch streamlit run frontend/app.py instead."
         )
-        if FRONTEND_APP.exists():
-            st.info(f"Detected frontend/app.py at {FRONTEND_APP}.")
-        raise RuntimeError("frontend.app module unavailable") from exc
+        raise RuntimeError("frontend.app module unavailable")
 
-    frontend_module.main()
+    # Execute the frontend app file directly to avoid package import issues on Streamlit Cloud.
+    runpy.run_path(str(FRONTEND_APP), run_name="__main__")
 
 
 if __name__ == "__main__":
