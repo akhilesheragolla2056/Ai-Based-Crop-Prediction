@@ -256,7 +256,10 @@ def main():
 
         # Use toggle for theme
         dark_mode = st.toggle(
-            "🌙", value=is_dark, key="dark_mode_toggle", label_visibility="collapsed"
+            "🌙",
+            value=is_dark,
+            key="about_dark_mode_toggle",
+            label_visibility="collapsed",
         )
 
         if dark_mode and current_theme != "dark":
@@ -271,7 +274,7 @@ def main():
             get_text("language"),
             options=["en", "hi"],
             format_func=lambda x: "English" if x == "en" else "हिंदी",
-            key="language",
+            key="about_language",
             label_visibility="collapsed",
         )
 

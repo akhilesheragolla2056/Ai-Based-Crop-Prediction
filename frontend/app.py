@@ -23,10 +23,11 @@ from backend.yield_prediction import predict_yield
 from frontend.components.cards import info_card, list_card
 from frontend.components.forms import DISEASE_SEVERITIES, environmental_inputs
 from frontend.components.layout import inject_theme
+from frontend.pages.About import main as render_legacy_about
 from modules.ai_chatbot import generate_crop_response, load_context_data
 from utils.crop_guide import get_crop_details
 
-load_dotenv()
+load_dotenv(Path(PROJECT_ROOT) / ".env")
 AI_CHAT_HISTORY_PATH = Path(PROJECT_ROOT) / "data" / "ai_chat_history.json"
 """FasalSaarthi – Professional AI Crop Recommendation Dashboard with Multi-language Support."""
 
@@ -1453,65 +1454,75 @@ def _format_assistant_response_html(raw_text: str) -> str:
 
 
 def render_ai_crop_assistant_page() -> None:
-    """Render isolated AI Crop Assistant chat interface."""
-    st.title("AI Crop Assistant")
+    """Render isolated AI Agricultural Assistant chat interface."""
+    st.title("AI Agricultural Assistant")
     st.caption(
-        "Ask agriculture-related questions about cultivation, fertilizer, pests, irrigation, season, soil, and harvest."
-    )
-
-    st.markdown(
-        """
-        <div style="
-            background: linear-gradient(145deg, #E8F5E9 0%, #C8E6C9 100%);
-            border-left: 5px solid #2E7D32;
-            border-radius: 10px;
-            padding: 0.9rem 1rem;
-            margin-bottom: 1rem;
-            color: #1B5E20;
-            font-weight: 600;
-        ">
-            Dataset-grounded advisory mode is active.
-        </div>
-        """,
-        unsafe_allow_html=True,
+        "Ask any agriculture question about cultivation, fertilizers, pests, irrigation, soil health, seasons, or yield."
     )
 
     st.markdown(
         """
         <style>
             .ai-shell {
-                border: 1px solid rgba(134, 239, 172, 0.22);
-                border-radius: 16px;
-                padding: 0.65rem;
+                border: 1px solid rgba(34, 197, 94, 0.18);
+                border-radius: 18px;
+                padding: 0.7rem;
                 background:
-                    radial-gradient(circle at 10% 12%, rgba(134, 239, 172, 0.12) 0 4px, transparent 5px),
-                    radial-gradient(circle at 76% 30%, rgba(134, 239, 172, 0.10) 0 3px, transparent 4px),
-                    radial-gradient(circle at 42% 68%, rgba(134, 239, 172, 0.08) 0 3px, transparent 4px),
-                    linear-gradient(180deg, rgba(16, 24, 40, 0.45), rgba(17, 24, 39, 0.20));
-                margin-bottom: 0.8rem;
+                    radial-gradient(circle at 12% 14%, rgba(34, 197, 94, 0.10) 0 4px, transparent 5px),
+                    radial-gradient(circle at 72% 30%, rgba(34, 197, 94, 0.08) 0 3px, transparent 4px),
+                    radial-gradient(circle at 42% 70%, rgba(34, 197, 94, 0.08) 0 3px, transparent 4px),
+                    linear-gradient(180deg, rgba(3, 7, 18, 0.55), rgba(15, 23, 42, 0.25));
+                margin-bottom: 0.85rem;
             }
             .ai-user-bubble {
-                background: linear-gradient(135deg, #e6f6ea 0%, #d2f1da 100%);
-                border: 1px solid #86d39a;
+                background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+                border: 1px solid #86efac;
                 border-radius: 16px 16px 4px 16px;
-                padding: 0.8rem 1rem;
-                color: #12411b;
-                font-weight: 600;
-                box-shadow: 0 6px 16px rgba(20, 78, 26, 0.12);
+                padding: 0.85rem 1rem;
+                color: #14532d;
+                font-weight: 650;
+                box-shadow: 0 6px 16px rgba(22, 163, 74, 0.18);
             }
             .ai-bot-bubble {
-                background: linear-gradient(135deg, #0d1a34 0%, #101a2a 100%);
-                border: 1px solid rgba(94, 234, 212, 0.22);
+                background: linear-gradient(135deg, #0a2518 0%, #0c1f16 100%);
+                border: 1px solid rgba(134, 239, 172, 0.25);
                 border-radius: 16px 16px 16px 4px;
-                padding: 0.95rem 1.05rem;
+                padding: 1rem 1.05rem;
                 box-shadow: 0 8px 18px rgba(15, 23, 42, 0.35);
             }
             .ai-bot-title {
-                color: #9ae6b4;
+                color: #bbf7d0;
                 font-weight: 700;
                 margin-bottom: 0.6rem;
-                letter-spacing: 0.2px;
-                font-size: 1.03rem;
+                letter-spacing: 0.3px;
+                font-size: 1.05rem;
+                text-transform: uppercase;
+            }
+            .ai-toolbar {
+                display: flex;
+                gap: 0.75rem;
+                align-items: center;
+                flex-wrap: wrap;
+                margin: 0.2rem 0 0.8rem 0;
+            }
+            .ai-toolbar .stButton > button {
+                border-radius: 10px;
+                border: 1px solid rgba(148, 163, 184, 0.45);
+                background: rgba(15, 23, 42, 0.6);
+                color: #e2e8f0;
+                font-weight: 600;
+            }
+            .ai-avatar {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 26px;
+                height: 26px;
+                border-radius: 50%;
+                background: rgba(34, 197, 94, 0.18);
+                color: #bbf7d0;
+                font-size: 0.9rem;
+                margin-right: 0.4rem;
             }
             .ai-section {
                 font-weight: 700;
@@ -1543,6 +1554,22 @@ def render_ai_crop_assistant_page() -> None:
             .ai-gap {
                 height: 0.4rem;
             }
+            .ai-history-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                gap: 0.6rem;
+                margin-top: 0.4rem;
+            }
+            .ai-history-grid .stButton > button {
+                width: 100%;
+                border-radius: 10px;
+                border: 1px solid rgba(148, 163, 184, 0.35);
+                background: rgba(15, 23, 42, 0.55);
+                color: #e2e8f0;
+                font-weight: 600;
+                text-align: left;
+                padding: 0.5rem 0.75rem;
+            }
         </style>
         """,
         unsafe_allow_html=True,
@@ -1553,7 +1580,7 @@ def render_ai_crop_assistant_page() -> None:
             {
                 "role": "assistant",
                 "content": (
-                    "I am your Crop Advisory Assistant. Ask a crop-specific question, for example: "
+                    "I am your Agricultural Advisory Assistant. Ask a farming question, for example: "
                     "'fertilizer plan for cotton in kharif'."
                 ),
             }
@@ -1561,35 +1588,32 @@ def render_ai_crop_assistant_page() -> None:
     if "ai_chat_search_history" not in st.session_state:
         st.session_state["ai_chat_search_history"] = _load_ai_search_history()
 
-    clear_col, clear_history_col, hint_col = st.columns([1, 1, 4])
-    with clear_col:
-        if st.button("Clear Chat", key="ai_chat_clear", use_container_width=True):
-            st.session_state["ai_chat_messages"] = [
-                {
-                    "role": "assistant",
-                    "content": (
-                        "Chat cleared. Ask me about crop cultivation, fertilizer, pests, water, season, soil, or harvest."
-                    ),
-                }
-            ]
-            st.rerun()
-    with clear_history_col:
-        if st.button("Clear History", key="ai_history_clear", use_container_width=True):
-            st.session_state["ai_chat_search_history"] = []
-            _save_ai_search_history([])
-            st.rerun()
-    with hint_col:
-        st.write(
-            "Try: `best season for wheat`, `pest control in rice`, `irrigation schedule for banana`."
-        )
+    st.markdown("<div class='ai-toolbar'>", unsafe_allow_html=True)
+    if st.button("Clear Chat", key="ai_chat_clear", use_container_width=False):
+        st.session_state["ai_chat_messages"] = [
+            {
+                "role": "assistant",
+                "content": (
+                    "Chat cleared. Ask about cultivation, fertilizer, pests, irrigation, soil health, season, or yield."
+                ),
+            }
+        ]
+        st.rerun()
+    if st.button("Clear History", key="ai_history_clear", use_container_width=False):
+        st.session_state["ai_chat_search_history"] = []
+        _save_ai_search_history([])
+        st.rerun()
+    st.markdown("</div>", unsafe_allow_html=True)
 
     selected_history_query = None
     history = st.session_state.get("ai_chat_search_history", [])
     if history:
         with st.expander("Recent Searches", expanded=False):
+            st.markdown("<div class='ai-history-grid'>", unsafe_allow_html=True)
             for idx, item in enumerate(history[:12]):
-                if st.button(item, key=f"ai_history_item_{idx}", use_container_width=True):
+                if st.button(item, key=f"ai_history_item_{idx}", use_container_width=False):
                     selected_history_query = item
+            st.markdown("</div>", unsafe_allow_html=True)
 
     for message in st.session_state["ai_chat_messages"]:
         role = message.get("role", "assistant")
@@ -1598,7 +1622,7 @@ def render_ai_crop_assistant_page() -> None:
             left, right = st.columns([3, 5])
             with right:
                 st.markdown(
-                    f"<div class='ai-shell'><div class='ai-user-bubble'>You: {html.escape(content)}</div></div>",
+                    f"<div class='ai-shell'><div class='ai-user-bubble'>🙋 You: {html.escape(content)}</div></div>",
                     unsafe_allow_html=True,
                 )
         else:
@@ -1606,7 +1630,7 @@ def render_ai_crop_assistant_page() -> None:
             with left:
                 formatted = _format_assistant_response_html(content)
                 st.markdown(
-                    f"<div class='ai-shell'><div class='ai-bot-bubble'><div class='ai-bot-title'>Crop Advisory Assistant</div>{formatted}</div></div>",
+                    f"<div class='ai-shell'><div class='ai-bot-bubble'><div class='ai-bot-title'><span class='ai-avatar'>🌾</span>Agricultural Advisory Assistant</div>{formatted}</div></div>",
                     unsafe_allow_html=True,
                 )
 
@@ -1864,18 +1888,37 @@ def main() -> None:
     apply_theme()
     render_header()
 
-    nav_choice = st.sidebar.radio(
-        "Navigation",
-        ["Home", "About", "🌿 AI Crop Assistant"],
-        key="main_navigation_choice",
+    st.markdown(
+        """
+        <style>
+            [data-testid="stSidebar"] {display: none;}
+            [data-testid="stSidebarCollapsedControl"] {display: none;}
+        </style>
+        """,
+        unsafe_allow_html=True,
     )
 
-    if nav_choice == "Home":
-        render_home_page()
-    elif nav_choice == "About":
-        render_about_page()
-    else:
+    if "main_view" not in st.session_state:
+        st.session_state["main_view"] = "app"
+
+    nav_col1, nav_col2, nav_col3, _ = st.columns([1, 1, 1, 5])
+    with nav_col1:
+        if st.button("🏠 App", use_container_width=True, key="nav_app"):
+            st.session_state["main_view"] = "app"
+    with nav_col2:
+        if st.button("🌿 AI Chatbot", use_container_width=True, key="nav_chat"):
+            st.session_state["main_view"] = "chat"
+    with nav_col3:
+        if st.button("ℹ️ About", use_container_width=True, key="nav_about"):
+            st.session_state["main_view"] = "about"
+
+    view = st.session_state.get("main_view", "app")
+    if view == "chat":
         render_ai_crop_assistant_page()
+    elif view == "about":
+        render_legacy_about()
+    else:
+        render_home_page()
 
     # Footer
     st.markdown("---")
