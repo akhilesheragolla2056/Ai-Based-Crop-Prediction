@@ -11,7 +11,13 @@ from src.features import (
     generate_soil_health_tips,
     generate_weather_warnings,
 )
-from src.models import (
+
+# Add src directory to sys.path for direct module import
+SRC_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
+if SRC_PATH not in sys.path:
+    sys.path.insert(0, SRC_PATH)
+
+from models import (
     CropDiseaseClassifier,
     CropPredictor,
     YieldEstimator,
