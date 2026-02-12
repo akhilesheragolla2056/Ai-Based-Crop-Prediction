@@ -1,5 +1,19 @@
 """Shared backend helpers for loading models and normalising inputs."""
 
+# Ensure project root and src are on sys.path for module imports
+import sys as _sys
+from pathlib import Path as _Path
+
+_PROJECT_ROOT_FOR_IMPORTS = _Path(__file__).resolve().parents[1]
+_SRC_PATH = _PROJECT_ROOT_FOR_IMPORTS / "src"
+if str(_PROJECT_ROOT_FOR_IMPORTS) not in _sys.path:
+    _sys.path.insert(0, str(_PROJECT_ROOT_FOR_IMPORTS))
+if _SRC_PATH.exists() and str(_SRC_PATH) not in _sys.path:
+    _sys.path.insert(0, str(_SRC_PATH))
+import importlib as _importlib
+
+_importlib.invalidate_caches()
+
 from __future__ import annotations
 
 from functools import lru_cache
@@ -27,7 +41,9 @@ def get_water_requirement_for_crop(crop_name, df=None):
 
     crop_column = "CROPS" if "CROPS" in df.columns else None
     water_column = "WATERREQUIRED" if "WATERREQUIRED" in df.columns else None
-    water_max_column = "WATERREQUIRED_MAX" if "WATERREQUIRED_MAX" in df.columns else None
+    water_max_column = (
+        "WATERREQUIRED_MAX" if "WATERREQUIRED_MAX" in df.columns else None
+    )
     soil_column = "SOIL" if "SOIL" in df.columns else None
     water_source_column = "WATER_SOURCE" if "WATER_SOURCE" in df.columns else None
     if not crop_column or not water_column:
@@ -43,12 +59,7 @@ def get_water_requirement_for_crop(crop_name, df=None):
 
     soil_type = None
     if soil_column:
-        soil_values = (
-            rows[soil_column]
-            .dropna()
-            .astype(str)
-            .str.strip()
-        )
+        soil_values = rows[soil_column].dropna().astype(str).str.strip()
         soil_values = [s for s in soil_values.tolist() if s]
         if soil_values:
             # Keep unique soil labels in observed order for readability.
@@ -56,12 +67,7 @@ def get_water_requirement_for_crop(crop_name, df=None):
 
     water_source = None
     if water_source_column:
-        water_source_values = (
-            rows[water_source_column]
-            .dropna()
-            .astype(str)
-            .str.strip()
-        )
+        water_source_values = rows[water_source_column].dropna().astype(str).str.strip()
         water_source_values = [w for w in water_source_values.tolist() if w]
         if water_source_values:
             # Keep unique labels in observed order for readable display.
@@ -86,36 +92,17 @@ def get_water_requirement_for_crop(crop_name, df=None):
     }
 
 
-try:
-    from src.features import (
-        generate_soil_health_tips,
-        generate_weather_warnings,
-        recommend_fertilizers,
-    )
-    from src.models import (
-        CropDiseaseClassifier,
-        CropPredictor,
-        YieldEstimator,
-        load_pipeline,
-    )
-except ModuleNotFoundError:
-    # Streamlit Cloud can run from a subdirectory; ensure project root is on sys.path.
-    import sys as _sys
-
-    _PROJECT_ROOT_FOR_IMPORTS = Path(__file__).resolve().parents[1]
-    if str(_PROJECT_ROOT_FOR_IMPORTS) not in _sys.path:
-        _sys.path.insert(0, str(_PROJECT_ROOT_FOR_IMPORTS))
-    from src.features import (
-        generate_soil_health_tips,
-        generate_weather_warnings,
-        recommend_fertilizers,
-    )
-    from src.models import (
-        CropDiseaseClassifier,
-        CropPredictor,
-        YieldEstimator,
-        load_pipeline,
-    )
+from src.features import (
+    generate_soil_health_tips,
+    generate_weather_warnings,
+    recommend_fertilizers,
+)
+from src.models import (
+    CropDiseaseClassifier,
+    CropPredictor,
+    YieldEstimator,
+    load_pipeline,
+)
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[1]
 _MODEL_FALLBACK = _PROJECT_ROOT / "models" / "trained_model.pkl"
