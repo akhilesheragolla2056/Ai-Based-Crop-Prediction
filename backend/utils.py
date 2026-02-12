@@ -2,13 +2,13 @@ from __future__ import annotations
 
 """Shared backend helpers for loading models and normalising inputs."""
 
-# Ensure project root (parent of src) is on sys.path for module imports (must be first)
+# Ensure src directory is on sys.path for module imports (must be first)
 import sys
 import os
 
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-if PROJECT_ROOT not in sys.path:
-    sys.path.insert(0, PROJECT_ROOT)
+SRC_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
+if SRC_PATH not in sys.path:
+    sys.path.insert(0, SRC_PATH)
 
 from functools import lru_cache
 from pathlib import Path
@@ -86,12 +86,12 @@ def get_water_requirement_for_crop(crop_name, df=None):
     }
 
 
-from src.features import (
+from features import (
     generate_soil_health_tips,
     generate_weather_warnings,
     recommend_fertilizers,
 )
-from src.models import (
+from models import (
     CropDiseaseClassifier,
     CropPredictor,
     YieldEstimator,
