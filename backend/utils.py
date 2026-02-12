@@ -58,12 +58,12 @@ def get_water_requirement_for_crop(crop_name, df=None):
             # Keep unique soil labels in observed order for readability.
             soil_type = ", ".join(dict.fromkeys(soil_values))
 
-             # Ensure project root (parent of src) is on sys.path for module imports (must be first)
+    water_source = None
     if water_source_column:
         water_source_values = rows[water_source_column].dropna().astype(str).str.strip()
-            PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-            if PROJECT_ROOT not in sys.path:
-                sys.path.insert(0, PROJECT_ROOT)
+        water_source_values = [w for w in water_source_values.tolist() if w]
+        if water_source_values:
+            # Keep unique labels in observed order for readable display.
             water_source = ", ".join(dict.fromkeys(water_source_values))
 
     avg_water = float(water_values.mean())
