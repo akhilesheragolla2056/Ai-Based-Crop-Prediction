@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: ai-crop-prediction
+    env: docker
+    plan: free
+    autoDeploy: true
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /_stcore/health
+    envVars:
+      - key: OPENWEATHER_API_KEY
+        sync: false
+      - key: WEATHERBIT_API_KEY
+        sync: false

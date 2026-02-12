@@ -1,0 +1,13 @@
+.git
+.github
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.pytest_cache
+.ipynb_checkpoints
+.env
+.env.*
+*.log
+notebooks

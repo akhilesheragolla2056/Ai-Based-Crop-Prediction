@@ -48,6 +48,23 @@ streamlit run app/main.py
 
 If neither key is set the live fetch button will show an error and the manual inputs remain available.
 
+## Deployment
+
+Streamlit Community Cloud:
+1. Push this repository to GitHub.
+2. Create a new Streamlit app and set the main file to `app/main.py`.
+3. Add `OPENWEATHER_API_KEY` or `WEATHERBIT_API_KEY` in the Streamlit secrets.
+4. Confirm `artifacts/models/crop_recommender.joblib` is committed so the app can start.
+
+Docker (Render, Railway, Fly, or any container host):
+1. Build the image with `Dockerfile` and run `./start.sh` as the container command.
+2. Expose port `8501` (or set `PORT` on platforms that provide it automatically).
+3. Set environment variables for API keys on the host.
+
+Heroku-style platforms:
+1. Use `Procfile` and `runtime.txt` as provided.
+2. Set `OPENWEATHER_API_KEY` or `WEATHERBIT_API_KEY` as config vars.
+
 ## Dataset Ingestion
 
 The dataset downloader checks a small set of known public mirrors. If they are unavailable, provide a fallback URL, checksum, or use the Kaggle workflow:
