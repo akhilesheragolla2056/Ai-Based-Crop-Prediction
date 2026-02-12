@@ -25,12 +25,21 @@ try:
         load_pipeline,
     )
 except ImportError:
-    from models import (
-        CropDiseaseClassifier,
-        CropPredictor,
-        YieldEstimator,
-        load_pipeline,
-    )
+    import importlib.util
+    import sys as _sys
+    import os as _os
+
+    src_path = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), "..", "src"))
+    if src_path not in _sys.path:
+        _sys.path.insert(0, src_path)
+    models_spec = importlib.util.find_spec("models")
+    if models_spec is None:
+        raise ImportError("Cannot find 'models' module in src directory.")
+    models = importlib.import_module("models")
+    CropDiseaseClassifier = models.CropDiseaseClassifier
+    CropPredictor = models.CropPredictor
+    YieldEstimator = models.YieldEstimator
+    load_pipeline = models.load_pipeline
 
 """Shared backend helpers for loading models and normalising inputs."""
 
