@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 import runpy
@@ -23,6 +24,12 @@ def main() -> None:
             "frontend/app.py is missing. Launch streamlit run frontend/app.py instead."
         )
         raise RuntimeError("frontend.app module unavailable")
+
+    # Ensure the project root is the working directory and on PYTHONPATH.
+    os.chdir(PROJECT_ROOT)
+    os.environ["PYTHONPATH"] = str(PROJECT_ROOT) + (
+        os.pathsep + os.environ["PYTHONPATH"] if os.environ.get("PYTHONPATH") else ""
+    )
 
     # Execute the frontend app file directly to avoid package import issues on Streamlit Cloud.
     runpy.run_path(str(FRONTEND_APP), run_name="__main__")
