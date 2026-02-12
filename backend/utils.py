@@ -11,7 +11,7 @@ from src.features import (
     generate_soil_health_tips,
     generate_weather_warnings,
 )
-from ..src.models import (
+from src.models import (
     CropDiseaseClassifier,
     CropPredictor,
     YieldEstimator,
