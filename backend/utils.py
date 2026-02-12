@@ -105,12 +105,12 @@ def get_water_requirement_for_crop(crop_name, df=None):
     }
 
 
-from src.features import (
+from features import (
     generate_soil_health_tips,
     generate_weather_warnings,
     recommend_fertilizers,
 )
-from src.models import (
+from models import (
     CropDiseaseClassifier,
     CropPredictor,
     YieldEstimator,
