@@ -2,21 +2,30 @@ from __future__ import annotations
 
 """Shared backend helpers for loading models and normalising inputs."""
 
-# Ensure project root (parent of src) is on sys.path for module imports (must be first)
+# Module-level imports (PEP 8 compliance)
 import sys
 import os
+from functools import lru_cache
+from pathlib import Path
+from typing import Mapping
+import joblib
+import pandas as pd
 
+# Ensure project root (parent of src) is on sys.path for module imports (must be first)
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
-from functools import lru_cache
-from pathlib import Path
-from typing import Mapping
-
-import joblib
-import pandas as pd
-import os
+from src.features import (
+    generate_soil_health_tips,
+    generate_weather_warnings,
+)
+from src.models import (
+    CropDiseaseClassifier,
+    CropPredictor,
+    YieldEstimator,
+    load_pipeline,
+)
 
 
 # Load seasonal water requirements from the crop recommendation dataset
@@ -102,17 +111,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[1]
 _MODEL_FALLBACK = _PROJECT_ROOT / "models" / "trained_model.pkl"
 
 
-class ModelNotReady(RuntimeError):
-    """Raised when a required trained asset is missing."""
 
-
-@lru_cache(maxsize=1)
-def get_crop_predictor(top_k: int = 3) -> CropPredictor:
-    """Return a cached crop predictor instance."""
-
-    try:
-        pipeline = load_pipeline()
-    except FileNotFoundError as exc:
         if _MODEL_FALLBACK.exists():
             pipeline = joblib.load(_MODEL_FALLBACK)
         else:
