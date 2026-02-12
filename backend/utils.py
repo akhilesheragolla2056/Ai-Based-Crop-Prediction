@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Shared backend helpers for loading models and normalising inputs."""
 
 # Ensure project root and src are on sys.path for module imports
@@ -13,8 +15,6 @@ if _SRC_PATH.exists() and str(_SRC_PATH) not in _sys.path:
 import importlib as _importlib
 
 _importlib.invalidate_caches()
-
-from __future__ import annotations
 
 from functools import lru_cache
 from pathlib import Path
