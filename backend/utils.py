@@ -58,12 +58,12 @@ def get_water_requirement_for_crop(crop_name, df=None):
             # Keep unique soil labels in observed order for readability.
             soil_type = ", ".join(dict.fromkeys(soil_values))
 
-    water_source = None
+             # Ensure project root (parent of src) is on sys.path for module imports (must be first)
     if water_source_column:
         water_source_values = rows[water_source_column].dropna().astype(str).str.strip()
-        water_source_values = [w for w in water_source_values.tolist() if w]
-        if water_source_values:
-            # Keep unique labels in observed order for readable display.
+            PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+            if PROJECT_ROOT not in sys.path:
+                sys.path.insert(0, PROJECT_ROOT)
             water_source = ", ".join(dict.fromkeys(water_source_values))
 
     avg_water = float(water_values.mean())
@@ -141,7 +141,14 @@ def soil_health_insights(features: Mapping[str, float]) -> tuple[str, ...]:
 
 def weather_insights(features: Mapping[str, float], crop: str) -> tuple[str, ...]:
     return generate_weather_warnings(features, crop)
-
-
-def fertilizer_plan(crop: str, soil_metrics: Mapping[str, float]):
-    return recommend_fertilizers(crop, soil_metrics)
+            from src.features import (
+                generate_soil_health_tips,
+                generate_weather_warnings,
+                recommend_fertilizers,
+            )
+            from src.models import (
+                CropDiseaseClassifier,
+                CropPredictor,
+                YieldEstimator,
+                load_pipeline,
+            )
