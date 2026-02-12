@@ -29,7 +29,7 @@ from utils.crop_guide import get_crop_details
 
 load_dotenv(Path(PROJECT_ROOT) / ".env")
 AI_CHAT_HISTORY_PATH = Path(PROJECT_ROOT) / "data" / "ai_chat_history.json"
-"""FasalSaarthi – Professional AI Crop Recommendation Dashboard with Multi-language Support."""
+
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -38,8 +38,11 @@ AI_CHAT_HISTORY_PATH = Path(PROJECT_ROOT) / "data" / "ai_chat_history.json"
 TRANSLATIONS = {
     "en": {
         "app_title": "FasalSaarthi – AI Crop Recommendation System",
-        "tagline": "AI-Powered Smart Farming",
+        "tagline": "   AI-Powered Smart Farming",
         "subtitle": "Helping farmers reduce risk and improve yield",
+        "hero_title": "🌾 FasalSaarthi",
+        "hero_subtitle": "AI-Powered Smart Farming",
+        "hero_desc": "Empowering Indian farmers with intelligent crop recommendations, market insights, and sustainable farming practices.",
         "field_profile": "Field & Weather Profile",
         "get_recommendations": "🚀 Get Smart Recommendations",
         "crop_recommendation": "Crop Recommendation",
@@ -88,6 +91,9 @@ TRANSLATIONS = {
         "app_title": "फसलसारथी – AI फसल सिफारिश प्रणाली",
         "tagline": "AI-संचालित स्मार्ट खेती",
         "subtitle": "किसानों को जोखिम कम करने और उपज बढ़ाने में मदद",
+        "hero_title": "🌾 फसलसारथी",
+        "hero_subtitle": "AI-संचालित स्मार्ट खेती",
+        "hero_desc": "भारतीय किसानों को बुद्धिमान फसल सिफारिशों, बाजार अंतर्दृष्टि और टिकाऊ खेती प्रथाओं के साथ सशक्त बनाना।",
         "field_profile": "खेत और मौसम प्रोफाइल",
         "get_recommendations": "🚀 स्मार्ट सिफारिशें प्राप्त करें",
         "crop_recommendation": "फसल सिफारिश",
@@ -131,6 +137,57 @@ TRANSLATIONS = {
         "about": "परिचय",
         "language": "भाषा",
         "home": "होम",
+    },
+    "te": {
+        "app_title": "ఫసల్సార్థి – AI పంట సిఫార్సు వ్యవస్థ",
+        "tagline": "AI ఆధారిత స్మార్ట్ సాగు",
+        "subtitle": "రైతులకు రిస్క్ తగ్గించి దిగుబడి పెంచేందుకు సహాయం",
+        "hero_title": "🌾 ఫసల్సార్థి",
+        "hero_subtitle": "AI ఆధారిత స్మార్ట్ సాగు",
+        "hero_desc": "భారత రైతులకు మేధస్సు ఆధారిత పంట సిఫార్సులు, మార్కెట్ అవగాహన, స్థిరమైన సాగు విధానాలు అందించడం.",
+        "field_profile": "భూమి & వాతావరణ ప్రొఫైల్",
+        "get_recommendations": "🚀 స్మార్ట్ సిఫార్సులు పొందండి",
+        "crop_recommendation": "పంట సిఫార్సు",
+        "top_crops_msg": "మీ నేల మరియు వాతావరణ ప్రొఫైల్ ఆధారంగా టాప్ పంటలు",
+        "why_crops": "ఈ పంటలు ఎందుకు?",
+        "market_outlook": "మార్కెట్ దృశ్యం & ధరలు",
+        "water_requirement": "నీటి అవసరం",
+        "weather_advisory": "వాతావరణ సలహా",
+        "fertilizer_rec": "ఎరువు సిఫార్సులు",
+        "nutrient_plan": "పోషక ప్రణాళిక",
+        "soil_health": "నేల ఆరోగ్య సూచనలు",
+        "pest_disease": "కీటక & రోగ నిర్వహణ",
+        "select_disease": "సిఫార్సులు పొందేందుకు వ్యాధిని ఎంచుకోండి",
+        "get_protection": "రక్షణ ప్రణాళిక పొందండి",
+        "yield_projection": "దిగుబడి అంచనా",
+        "expected_yield": "అంచనా దిగుబడి",
+        "yield_category": "దిగుబడి వర్గం",
+        "est_revenue": "అంచనా ఆదాయం",
+        "per_acre": "ప్రతి ఎకరాకు (సుమారు)",
+        "weather_alerts": "వాతావరణ హెచ్చరికలు",
+        "price": "ధర",
+        "per_quintal": "ప్రతి క్వింటాల్",
+        "trend": "ధోరణి",
+        "demand": "డిమాండ్",
+        "seasonal_need": "సీజనల్ అవసరం",
+        "soil_type": "నేల రకం",
+        "water_source": "నీటి మూలం",
+        "irrigations": "పారుదల",
+        "critical_stage": "ముఖ్య దశ",
+        "suitability": "అనుకూలత",
+        "confidence": "నమ్మకం",
+        "chemical": "రసాయనం",
+        "frequency": "తరచుదనం",
+        "safety": "భద్రతా మార్గదర్శకాలు",
+        "organic_alt": "జైవ ప్రత్యామ్నాయం",
+        "common_diseases": "సాధారణ వ్యాధులు",
+        "severity": "తీవ్రత స్థాయి",
+        "quantity": "పరిమాణం",
+        "why": "ఎందుకు",
+        "organic_option": "జైవ ఎంపిక",
+        "about": "గురించి",
+        "language": "భాష",
+        "home": "హోమ్",
     },
 }
 
@@ -710,7 +767,7 @@ def render_header():
     # Centered header with green FasalSaarthi title
     st.markdown("---")
     st.markdown(
-        "<h1 style='text-align: center;'>🌾 FasalSaarthi</h1>", unsafe_allow_html=True
+        "<h1 style='text-align: center;'>🌾FasalSaarthi</h1>", unsafe_allow_html=True
     )
     st.markdown(
         f"<p style='text-align: center; font-weight: bold;'>{get_text('tagline')}</p>",
@@ -1238,7 +1295,7 @@ def render_about_page():
     # Hero section
     st.title("🌾 About FasalSaarthi")
     st.write(
-        "AI-powered smart farming assistant designed to help Indian farmers "
+        " AI-powered smart farming assistant designed to help Indian farmers "
         "make data-driven decisions for better crop yields and sustainable agriculture."
     )
 
@@ -1351,8 +1408,6 @@ def render_about_page():
 
     # Team Section
     st.subheader("👥 Our Team")
-    st.write("Built with ❤️ for Indian farmers by the FasalSaarthi team")
-    st.caption("© 2026 FasalSaarthi. All rights reserved.")
 
 
 def _load_ai_search_history() -> list[str]:
@@ -1455,14 +1510,69 @@ def _format_assistant_response_html(raw_text: str) -> str:
 
 def render_ai_crop_assistant_page() -> None:
     """Render isolated AI Agricultural Assistant chat interface."""
-    st.title("AI Agricultural Assistant")
-    st.caption(
-        "Ask any agriculture question about cultivation, fertilizers, pests, irrigation, soil health, seasons, or yield."
-    )
+    header_left, header_center, header_right = st.columns([1, 6, 2])
+    with header_left:
+        st.markdown("<div class='ai-logo'></div>", unsafe_allow_html=True)
+    with header_center:
+        st.markdown(
+            """
+            <div class="ai-header">
+                <div class="ai-title">🌿AI Agricultural Assistant</div>
+                <div class="ai-subtitle">
+                    Ask any agriculture question about cultivation, fertilizers, pests, irrigation, soil health, seasons, or yield.
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+    with header_right:
+        st.markdown("<div class='ai-action-panel'>", unsafe_allow_html=True)
+        if st.button("Clear Chat", key="ai_chat_clear", use_container_width=False):
+            st.session_state["ai_chat_messages"] = [
+                {
+                    "role": "assistant",
+                    "content": (
+                        "Chat cleared. Ask about cultivation, fertilizer, pests, irrigation, soil health, season, or yield."
+                    ),
+                }
+            ]
+            st.rerun()
+        if st.button("Clear History", key="ai_history_clear", use_container_width=False):
+            st.session_state["ai_chat_search_history"] = []
+            _save_ai_search_history([])
+            st.rerun()
+        st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown(
         """
         <style>
+            .ai-header {
+                text-align: center;
+                margin-top: 0.6rem;
+            }
+            .ai-title {
+                font-size: 2.4rem;
+                font-weight: 700;
+                letter-spacing: 0.2px;
+            }
+            .ai-subtitle {
+                margin-top: 0.35rem;
+                color: #94a3b8;
+                font-size: 0.98rem;
+            }
+            .ai-logo {
+                font-size: 1.2rem;
+                opacity: 0.8;
+                margin-top: 0.8rem;
+            }
+            .ai-action-panel {
+                display: flex;
+                flex-direction: row;
+                gap: 0.45rem;
+                align-items: center;
+                justify-content: flex-end;
+                margin-top: 0.6rem;
+            }
             .ai-shell {
                 border: 1px solid rgba(34, 197, 94, 0.18);
                 border-radius: 18px;
@@ -1473,6 +1583,9 @@ def render_ai_crop_assistant_page() -> None:
                     radial-gradient(circle at 42% 70%, rgba(34, 197, 94, 0.08) 0 3px, transparent 4px),
                     linear-gradient(180deg, rgba(3, 7, 18, 0.55), rgba(15, 23, 42, 0.25));
                 margin-bottom: 0.85rem;
+                max-width: 860px;
+                margin-left: auto;
+                margin-right: auto;
             }
             .ai-user-bubble {
                 background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
@@ -1498,19 +1611,14 @@ def render_ai_crop_assistant_page() -> None:
                 font-size: 1.05rem;
                 text-transform: uppercase;
             }
-            .ai-toolbar {
-                display: flex;
-                gap: 0.75rem;
-                align-items: center;
-                flex-wrap: wrap;
-                margin: 0.2rem 0 0.8rem 0;
-            }
-            .ai-toolbar .stButton > button {
-                border-radius: 10px;
+            .ai-action-panel .stButton > button {
+                border-radius: 8px;
                 border: 1px solid rgba(148, 163, 184, 0.45);
                 background: rgba(15, 23, 42, 0.6);
                 color: #e2e8f0;
                 font-weight: 600;
+                font-size: 0.78rem;
+                padding: 0.18rem 0.55rem;
             }
             .ai-avatar {
                 display: inline-flex;
@@ -1588,51 +1696,36 @@ def render_ai_crop_assistant_page() -> None:
     if "ai_chat_search_history" not in st.session_state:
         st.session_state["ai_chat_search_history"] = _load_ai_search_history()
 
-    st.markdown("<div class='ai-toolbar'>", unsafe_allow_html=True)
-    if st.button("Clear Chat", key="ai_chat_clear", use_container_width=False):
-        st.session_state["ai_chat_messages"] = [
-            {
-                "role": "assistant",
-                "content": (
-                    "Chat cleared. Ask about cultivation, fertilizer, pests, irrigation, soil health, season, or yield."
-                ),
-            }
-        ]
-        st.rerun()
-    if st.button("Clear History", key="ai_history_clear", use_container_width=False):
-        st.session_state["ai_chat_search_history"] = []
-        _save_ai_search_history([])
-        st.rerun()
-    st.markdown("</div>", unsafe_allow_html=True)
-
     selected_history_query = None
     history = st.session_state.get("ai_chat_search_history", [])
     if history:
-        with st.expander("Recent Searches", expanded=False):
-            st.markdown("<div class='ai-history-grid'>", unsafe_allow_html=True)
-            for idx, item in enumerate(history[:12]):
-                if st.button(item, key=f"ai_history_item_{idx}", use_container_width=False):
-                    selected_history_query = item
-            st.markdown("</div>", unsafe_allow_html=True)
+        with st.container():
+            with st.expander("Recent Searches", expanded=False):
+                st.markdown("<div class='ai-history-grid'>", unsafe_allow_html=True)
+                for idx, item in enumerate(history[:12]):
+                    if st.button(item, key=f"ai_history_item_{idx}", use_container_width=False):
+                        selected_history_query = item
+                st.markdown("</div>", unsafe_allow_html=True)
 
-    for message in st.session_state["ai_chat_messages"]:
-        role = message.get("role", "assistant")
-        content = message.get("content", "")
-        if role == "user":
-            left, right = st.columns([3, 5])
-            with right:
-                st.markdown(
-                    f"<div class='ai-shell'><div class='ai-user-bubble'>🙋 You: {html.escape(content)}</div></div>",
-                    unsafe_allow_html=True,
-                )
-        else:
-            left, right = st.columns([5, 3])
-            with left:
-                formatted = _format_assistant_response_html(content)
-                st.markdown(
-                    f"<div class='ai-shell'><div class='ai-bot-bubble'><div class='ai-bot-title'><span class='ai-avatar'>🌾</span>Agricultural Advisory Assistant</div>{formatted}</div></div>",
-                    unsafe_allow_html=True,
-                )
+    with st.container():
+        for message in st.session_state["ai_chat_messages"]:
+            role = message.get("role", "assistant")
+            content = message.get("content", "")
+            if role == "user":
+                left, right = st.columns([3, 5])
+                with right:
+                    st.markdown(
+                        f"<div class='ai-shell'><div class='ai-user-bubble'>🙋 You: {html.escape(content)}</div></div>",
+                        unsafe_allow_html=True,
+                    )
+            else:
+                left, right = st.columns([5, 3])
+                with left:
+                    formatted = _format_assistant_response_html(content)
+                    st.markdown(
+                        f"<div class='ai-shell'><div class='ai-bot-bubble'><div class='ai-bot-title'><span class='ai-avatar'>🌾</span>Agricultural Advisory Assistant</div>{formatted}</div></div>",
+                        unsafe_allow_html=True,
+                    )
 
     typed_query = st.chat_input("Ask your agriculture question...")
     user_query = typed_query or selected_history_query
@@ -1656,6 +1749,7 @@ def render_ai_crop_assistant_page() -> None:
             {"role": "assistant", "content": answer}
         )
         st.rerun()
+
 
 
 def render_home_page():
@@ -1886,45 +1980,113 @@ def main() -> None:
 
     inject_theme()
     apply_theme()
-    render_header()
 
     st.markdown(
         """
         <style>
-            [data-testid="stSidebar"] {display: none;}
-            [data-testid="stSidebarCollapsedControl"] {display: none;}
+            .fs-topbar {
+                margin-top: 0.4rem;
+                margin-bottom: 0.4rem;
+            }
+            .fs-title {
+                text-align: center;
+                margin: 0.2rem 0 0.4rem 0;
+                font-size: 2.8rem;
+                font-weight: 700;
+                letter-spacing: 0.3px;
+            }
+            .global-footer {
+                text-align: center;
+                padding: 0.75rem 0 1rem 0;
+                font-size: 0.85rem;
+                color: #94a3b8;
+            }
+            .lang-compact .stSelectbox > div {
+                min-width: 120px;
+            }
+            .lang-compact select, .lang-compact input {
+                font-size: 0.85rem !important;
+                padding: 0.2rem 0.4rem !important;
+            }
+            .footer-separator {
+                margin-top: 2rem;
+            }
         </style>
         """,
         unsafe_allow_html=True,
     )
 
-    if "main_view" not in st.session_state:
-        st.session_state["main_view"] = "app"
-
-    nav_col1, nav_col2, nav_col3, _ = st.columns([1, 1, 1, 5])
-    with nav_col1:
-        if st.button("🏠 App", use_container_width=True, key="nav_app"):
-            st.session_state["main_view"] = "app"
-    with nav_col2:
-        if st.button("🌿 AI Chatbot", use_container_width=True, key="nav_chat"):
-            st.session_state["main_view"] = "chat"
-    with nav_col3:
-        if st.button("ℹ️ About", use_container_width=True, key="nav_about"):
-            st.session_state["main_view"] = "about"
-
-    view = st.session_state.get("main_view", "app")
-    if view == "chat":
-        render_ai_crop_assistant_page()
-    elif view == "about":
-        render_legacy_about()
-    else:
-        render_home_page()
-
-    # Footer
-    st.markdown("---")
-    st.caption(
-        "🌾 Built with ❤️ for Indian farmers | © 2026 FasalSaarthi. All rights reserved."
+    st.sidebar.markdown(
+        """
+        <style>
+            [data-testid="stSidebarNav"] {display: none;}
+        </style>
+        """,
+        unsafe_allow_html=True,
     )
+
+    nav_choice = st.sidebar.radio(
+        "Navigation",
+        ["App", "AI Chat", "About"],
+        key="main_navigation_choice",
+        label_visibility="collapsed",
+    )
+    st.session_state["page"] = (
+        "app" if nav_choice == "App" else "chat" if nav_choice == "AI Chat" else "about"
+    )
+
+    def render_global_footer() -> None:
+        st.markdown("<div class='footer-separator'></div>", unsafe_allow_html=True)
+        st.markdown("---")
+        st.markdown(
+            "<div class='global-footer'>Made with ❤️ for Indian Farmers | © 2026 FasalSaarthi | All Rights Reserved</div>",
+            unsafe_allow_html=True,
+        )
+
+    if st.session_state["page"] == "app":
+        with st.container():
+            st.markdown("<div class='fs-topbar'>", unsafe_allow_html=True)
+            col_left, col_title, col_lang = st.columns([2, 6, 2])
+            with col_title:
+                st.markdown(
+                    f"""
+                    <div style="text-align:center; padding: 1.6rem 0 0.8rem 0;">
+                        <div style="font-family: 'Poppins', sans-serif; font-size: 3rem; font-weight: 800; color: #1b5e20; text-align: center; transform: translateX(-6px);">
+                            {get_text("hero_title")}
+                        </div>
+                        <div style="font-family: 'Inter', sans-serif; font-size: 1.2rem; color: #2e7d32; font-weight: 700;
+                                    text-transform: uppercase; letter-spacing: 3px; margin: 0.25rem 0 0.5rem 0; text-align: center;">
+                            {get_text("hero_subtitle")}
+                        </div>
+                        <p style="color: #5f6b7a; max-width: 720px; margin: 0.6rem auto 0; font-size: 1.05rem; font-weight: 600;">
+                            {get_text("hero_desc")}
+                        </p>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+            with col_lang:
+                st.markdown("<div class='lang-compact'>", unsafe_allow_html=True)
+                st.selectbox(
+                    get_text("language"),
+                    options=["en", "hi", "te"],
+                    format_func=lambda x: "English"
+                    if x == "en"
+                    else ("हिंदी" if x == "hi" else "తెలుగు"),
+                    key="language",
+                    label_visibility="collapsed",
+                )
+                st.markdown("</div>", unsafe_allow_html=True)
+            st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown("<hr style='margin: 1.4rem auto 1.8rem auto; border: 0; height: 1px; background: rgba(148, 163, 184, 0.35); max-width: 820px;'>", unsafe_allow_html=True)
+        render_home_page()
+        st.markdown("<div class='footer-separator'></div>", unsafe_allow_html=True)
+        render_global_footer()
+    elif st.session_state["page"] == "chat":
+        render_ai_crop_assistant_page()
+    else:
+        render_legacy_about()
+        render_global_footer()
 
 
 if __name__ == "__main__":
