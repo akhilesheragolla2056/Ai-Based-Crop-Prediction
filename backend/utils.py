@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 """Shared backend helpers for loading models and normalising inputs."""
+
 # Ensure src directory is on sys.path for module imports (must be first)
 import sys
 import os
@@ -85,12 +86,12 @@ def get_water_requirement_for_crop(crop_name, df=None):
     }
 
 
-from src.features import (
+from features import (
     generate_soil_health_tips,
     generate_weather_warnings,
     recommend_fertilizers,
 )
-from src.models import (
+from models import (
     CropDiseaseClassifier,
     CropPredictor,
     YieldEstimator,
