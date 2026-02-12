@@ -30,7 +30,6 @@ class CropRecommendationResponse:
 
 def recommend_crops(features: Mapping[str, float]) -> CropRecommendationResponse:
     predictor = get_crop_predictor()
-
     result = predictor.recommend(features)
     recommendations = tuple(
         CropRecommendation(
@@ -44,11 +43,9 @@ def recommend_crops(features: Mapping[str, float]) -> CropRecommendationResponse
         )
         for entry in result.recommendations
     )
-
     default_crop = recommendations[0].name if recommendations else ""
     soil_tips = soil_health_insights(features)
     weather_notes = weather_insights(features, default_crop)
-
     return CropRecommendationResponse(
         recommendations=recommendations,
         soil_tips=soil_tips,
