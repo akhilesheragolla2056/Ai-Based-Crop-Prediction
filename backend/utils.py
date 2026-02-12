@@ -16,14 +16,9 @@ from src.features import (
 SRC_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
 if SRC_PATH not in sys.path:
     sys.path.insert(0, SRC_PATH)
+import importlib
 
-
-# Always add src to sys.path and import models directly
-SRC_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
-if SRC_PATH not in sys.path:
-    sys.path.insert(0, SRC_PATH)
-import models
-
+models = importlib.import_module("models")
 CropDiseaseClassifier = models.CropDiseaseClassifier
 CropPredictor = models.CropPredictor
 YieldEstimator = models.YieldEstimator
