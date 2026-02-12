@@ -18,7 +18,7 @@ if SRC_PATH not in sys.path:
     sys.path.insert(0, SRC_PATH)
 import importlib
 
-models = importlib.import_module("models")
+models = importlib.import_module("src.models")
 CropDiseaseClassifier = models.CropDiseaseClassifier
 CropPredictor = models.CropPredictor
 YieldEstimator = models.YieldEstimator
