@@ -34,7 +34,17 @@ except ImportError:
         _sys.path.insert(0, src_path)
     models_spec = importlib.util.find_spec("models")
     if models_spec is None:
-        raise ImportError("Cannot find 'models' module in src directory.")
+        import sys as _sys
+
+        print("\n[ERROR] Cannot find 'models' module in src directory.")
+        print("sys.path:", _sys.path)
+        print("cwd:", _os.getcwd())
+        raise ImportError(
+            "Cannot find 'models' module in src directory.\n"
+            "Make sure the 'src' directory exists and contains a 'models' package.\n"
+            "Current sys.path and working directory are printed above for debugging.\n"
+            "If deploying, ensure your working directory is the project root and 'src' is a sibling of 'backend'."
+        )
     models = importlib.import_module("models")
     CropDiseaseClassifier = models.CropDiseaseClassifier
     CropPredictor = models.CropPredictor
