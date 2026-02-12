@@ -2,13 +2,13 @@ from __future__ import annotations
 
 """Shared backend helpers for loading models and normalising inputs."""
 
-# Ensure src directory is on sys.path for module imports (must be first)
+# Ensure project root (parent of src) is on sys.path for module imports (must be first)
 import sys
 import os
 
-SRC_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if SRC_PATH not in sys.path:
-    sys.path.insert(0, SRC_PATH)
+    sys.path.insert(0, PROJECT_ROOT)
 
 from functools import lru_cache
 from pathlib import Path
