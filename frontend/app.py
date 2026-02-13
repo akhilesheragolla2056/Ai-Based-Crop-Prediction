@@ -320,6 +320,33 @@ WATER_SOURCE_FALLBACK = {
 }
 
 
+def _repair_mojibake_text(value):
+    if isinstance(value, dict):
+        return {k: _repair_mojibake_text(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [_repair_mojibake_text(item) for item in value]
+    if isinstance(value, tuple):
+        return tuple(_repair_mojibake_text(item) for item in value)
+    if isinstance(value, str):
+        try:
+            return value.encode("latin1").decode("utf-8")
+        except (UnicodeEncodeError, UnicodeDecodeError):
+            return value
+    return value
+
+
+TRANSLATIONS = _repair_mojibake_text(TRANSLATIONS)
+
+
+def language_label(code: str) -> str:
+    labels = {
+        "en": "English",
+        "hi": "\u0939\u093f\u0902\u0926\u0940",
+        "te": "\u0c24\u0c46\u0c32\u0c41\u0c17\u0c41",
+    }
+    return labels.get(code, code)
+
+
 def get_text(key: str) -> str:
     """Get translated text based on current language."""
     lang = st.session_state.get("language", "en")
@@ -759,7 +786,7 @@ def render_header():
         st.selectbox(
             get_text("language"),
             options=["en", "hi"],
-            format_func=lambda x: "English" if x == "en" else "हिंदी",
+            format_func=language_label,
             key="language",
             label_visibility="collapsed",
         )
@@ -2070,9 +2097,7 @@ def main() -> None:
                 st.selectbox(
                     get_text("language"),
                     options=["en", "hi", "te"],
-                    format_func=lambda x: "English"
-                    if x == "en"
-                    else ("हिंदी" if x == "hi" else "తెలుగు"),
+                    format_func=language_label,
                     key="language",
                     label_visibility="collapsed",
                 )
