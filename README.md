@@ -1,98 +1,150 @@
-# AI-Based Crop Recommendation Platform
+﻿# AI Based Crop Prediction
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://streamlit.io/cloud)
+AI-powered crop advisory platform built with Streamlit and ML models for:
+- Crop recommendation (top 3 crops)
+- Fertilizer guidance
+- Water and weather insights
+- Pest and disease suggestions
+- Yield projection
+- AI chat assistant with dataset fallback
 
-Production-ready machine learning system that recommends the top three crops and expected yield category based on soil nutrients and climate indicators. Designed for rapid hackathon demos with a clear path to market deployment.
+## Tech Stack
+- Python 3.11
+- Streamlit
+- Pandas, NumPy, scikit-learn
+- Requests, python-dotenv
+- OpenWeather API (optional live weather)
+- OpenAI/Gemini API (optional AI chat enhancement)
 
-## Key Features
-
-- Automated dataset ingestion from trusted public sources with checksum validation.
-- Modular training pipeline supporting experiment tracking and hyperparameter tuning.
-- Top-3 crop ranking with yield category heuristics and agronomic tips.
-- Streamlit web app for farmer-facing interactions.
-- Deployment ready structure with Docker, environment-based configuration, and CI hooks.
-
-## Repository Layout
-
-```
+## Project Structure
+```text
 .
-├── app/                  # Streamlit UI and deployment assets
-├── artifacts/            # Persisted models, metrics, and reports
-├── data/                 # Raw and processed datasets
-├── docs/                 # Design docs, deployment guides, and presentations
-├── notebooks/            # Exploratory data analysis and experimentation
-├── scripts/              # Command line utilities (ingest, train, evaluate)
-├── src/                  # Core Python package for data, features, models, pipelines
-└── README.md
+|-- app/                      # Streamlit entry wrapper
+|-- backend/                  # Domain services (weather, market, rainfall, etc.)
+|-- frontend/                 # Main Streamlit UI and components
+|-- modules/                  # AI chatbot logic
+|-- src/                      # ML/data pipeline code
+|-- scripts/                  # Dataset download and training scripts
+|-- data/                     # Raw and processed datasets
+|-- artifacts/                # Trained models and metrics
+|-- docs/                     # Additional documentation
+|-- requirements.txt
+|-- pyproject.toml
+|-- README.md
 ```
 
-## Quick Start
+## Prerequisites
+- Python `3.11.x` (project targets `>=3.11,<3.12`)
+- Git
+- Optional API keys for weather and AI features
 
-1. Create and activate a Python 3.11 environment (Python 3.12+ is not yet supported). See [docs/environment-setup.md](docs/environment-setup.md) for detailed steps on Windows.
-2. Install dependencies: `pip install -r requirements.txt`.
-3. Download the dataset: `python scripts/download_dataset.py` (use `--url` or `CROP_DATASET_URL` if mirrors are unavailable).
-4. Train the baseline model: `python scripts/train_model.py`.
-5. Launch the Streamlit app: `streamlit run app/main.py` (requires a trained model under `artifacts/models/`).
+## Setup (Local)
+1. Clone repository.
+```bash
+git clone <your-repo-url>
+cd "Ai Based Crop Prediction"
+```
 
-### Weather API Setup
-
-The Streamlit UI supports auto-filling temperature, humidity, and rainfall using live weather providers while still allowing manual overrides. Configure one of the following environment variables before launching the app:
-
-- `OPENWEATHER_API_KEY` for [OpenWeather Current Weather](https://openweathermap.org/current)
-- `WEATHERBIT_API_KEY` for [Weatherbit Current Conditions](https://www.weatherbit.io/api/weather-current)
-
-Set the variable in your shell (or `.env`) and restart Streamlit:
-
+2. Create virtual environment.
 ```powershell
-$env:OPENWEATHER_API_KEY = "your-key-here"
+py -3.11 -m venv .venv
+```
+
+3. Activate environment.
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+4. Install dependencies.
+```bash
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+5. Configure environment.
+```bash
+copy .env.example .env
+```
+Then update `.env` values as needed.
+
+## Environment Variables
+Use `.env` in project root.
+
+- `OPENWEATHER_API_KEY`: Optional, enables live weather autofetch.
+- `OPENAI_API_KEY`: Optional, enables OpenAI chat responses.
+- `OPENAI_MODEL`: Optional, default `gpt-4o-mini`.
+- `OPENAI_EMBEDDING_MODEL`: Optional, default `text-embedding-3-small`.
+- `GEMINI_API_KEY`: Optional, enables Gemini chat responses.
+- `GEMINI_MODEL`: Optional, default `gemini-1.5-flash`.
+- `RAG_REBUILD`: Optional, set `1` to rebuild embeddings cache.
+- `CROP_DATASET_URL`: Optional custom dataset source URL.
+- `CROP_DATASET_SHA256`: Optional checksum for dataset validation.
+
+If AI keys are missing or limits are reached, chatbot falls back to dataset-based advisory.
+
+## Dataset Setup
+Download dataset into `data/raw/`:
+```bash
+python scripts/download_dataset.py
+```
+
+Optional custom source:
+```bash
+python scripts/download_dataset.py --url <csv-url> --checksum <sha256>
+```
+
+Optional Kaggle flow:
+```bash
+python scripts/download_dataset.py --use-kaggle --kaggle-dataset atharvaingle/crop-recommendation-dataset --kaggle-file Crop_recommendation.csv
+```
+
+## Train Model
+```bash
+python scripts/train_model.py
+```
+
+Expected artifact:
+- `artifacts/models/crop_recommender.joblib`
+
+## Run the App
+Use either entry:
+```bash
 streamlit run app/main.py
 ```
+or
+```bash
+streamlit run frontend/app.py
+```
 
-If neither key is set the live fetch button will show an error and the manual inputs remain available.
+Default local URL:
+- `http://localhost:8501`
 
 ## Deployment
+### Streamlit Community Cloud
+1. Push repo to GitHub.
+2. Create new app in Streamlit Cloud.
+3. Set main file path to `app/main.py`.
+4. Add required secrets/environment variables.
+5. Deploy.
 
-Streamlit Community Cloud:
-1. Push this repository to GitHub (private or public).
-2. Open Streamlit Cloud and click `New app`.
-3. Select the repo + branch, then set **Main file path** to `app/main.py`.
-4. Click **Advanced settings** and add secrets:
-   - `OPENWEATHER_API_KEY = "your-key"` or `WEATHERBIT_API_KEY = "your-key"`
-5. Deploy and wait for the build to finish.
-6. If the app fails to start, confirm `artifacts/models/crop_recommender.joblib` is in the repo.
+### Docker/Render/Railway
+1. Build using `Dockerfile`.
+2. Start command uses `start.sh` (or Procfile command).
+3. Expose `PORT` (defaults to `8501`).
 
-Docker (Render, Railway, Fly, or any container host):
-1. Build the image with `Dockerfile` and run `./start.sh` as the container command.
-2. Expose port `8501` (or set `PORT` on platforms that provide it automatically).
-3. Set environment variables for API keys on the host.
+## Common Issues
+- `OPENWEATHER_API_KEY is not configured`: add key or use manual input.
+- No crop recommendations: verify dataset exists and model artifact is trained.
+- Chat AI unavailable: app will still return dataset-based responses.
+- Python version issues: use Python 3.11.
 
-Heroku-style platforms:
-1. Use `Procfile` and `runtime.txt` as provided.
-2. Set `OPENWEATHER_API_KEY` or `WEATHERBIT_API_KEY` as config vars.
-
-## Dataset Ingestion
-
-The dataset downloader checks a small set of known public mirrors. If they are unavailable, provide a fallback URL, checksum, or use the Kaggle workflow:
-
-- `python scripts/download_dataset.py --url https://example.com/Crop_recommendation.csv`
-- Set `CROP_DATASET_URL` and, optionally, `CROP_DATASET_SHA256` in a `.env` file.
-- Pass `--skip-checksum` when working with exploratory or unpublished data sources.
-- Use the Kaggle API: `python scripts/download_dataset.py --use-kaggle --kaggle-dataset atharvaingle/crop-recommendation-dataset --kaggle-file Crop_recommendation.csv`
-
-## Model Training
-
-- The training entry point lives at `scripts/train_model.py`. Use `--metrics-only` during CI to skip artifact persistence.
-- Models and metrics are stored under `artifacts/models` and `artifacts/metrics` respectively.
-- Hyperparameters (estimators, depth, split criteria) are configurable through CLI flags or by extending `TrainingConfig`.
-- The resulting pipeline exports class probabilities, enabling top-3 crop recommendations, yield categories, and nutrient advisory overlays in the Streamlit app.
-
-## Roadmap
-
-- Integrate experiment tracking (MLflow or Weights & Biases).
-- Enhance weather-driven insights with historical anomaly detection.
-- Build RESTful inference service and container orchestration manifests.
-- Implement continuous deployment pipeline targeting Azure Web Apps.
+## Git Workflow (Suggested)
+```bash
+git checkout -b docs/update-readme-license
+git add README.md .env.example LICENSE
+git commit -m "docs: improve README and add MIT license"
+git push origin docs/update-readme-license
+```
 
 ## License
-
-To be determined.
+This project is licensed under the MIT License. See `LICENSE`.
