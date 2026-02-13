@@ -1998,7 +1998,7 @@ def main() -> None:
         page_title="FasalSaarthi – AI Crop Recommendation",
         page_icon="🌾",
         layout="wide",
-        initial_sidebar_state="collapsed",
+        initial_sidebar_state="expanded",
     )
 
     # Initialize theme in session state
@@ -2047,19 +2047,46 @@ def main() -> None:
         """
         <style>
             [data-testid="stSidebarNav"] {display: none;}
+            .fs-sidebar-title {
+                font-size: 1rem;
+                font-weight: 700;
+                margin: 0.2rem 0 0.35rem 0;
+                color: #e2e8f0;
+                letter-spacing: 0.3px;
+            }
+            .fs-sidebar-help {
+                font-size: 0.82rem;
+                color: #94a3b8;
+                margin-bottom: 0.8rem;
+                line-height: 1.35;
+            }
         </style>
         """,
         unsafe_allow_html=True,
     )
 
+    st.sidebar.markdown("<div class='fs-sidebar-title'>Navigation</div>", unsafe_allow_html=True)
+    st.sidebar.markdown(
+        "<div class='fs-sidebar-help'>Choose a section to use recommendations, talk to the AI assistant, or read platform details.</div>",
+        unsafe_allow_html=True,
+    )
+
     nav_choice = st.sidebar.radio(
-        "Navigation",
-        ["App", "AI Chat", "About"],
+        "Go To",
+        [
+            "Crop Recommendation",
+            "AI Chat Assistant",
+            "About FasalSaarthi",
+        ],
         key="main_navigation_choice",
-        label_visibility="collapsed",
+        help="Navigation between the main recommendation app, assistant chat, and about page.",
     )
     st.session_state["main_page"] = (
-        "app" if nav_choice == "App" else "chat" if nav_choice == "AI Chat" else "about"
+        "app"
+        if nav_choice == "Crop Recommendation"
+        else "chat"
+        if nav_choice == "AI Chat Assistant"
+        else "about"
     )
 
     def render_global_footer() -> None:
