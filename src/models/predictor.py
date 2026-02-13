@@ -82,8 +82,22 @@ class CropPredictor:
             ]
             if missing:
                 raise ValueError(f"Missing feature columns: {missing}")
-            return features[FEATURE_COLUMNS]
-        return pd.DataFrame([features], columns=FEATURE_COLUMNS)
+            frame = features[FEATURE_COLUMNS].copy()
+        else:
+            frame = pd.DataFrame([features], columns=FEATURE_COLUMNS)
+
+        # Keep preprocessing stable across environments: region must always be string-like.
+        if "region" in frame.columns:
+            frame["region"] = (
+                frame["region"]
+                .fillna("unknown")
+                .astype(str)
+                .str.strip()
+                .replace("", "unknown")
+                .str.lower()
+            )
+
+        return frame
 
 
 def load_pipeline(model_path: Path | None = None) -> Pipeline:

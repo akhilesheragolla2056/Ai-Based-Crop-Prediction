@@ -75,7 +75,14 @@ def load_dataset(path: Path | None = None) -> pd.DataFrame:
     # Aggressively filter: drop rows with NaN in any numeric column
     combined = combined.dropna(subset=numeric_cols)
     if "region" in combined.columns:
-        combined["region"] = combined["region"].fillna("unknown")
+        combined["region"] = (
+            combined["region"]
+            .fillna("unknown")
+            .astype(str)
+            .str.strip()
+            .replace("", "unknown")
+            .str.lower()
+        )
     combined[TARGET_COLUMN] = combined[TARGET_COLUMN].fillna(
         combined[TARGET_COLUMN].mode()[0]
         if not combined[TARGET_COLUMN].mode().empty
