@@ -1,60 +1,56 @@
+"""Shared backend helpers for loading models and normalising inputs."""
+
 from __future__ import annotations
 
-import sys
-import os
 from functools import lru_cache
 from pathlib import Path
 from typing import Mapping
+
 import joblib
 import pandas as pd
+
 from src.features import (
     generate_soil_health_tips,
     generate_weather_warnings,
+    recommend_fertilizers,
+)
+from src.models import (
+    CropDiseaseClassifier,
+    CropPredictor,
+    YieldEstimator,
+    load_pipeline,
 )
 
-# Add src directory to sys.path for direct module import
-SRC_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
-if SRC_PATH not in sys.path:
-    sys.path.insert(0, SRC_PATH)
-import importlib
-
-models = importlib.import_module("src.models")
-CropDiseaseClassifier = models.CropDiseaseClassifier
-CropPredictor = models.CropPredictor
-YieldEstimator = models.YieldEstimator
-load_pipeline = models.load_pipeline
-"""Shared backend helpers for loading models and normalising inputs."""
-
-# Ensure project root (parent of src) is on sys.path for module imports (must be first)
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-if PROJECT_ROOT not in sys.path:
-    sys.path.insert(0, PROJECT_ROOT)
+_PROJECT_ROOT = Path(__file__).resolve().parents[1]
+_MODEL_FALLBACK = _PROJECT_ROOT / "models" / "trained_model.pkl"
 
 
-def load_water_requirements(csv_path=None):
+def load_water_requirements(csv_path: str | Path | None = None) -> pd.DataFrame:
     if csv_path is None:
-        csv_path = os.path.join("data", "raw", "Crop recommendation dataset.csv")
-    df = pd.read_csv(csv_path)
-    df.columns = [str(col).strip().upper() for col in df.columns]
-    return df
+        csv_path = Path("data") / "raw" / "Crop recommendation dataset.csv"
+    dataframe = pd.read_csv(csv_path)
+    dataframe.columns = [str(column).strip().upper() for column in dataframe.columns]
+    return dataframe
 
 
-# Get average seasonal water requirement for a crop
-def get_water_requirement_for_crop(crop_name, df=None):
-    if df is None:
-        df = load_water_requirements()
+def get_water_requirement_for_crop(
+    crop_name: str, dataframe: pd.DataFrame | None = None
+) -> Mapping[str, float | str] | None:
+    if dataframe is None:
+        dataframe = load_water_requirements()
 
-    crop_column = "CROPS" if "CROPS" in df.columns else None
-    water_column = "WATERREQUIRED" if "WATERREQUIRED" in df.columns else None
+    crop_column = "CROPS" if "CROPS" in dataframe.columns else None
+    water_column = "WATERREQUIRED" if "WATERREQUIRED" in dataframe.columns else None
     water_max_column = (
-        "WATERREQUIRED_MAX" if "WATERREQUIRED_MAX" in df.columns else None
+        "WATERREQUIRED_MAX" if "WATERREQUIRED_MAX" in dataframe.columns else None
     )
-    soil_column = "SOIL" if "SOIL" in df.columns else None
-    water_source_column = "WATER_SOURCE" if "WATER_SOURCE" in df.columns else None
+    soil_column = "SOIL" if "SOIL" in dataframe.columns else None
+    water_source_column = "WATER_SOURCE" if "WATER_SOURCE" in dataframe.columns else None
+
     if not crop_column or not water_column:
         return None
 
-    rows = df[df[crop_column].astype(str).str.lower() == crop_name.lower()]
+    rows = dataframe[dataframe[crop_column].astype(str).str.lower() == crop_name.lower()]
     if rows.empty:
         return None
 
@@ -65,40 +61,31 @@ def get_water_requirement_for_crop(crop_name, df=None):
     soil_type = None
     if soil_column:
         soil_values = rows[soil_column].dropna().astype(str).str.strip()
-        soil_values = [s for s in soil_values.tolist() if s]
-        if soil_values:
-            # Keep unique soil labels in observed order for readability.
-            soil_type = ", ".join(dict.fromkeys(soil_values))
+        filtered = [item for item in soil_values.tolist() if item]
+        if filtered:
+            soil_type = ", ".join(dict.fromkeys(filtered))
 
     water_source = None
     if water_source_column:
         water_source_values = rows[water_source_column].dropna().astype(str).str.strip()
-        water_source_values = [w for w in water_source_values.tolist() if w]
-        if water_source_values:
-            # Keep unique labels in observed order for readable display.
-            water_source = ", ".join(dict.fromkeys(water_source_values))
+        filtered = [item for item in water_source_values.tolist() if item]
+        if filtered:
+            water_source = ", ".join(dict.fromkeys(filtered))
 
-    avg_water = float(water_values.mean())
+    result: dict[str, float | str] = {
+        "seasonal_mm": float(water_values.mean()),
+    }
+    if soil_type:
+        result["soil_type"] = soil_type
+    if water_source:
+        result["water_source"] = water_source
+
     if water_max_column and water_max_column in rows.columns:
         max_values = pd.to_numeric(rows[water_max_column], errors="coerce").dropna()
         if not max_values.empty:
-            avg_max = float(max_values.mean())
-            return {
-                "seasonal_mm": avg_water,
-                "seasonal_mm_max": avg_max,
-                "soil_type": soil_type,
-                "water_source": water_source,
-            }
+            result["seasonal_mm_max"] = float(max_values.mean())
 
-    return {
-        "seasonal_mm": avg_water,
-        "soil_type": soil_type,
-        "water_source": water_source,
-    }
-
-
-_PROJECT_ROOT = Path(__file__).resolve().parents[1]
-_MODEL_FALLBACK = _PROJECT_ROOT / "models" / "trained_model.pkl"
+    return result
 
 
 class ModelNotReady(RuntimeError):
@@ -108,6 +95,7 @@ class ModelNotReady(RuntimeError):
 @lru_cache(maxsize=1)
 def get_crop_predictor(top_k: int = 3) -> CropPredictor:
     """Return a cached crop predictor instance."""
+
     try:
         pipeline = load_pipeline()
     except FileNotFoundError as exc:
@@ -117,7 +105,6 @@ def get_crop_predictor(top_k: int = 3) -> CropPredictor:
             raise ModelNotReady(
                 "Crop recommendation model is missing. Run scripts/train_model.py first."
             ) from exc
-    return CropPredictor(pipeline, top_k=top_k)
     return CropPredictor(pipeline, top_k=top_k)
 
 
@@ -141,3 +128,7 @@ def soil_health_insights(features: Mapping[str, float]) -> tuple[str, ...]:
 
 def weather_insights(features: Mapping[str, float], crop: str) -> tuple[str, ...]:
     return generate_weather_warnings(features, crop)
+
+
+def fertilizer_plan(crop: str, soil_metrics: Mapping[str, float]):
+    return recommend_fertilizers(crop, soil_metrics)

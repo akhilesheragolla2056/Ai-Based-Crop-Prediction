@@ -28,6 +28,8 @@ artifacts/
 
 # Models
 models/
+!src/models/
+!src/models/**
 
 # Logs
 logs/
