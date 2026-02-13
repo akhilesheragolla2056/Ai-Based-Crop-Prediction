@@ -28,8 +28,10 @@ data/raw/*
 data/processed/
 artifacts/*
 !artifacts/models/
-!artifacts/models/.gitkeep
 !artifacts/metrics/
+artifacts/models/*
+artifacts/metrics/*
+!artifacts/models/.gitkeep
 !artifacts/metrics/.gitkeep
 !artifacts/models/crop_recommender.joblib
 

@@ -3,13 +3,15 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Mapping
 
 from backend.utils import get_yield_estimator, weather_insights
 from backend.yield_data_utils import predict_yield as predict_yield_from_data
 import pandas as pd
 
-CROP_YIELD_CSV = "data/raw/crop_yield.csv"
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+CROP_YIELD_CSV = PROJECT_ROOT / "data" / "raw" / "crop_yield.csv"
 STATIC_YIELD = {
     "rice": 2.7,
     "wheat": 3.2,
@@ -70,6 +72,29 @@ def _level_from_confidence(confidence: float) -> str:
 def predict_yield(crop: str, features: Mapping[str, float]) -> YieldProjection:
     # Only use crop and state for lookup
     state = features.get("state")
+    if not CROP_YIELD_CSV.exists():
+        fallback_yield = STATIC_YIELD.get(crop.lower())
+        if fallback_yield is not None:
+            fallback_confidence = 0.62
+            return YieldProjection(
+                crop=crop,
+                level=_level_from_confidence(fallback_confidence),
+                estimated_output=fallback_yield,
+                confidence=fallback_confidence,
+                reasoning=(
+                    "Yield dataset file is missing. Using static average yield fallback."
+                ),
+                weather_notes=None,
+            )
+        return YieldProjection(
+            crop=crop,
+            level="Low",
+            estimated_output=None,
+            confidence=0.0,
+            reasoning="Yield dataset file is missing and no static crop fallback is available.",
+            weather_notes=None,
+        )
+
     df = pd.read_csv(CROP_YIELD_CSV)
     df_crop_all_states = df[df["Crop"].str.lower() == crop.lower()]
     df_crop = df_crop_all_states

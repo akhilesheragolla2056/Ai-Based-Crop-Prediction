@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import logging
 from pathlib import Path
 from typing import Iterable, Sequence
 
@@ -12,6 +13,7 @@ import pandas as pd
 from sklearn.pipeline import Pipeline
 
 from src.data.dataset import FEATURE_COLUMNS, TARGET_COLUMN
+from src.models.training import save_model, train_model
 from src.utils.config import PATHS
 
 __all__ = [
@@ -90,7 +92,18 @@ def load_pipeline(model_path: Path | None = None) -> Pipeline:
         raise FileNotFoundError(
             "Trained model not found. Run scripts/train_model.py first."
         )
-    pipeline = joblib.load(path)
+    try:
+        pipeline = joblib.load(path)
+    except Exception as exc:
+        # Handle sklearn/joblib incompatibility (common on cloud when package versions change).
+        logging.warning(
+            "Model load failed for %s (%s). Re-training a compatible model.",
+            path,
+            exc.__class__.__name__,
+        )
+        artifacts = train_model()
+        save_model(artifacts, model_dir=path.parent)
+        pipeline = artifacts.pipeline
     if not isinstance(pipeline, Pipeline):
         raise TypeError("Loaded object is not a scikit-learn Pipeline")
     return pipeline
