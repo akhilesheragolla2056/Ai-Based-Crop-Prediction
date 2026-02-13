@@ -886,7 +886,7 @@ def render_crop_cards(recommendations):
                     "main_soil_region_select",
                     st.session_state.get("main_soil_region_select_persist"),
                 )
-                st.session_state["page"] = "crop_detail"
+                st.session_state["app_subpage"] = "crop_detail"
                 st.session_state["selected_crop"] = rec.name
                 st.rerun()
 
@@ -908,14 +908,14 @@ def render_crop_details_page(selected_crop: str) -> None:
         st.info(f"Detailed guide not available for {selected_crop.title()}.")
         if st.button("⬅ Back to Recommendations", key="back_to_home_missing_details"):
             _restore_home_form_state()
-            st.session_state["page"] = "home"
+            st.session_state["app_subpage"] = "home"
             st.session_state["selected_crop"] = None
             st.rerun()
         return
 
     if st.button("⬅ Back to Recommendations", key="back_to_recommendations"):
         _restore_home_form_state()
-        st.session_state["page"] = "home"
+        st.session_state["app_subpage"] = "home"
         st.session_state["selected_crop"] = None
         st.rerun()
 
@@ -1754,15 +1754,15 @@ def render_ai_crop_assistant_page() -> None:
 
 def render_home_page():
     """Render the main Home page content."""
-    if "page" not in st.session_state:
-        st.session_state["page"] = "home"
+    if "app_subpage" not in st.session_state:
+        st.session_state["app_subpage"] = "home"
     if "selected_crop" not in st.session_state:
         st.session_state["selected_crop"] = None
 
-    if st.session_state["page"] == "crop_detail":
+    if st.session_state["app_subpage"] == "crop_detail":
         selected_crop = st.session_state.get("selected_crop")
         if not selected_crop:
-            st.session_state["page"] = "home"
+            st.session_state["app_subpage"] = "home"
             st.rerun()
         render_crop_details_page(selected_crop)
         return
@@ -2031,7 +2031,7 @@ def main() -> None:
         key="main_navigation_choice",
         label_visibility="collapsed",
     )
-    st.session_state["page"] = (
+    st.session_state["main_page"] = (
         "app" if nav_choice == "App" else "chat" if nav_choice == "AI Chat" else "about"
     )
 
@@ -2043,7 +2043,7 @@ def main() -> None:
             unsafe_allow_html=True,
         )
 
-    if st.session_state["page"] == "app":
+    if st.session_state["main_page"] == "app":
         with st.container():
             st.markdown("<div class='fs-topbar'>", unsafe_allow_html=True)
             col_left, col_title, col_lang = st.columns([2, 6, 2])
@@ -2082,7 +2082,7 @@ def main() -> None:
         render_home_page()
         st.markdown("<div class='footer-separator'></div>", unsafe_allow_html=True)
         render_global_footer()
-    elif st.session_state["page"] == "chat":
+    elif st.session_state["main_page"] == "chat":
         render_ai_crop_assistant_page()
     else:
         render_legacy_about()

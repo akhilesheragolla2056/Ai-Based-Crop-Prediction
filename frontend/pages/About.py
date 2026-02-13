@@ -282,13 +282,6 @@ def apply_theme():
 
 
 def main():
-    st.set_page_config(
-        page_title="About – FasalSaarthi",
-        page_icon="🌾",
-        layout="wide",
-        initial_sidebar_state="collapsed",
-    )
-
     # Initialize theme in session state
     if "theme" not in st.session_state:
         st.session_state["theme"] = "light"
