@@ -87,6 +87,7 @@ RAINFALL_LOOKUP = {
     "latur": 700,
     "sangli": 800,
     "satara": 900,
+    "adilabad": 1100,
     # Add more districts/cities as needed
 }
 

@@ -1163,12 +1163,5 @@ def generate_crop_response(user_query: str, context_data: dict[str, Any]) -> str
     if ai_reply:
         return ai_reply
 
-    # If OpenAI is unavailable, fall back to dataset-based advisory.
-    fallback = _build_rule_based_response(query, context_data)
-    if _LAST_AI_ERROR:
-        return f"AI service unavailable ({_LAST_AI_ERROR}). Showing dataset-based advisory.\n{fallback}"
-    return (
-        "AI service unavailable (no response from providers). "
-        "Showing dataset-based advisory.\n"
-        f"{fallback}"
-    )
+    # Silent fallback: when AI providers fail/limit, respond from local dataset only.
+    return _build_rule_based_response(query, context_data)

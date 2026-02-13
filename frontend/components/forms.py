@@ -47,6 +47,11 @@ MAJOR_CROPS_LOOKUP = {
     # Add more as needed
 }
 
+AUTOFETCH_TOP_CROP_OVERRIDES = {
+    # District-level override for AutoFetch top-3 crop shortlist.
+    "adilabad": ["cotton", "pigeonpeas", "soybean"],  # cotton, red gram, soya
+}
+
 DISEASE_SEVERITIES = ["Low", "Medium", "High"]
 """Form components for capture of agronomic inputs."""
 
@@ -438,8 +443,20 @@ def environmental_inputs(key_prefix: str = "env") -> dict[str, float]:
         top_crops: list[str] = []
         top_scores: dict[str, float] = {}
         source = ""
+        override_region_key = ""
+        if " adilabad " in f" {location_match} ":
+            override_region_key = "adilabad"
+        elif city_display == "adilabad":
+            override_region_key = "adilabad"
+        elif region_display == "adilabad":
+            override_region_key = "adilabad"
 
-        if not region_df.empty:
+        if override_region_key:
+            region_key = override_region_key
+            top_crops = AUTOFETCH_TOP_CROP_OVERRIDES[override_region_key][:3]
+            source = "override"
+
+        if not top_crops and not region_df.empty:
             crop_counts = region_df["label"].value_counts()
             if crop_counts.nunique() == 1:
                 ordered = list(dict.fromkeys(region_df["label"].tolist()))
