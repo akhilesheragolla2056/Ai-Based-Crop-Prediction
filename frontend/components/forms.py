@@ -74,6 +74,56 @@ CROPS = [
     "Grapes",
 ]
 
+FORM_I18N = {
+    "en": {
+        "soil_input_method": "Soil Data Input Method:",
+        "manual_input": "Manual Input",
+        "auto_fetch_location": "Auto Fetch by Location",
+        "regional_soil_profile": "Regional Soil Profile",
+        "select_soil_type": "Select Soil Type (Dataset)",
+        "weather_expander": "Auto-fill weather & region data",
+        "location_label": "Location (City, State)",
+        "location_help": "Example: Pune, Maharashtra",
+        "fetch_live_weather": "Fetch live weather",
+        "macronutrients": "Macronutrients (NPK)",
+        "weather_climate": "Weather & Climate",
+        "soil_ph": "Soil pH",
+    },
+    "hi": {
+        "soil_input_method": "मिट्टी डेटा इनपुट तरीका:",
+        "manual_input": "मैनुअल इनपुट",
+        "auto_fetch_location": "स्थान से ऑटो फेच",
+        "regional_soil_profile": "क्षेत्रीय मिट्टी प्रोफाइल",
+        "select_soil_type": "मिट्टी प्रकार चुनें (डेटासेट)",
+        "weather_expander": "मौसम और क्षेत्र डेटा ऑटो-फिल",
+        "location_label": "स्थान (शहर, राज्य)",
+        "location_help": "उदाहरण: पुणे, महाराष्ट्र",
+        "fetch_live_weather": "लाइव मौसम प्राप्त करें",
+        "macronutrients": "प्रमुख पोषक तत्व (NPK)",
+        "weather_climate": "मौसम और जलवायु",
+        "soil_ph": "मिट्टी pH",
+    },
+    "te": {
+        "soil_input_method": "నేల డేటా ఇన్‌పుట్ విధానం:",
+        "manual_input": "మాన్యువల్ ఇన్‌పుట్",
+        "auto_fetch_location": "ప్రాంతం ద్వారా ఆటో ఫెచ్",
+        "regional_soil_profile": "ప్రాంతీయ నేల ప్రొఫైల్",
+        "select_soil_type": "నేల రకం ఎంచుకోండి (డేటాసెట్)",
+        "weather_expander": "వాతావరణం మరియు ప్రాంత డేటా ఆటో-ఫిల్",
+        "location_label": "ప్రాంతం (నగరం, రాష్ట్రం)",
+        "location_help": "ఉదాహరణ: పుణే, మహారాష్ట్ర",
+        "fetch_live_weather": "లైవ్ వాతావరణం పొందండి",
+        "macronutrients": "మ్యాక్రో పోషకాలు (NPK)",
+        "weather_climate": "వాతావరణం మరియు కాలావస్థ",
+        "soil_ph": "నేల pH",
+    },
+}
+
+
+def _t(key: str) -> str:
+    lang = st.session_state.get("language", "en")
+    return FORM_I18N.get(lang, FORM_I18N["en"]).get(key, FORM_I18N["en"].get(key, key))
+
 
 def environmental_inputs(key_prefix: str = "env") -> dict[str, float]:
     weather_meta_key = f"{key_prefix}_weather_meta"
@@ -126,20 +176,39 @@ def environmental_inputs(key_prefix: str = "env") -> dict[str, float]:
         unsafe_allow_html=True,
     )
     # Removed custom Environmental & Soil Inputs header block as requested
+    input_method_codes = ["manual", "auto", "regional"]
+    legacy_map = {
+        "Manual Input": "manual",
+        "Auto Fetch by Location": "auto",
+        "Regional Soil Profile": "regional",
+    }
     if input_method_persist_key not in st.session_state:
-        st.session_state[input_method_persist_key] = "Manual Input"
+        st.session_state[input_method_persist_key] = "manual"
+    elif st.session_state[input_method_persist_key] in legacy_map:
+        st.session_state[input_method_persist_key] = legacy_map[
+            st.session_state[input_method_persist_key]
+        ]
     if input_method_key not in st.session_state:
         st.session_state[input_method_key] = st.session_state[input_method_persist_key]
+    elif st.session_state[input_method_key] in legacy_map:
+        st.session_state[input_method_key] = legacy_map[st.session_state[input_method_key]]
 
     input_method = st.radio(
-        "Soil Data Input Method:",
-        ["Manual Input", "Auto Fetch by Location", "Regional Soil Profile"],
+        _t("soil_input_method"),
+        input_method_codes,
+        format_func=lambda code: (
+            _t("manual_input")
+            if code == "manual"
+            else _t("auto_fetch_location")
+            if code == "auto"
+            else _t("regional_soil_profile")
+        ),
         key=input_method_key,
     )
     st.session_state[input_method_persist_key] = input_method
 
     regional_profile_key = None
-    if input_method == "Regional Soil Profile":
+    if input_method == "regional":
         region_labels = [label for label, _ in SOIL_REGION_OPTIONS]
         if soil_region_persist_key not in st.session_state:
             st.session_state[soil_region_persist_key] = region_labels[0]
@@ -150,7 +219,7 @@ def environmental_inputs(key_prefix: str = "env") -> dict[str, float]:
         if soil_region_select_key not in st.session_state:
             st.session_state[soil_region_select_key] = persisted_region
         selected_label = st.selectbox(
-            "Select Soil Type (Dataset)",
+            _t("select_soil_type"),
             region_labels,
             key=soil_region_select_key,
         )
@@ -160,6 +229,12 @@ def environmental_inputs(key_prefix: str = "env") -> dict[str, float]:
         st.caption(
             "Regional soil profile values are computed from Crop recommendation dataset rows "
             "for the selected soil type. For best accuracy, manual soil testing is recommended."
+            if st.session_state.get("language", "en") == "en"
+            else (
+                "चुने गए मिट्टी प्रकार के लिए मान डेटासेट से निकाले गए हैं। बेहतर सटीकता के लिए मिट्टी परीक्षण करें।"
+                if st.session_state.get("language") == "hi"
+                else "ఎంచుకున్న నేల రకానికి విలువలు డేటాసెట్ నుంచి తీసుకోబడ్డాయి. మెరుగైన ఖచ్చితత్వం కోసం నేల పరీక్ష చేయండి。"
+            )
         )
 
     for state_key, default in (
@@ -182,16 +257,16 @@ def environmental_inputs(key_prefix: str = "env") -> dict[str, float]:
     if weather_meta_key not in st.session_state:
         st.session_state[weather_meta_key] = {}
 
-    if input_method == "Auto Fetch by Location":
-        with st.expander("🌤️ Auto-fill weather & region data", expanded=False):
+    if input_method == "auto":
+        with st.expander(_t("weather_expander"), expanded=False):
             location = st.text_input(
-                "Location (City, State)",
+                _t("location_label"),
                 value=st.session_state[weather_meta_key].get("location", ""),
                 key=f"{key_prefix}_weather_location",
-                help="Example: Pune, Maharashtra",
+                help=_t("location_help"),
             )
 
-            if st.button("Fetch live weather", key=f"{key_prefix}_weather_fetch"):
+            if st.button(_t("fetch_live_weather"), key=f"{key_prefix}_weather_fetch"):
                 try:
                     snapshot: WeatherSnapshot = get_weather_snapshot(location)
                 except WeatherProviderError as exc:
@@ -442,7 +517,7 @@ def environmental_inputs(key_prefix: str = "env") -> dict[str, float]:
     except Exception as e:
         st.info(f"Regional AutoFetch unavailable: {e}")
 
-    if input_method == "Regional Soil Profile" and regional_profile_key:
+    if input_method == "regional" and regional_profile_key:
         profile = get_soil_profile(regional_profile_key)
         if profile:
             last_region_key = f"{key_prefix}_regional_profile_region"
@@ -517,7 +592,7 @@ def environmental_inputs(key_prefix: str = "env") -> dict[str, float]:
             st.warning("Regional soil profile not found. Please select another region.")
 
     st.markdown(
-        "<h5 style='margin-top:1.5em; color:#388e3c;'>Macronutrients (NPK)</h5>",
+        f"<h5 style='margin-top:1.5em; color:#388e3c;'>{_t('macronutrients')}</h5>",
         unsafe_allow_html=True,
     )
     col1, col2, col3 = st.columns([1.1, 1, 1.1])
@@ -550,7 +625,7 @@ def environmental_inputs(key_prefix: str = "env") -> dict[str, float]:
         )
 
     st.markdown(
-        "<h5 style='margin-top:1.5em; color:#388e3c;'>Weather & Climate</h5>",
+        f"<h5 style='margin-top:1.5em; color:#388e3c;'>{_t('weather_climate')}</h5>",
         unsafe_allow_html=True,
     )
     col4, col5, col6 = st.columns([1.1, 1, 1.1])
@@ -583,7 +658,7 @@ def environmental_inputs(key_prefix: str = "env") -> dict[str, float]:
         )
 
     st.markdown(
-        "<h5 style='margin-top:1.5em; color:#388e3c;'>Soil pH</h5>",
+        f"<h5 style='margin-top:1.5em; color:#388e3c;'>{_t('soil_ph')}</h5>",
         unsafe_allow_html=True,
     )
     ph_value = st.slider(

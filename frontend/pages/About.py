@@ -312,6 +312,8 @@ def main():
     # Initialize theme in session state
     if "theme" not in st.session_state:
         st.session_state["theme"] = "light"
+    if "language" not in st.session_state:
+        st.session_state["language"] = "en"
 
     inject_theme()
     apply_theme()

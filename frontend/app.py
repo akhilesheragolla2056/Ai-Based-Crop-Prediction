@@ -785,7 +785,7 @@ def render_header():
     with col_lang:
         st.selectbox(
             get_text("language"),
-            options=["en", "hi"],
+            options=["en", "hi", "te"],
             format_func=language_label,
             key="language",
             label_visibility="collapsed",
@@ -2004,6 +2004,8 @@ def main() -> None:
     # Initialize theme in session state
     if "theme" not in st.session_state:
         st.session_state["theme"] = "light"
+    if "language" not in st.session_state:
+        st.session_state["language"] = "en"
 
     inject_theme()
     apply_theme()
@@ -2060,6 +2062,32 @@ def main() -> None:
                 margin-bottom: 0.8rem;
                 line-height: 1.35;
             }
+            [class*="st-key-nav_btn_"] .stButton > button {
+                width: 100%;
+                text-align: left;
+                border-radius: 12px;
+                border: 1px solid rgba(148, 163, 184, 0.35);
+                background: rgba(15, 23, 42, 0.45);
+                color: #e2e8f0;
+                font-weight: 600;
+                padding: 0.55rem 0.75rem;
+                margin-bottom: 0.15rem;
+            }
+            [class*="st-key-nav_btn_"] .stButton > button:hover {
+                border-color: rgba(34, 197, 94, 0.75);
+                color: #dcfce7;
+            }
+            [class*="st-key-nav_btn_active_"] .stButton > button {
+                background: linear-gradient(135deg, rgba(21, 128, 61, 0.85), rgba(16, 185, 129, 0.72));
+                border-color: rgba(110, 231, 183, 0.95);
+                color: #ecfdf5;
+            }
+            .fs-sidebar-desc {
+                font-size: 0.78rem;
+                color: #94a3b8;
+                margin: -0.05rem 0 0.6rem 0.25rem;
+                line-height: 1.25;
+            }
         </style>
         """,
         unsafe_allow_html=True,
@@ -2071,23 +2099,24 @@ def main() -> None:
         unsafe_allow_html=True,
     )
 
-    nav_choice = st.sidebar.radio(
-        "Go To",
-        [
-            "Crop Recommendation",
-            "AI Chat Assistant",
-            "About FasalSaarthi",
-        ],
-        key="main_navigation_choice",
-        help="Navigation between the main recommendation app, assistant chat, and about page.",
-    )
-    st.session_state["main_page"] = (
-        "app"
-        if nav_choice == "Crop Recommendation"
-        else "chat"
-        if nav_choice == "AI Chat Assistant"
-        else "about"
-    )
+    if "main_page" not in st.session_state:
+        st.session_state["main_page"] = "app"
+
+    nav_items = [
+        ("app", "🌱 Crop Recommendation", "Run soil, weather, and market based crop guidance."),
+        ("chat", "🤖 AI Chat Assistant", "Ask farming questions and get advisory answers."),
+        ("about", "ℹ️ About FasalSaarthi", "See features, mission, and platform details."),
+    ]
+    for page_id, button_label, description in nav_items:
+        is_active = st.session_state.get("main_page") == page_id
+        key_prefix = "nav_btn_active_" if is_active else "nav_btn_"
+        if st.sidebar.button(button_label, key=f"{key_prefix}{page_id}", use_container_width=True):
+            st.session_state["main_page"] = page_id
+            st.rerun()
+        st.sidebar.markdown(
+            f"<div class='fs-sidebar-desc'>{description}</div>",
+            unsafe_allow_html=True,
+        )
 
     def render_global_footer() -> None:
         st.markdown("<div class='footer-separator'></div>", unsafe_allow_html=True)
