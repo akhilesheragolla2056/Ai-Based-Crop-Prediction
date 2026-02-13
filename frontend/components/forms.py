@@ -2,6 +2,7 @@ from __future__ import annotations
 from datetime import timezone
 from typing import Mapping
 import math
+from pathlib import Path
 import streamlit as st
 from backend.weather_service import (
     WeatherProviderError,
@@ -10,6 +11,8 @@ from backend.weather_service import (
 )
 from backend.rainfall_lookup import get_avg_rainfall_for_region
 from utils.soil_profiles import SOIL_REGION_OPTIONS, get_soil_profile
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 MAJOR_CROPS_LOOKUP = {
     # States
@@ -233,7 +236,7 @@ def environmental_inputs(key_prefix: str = "env") -> dict[str, float]:
     # AutoFetch: Use region-aware dataset to suggest top 3 crops for the state.
     import pandas as pd
 
-    dataset_region_path = "data/raw/crop_recommendation_region_augmented.csv"
+    dataset_region_path = PROJECT_ROOT / "data" / "raw" / "crop_recommendation_region_augmented.csv"
     def _normalize_region(text: str) -> str:
         cleaned = "".join(ch if ch.isalnum() or ch.isspace() else " " for ch in text.lower())
         return " ".join(cleaned.split())
@@ -255,6 +258,8 @@ def environmental_inputs(key_prefix: str = "env") -> dict[str, float]:
         region_display = location_match
 
     try:
+        if not dataset_region_path.exists():
+            raise FileNotFoundError(dataset_region_path)
         df_region = pd.read_csv(dataset_region_path, comment="#")
         df_region["region"] = df_region["region"].astype(str).str.strip().str.lower()
         df_region["label"] = df_region["label"].astype(str).str.strip().str.lower()
@@ -435,7 +440,7 @@ def environmental_inputs(key_prefix: str = "env") -> dict[str, float]:
                     "Location not found in AutoFetch dataset. Try a state/UT or capital city."
                 )
     except Exception as e:
-        st.warning(f"AutoFetch failed: {e}")
+        st.info(f"Regional AutoFetch unavailable: {e}")
 
     if input_method == "Regional Soil Profile" and regional_profile_key:
         profile = get_soil_profile(regional_profile_key)
@@ -466,7 +471,9 @@ def environmental_inputs(key_prefix: str = "env") -> dict[str, float]:
 
             # Use Crop recommendation dataset directly to compute soil-specific top crops.
             try:
-                soil_dataset_path = "data/raw/Crop recommendation dataset.csv"
+                soil_dataset_path = PROJECT_ROOT / "data" / "raw" / "Crop recommendation dataset.csv"
+                if not soil_dataset_path.exists():
+                    raise FileNotFoundError(soil_dataset_path)
                 soil_df = pd.read_csv(soil_dataset_path)
                 soil_df.columns = [str(col).strip().upper() for col in soil_df.columns]
                 if "SOIL" in soil_df.columns and "CROPS" in soil_df.columns:

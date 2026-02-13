@@ -21,13 +21,20 @@ ENV/
 # Data artifacts
 data/raw/*
 !data/raw/.gitkeep
+!data/raw/crop_recommendation.csv
+!data/raw/crop_recommendation_region_augmented.csv
+!data/raw/Crop recommendation dataset.csv
+!data/raw/crop_yield.csv
 data/processed/
-artifacts/
+artifacts/*
+!artifacts/models/
 !artifacts/models/.gitkeep
+!artifacts/metrics/
 !artifacts/metrics/.gitkeep
+!artifacts/models/crop_recommender.joblib
 
 # Models
-models/
+/models/
 !src/models/
 !src/models/**
 
