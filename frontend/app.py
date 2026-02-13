@@ -338,6 +338,20 @@ def _repair_mojibake_text(value):
 TRANSLATIONS = _repair_mojibake_text(TRANSLATIONS)
 
 
+def normalize_language(value: str | None) -> str:
+    mapping = {
+        "en": "en",
+        "english": "en",
+        "hi": "hi",
+        "hindi": "hi",
+        "हिंदी": "hi",
+        "te": "te",
+        "telugu": "te",
+        "తెలుగు": "te",
+    }
+    return mapping.get(str(value or "").strip().lower(), "en")
+
+
 def language_label(code: str) -> str:
     labels = {
         "en": "English",
@@ -349,32 +363,27 @@ def language_label(code: str) -> str:
 
 def render_language_selector(selector_key: str, label: str) -> None:
     options = ["en", "hi", "te"]
-    current_language = st.session_state.get("language", "en")
-    if current_language not in options:
-        current_language = "en"
-        st.session_state["language"] = "en"
-
-    if selector_key not in st.session_state or st.session_state[selector_key] not in options:
-        st.session_state[selector_key] = current_language
-    elif st.session_state[selector_key] != current_language:
-        # Keep widget state in sync when language changes from another page/selector.
-        st.session_state[selector_key] = current_language
+    widget_key = "language_code"
+    current_language = normalize_language(st.session_state.get("language", "en"))
+    if widget_key in st.session_state:
+        current_language = normalize_language(st.session_state[widget_key])
+        st.session_state["language"] = current_language
+    else:
+        st.session_state[widget_key] = current_language
 
     selected = st.selectbox(
         label,
         options=options,
         format_func=language_label,
-        key=selector_key,
+        key=widget_key,
         label_visibility="collapsed",
     )
-    if selected != current_language:
-        st.session_state["language"] = selected
-        st.rerun()
+    st.session_state["language"] = normalize_language(selected)
 
 
 def get_text(key: str) -> str:
     """Get translated text based on current language."""
-    lang = st.session_state.get("language", "en")
+    lang = normalize_language(st.session_state.get("language", "en"))
     return TRANSLATIONS.get(lang, TRANSLATIONS["en"]).get(key, key)
 
 
@@ -2023,8 +2032,9 @@ def main() -> None:
     # Initialize theme in session state
     if "theme" not in st.session_state:
         st.session_state["theme"] = "light"
-    if "language" not in st.session_state:
-        st.session_state["language"] = "en"
+    st.session_state["language"] = normalize_language(
+        st.session_state.get("language", "en")
+    )
 
     inject_theme()
     apply_theme()
@@ -2153,10 +2163,10 @@ def main() -> None:
                 st.markdown(
                     f"""
                     <div style="text-align:center; padding: 1.6rem 0 0.8rem 0;">
-                        <div style="font-family: 'Poppins', sans-serif; font-size: 3rem; font-weight: 800; color: #1b5e20; text-align: center; transform: translateX(-6px);">
+                        <div style="font-family: 'Noto Sans Telugu', 'Noto Sans Devanagari', 'Nirmala UI', 'Segoe UI', sans-serif; font-size: 3rem; font-weight: 800; color: #1b5e20; text-align: center; transform: translateX(-6px);">
                             {get_text("hero_title")}
                         </div>
-                        <div style="font-family: 'Inter', sans-serif; font-size: 1.2rem; color: #2e7d32; font-weight: 700;
+                        <div style="font-family: 'Noto Sans Telugu', 'Noto Sans Devanagari', 'Nirmala UI', 'Segoe UI', sans-serif; font-size: 1.2rem; color: #2e7d32; font-weight: 700;
                                     text-transform: uppercase; letter-spacing: 3px; margin: 0.25rem 0 0.5rem 0; text-align: center;">
                             {get_text("hero_subtitle")}
                         </div>

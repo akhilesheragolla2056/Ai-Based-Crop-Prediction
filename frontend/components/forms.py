@@ -74,6 +74,8 @@ CROPS = [
     "Grapes",
 ]
 
+
+
 FORM_I18N = {
     "en": {
         "soil_input_method": "Soil Data Input Method:",
@@ -113,102 +115,96 @@ FORM_I18N = {
         "severity": "Severity",
     },
     "hi": {
-        "soil_input_method": "à¤®à¤¿à¤Ÿà¥à¤Ÿà¥€ à¤¡à¥‡à¤Ÿà¤¾ à¤‡à¤¨à¤ªà¥à¤Ÿ à¤¤à¤°à¥€à¤•à¤¾:",
-        "manual_input": "à¤®à¥ˆà¤¨à¥à¤…à¤² à¤‡à¤¨à¤ªà¥à¤Ÿ",
-        "auto_fetch_location": "à¤¸à¥à¤¥à¤¾à¤¨ à¤¸à¥‡ à¤‘à¤Ÿà¥‹ à¤«à¥‡à¤š",
-        "regional_soil_profile": "à¤•à¥à¤·à¥‡à¤¤à¥à¤°à¥€à¤¯ à¤®à¤¿à¤Ÿà¥à¤Ÿà¥€ à¤ªà¥à¤°à¥‹à¤«à¤¾à¤‡à¤²",
-        "select_soil_type": "à¤®à¤¿à¤Ÿà¥à¤Ÿà¥€ à¤ªà¥à¤°à¤•à¤¾à¤° à¤šà¥à¤¨à¥‡à¤‚ (à¤¡à¥‡à¤Ÿà¤¾à¤¸à¥‡à¤Ÿ)",
-        "weather_expander": "à¤®à¥Œà¤¸à¤® à¤”à¤° à¤•à¥à¤·à¥‡à¤¤à¥à¤° à¤¡à¥‡à¤Ÿà¤¾ à¤‘à¤Ÿà¥‹-à¤«à¤¿à¤²",
-        "location_label": "à¤¸à¥à¤¥à¤¾à¤¨ (à¤¶à¤¹à¤°, à¤°à¤¾à¤œà¥à¤¯)",
-        "location_help": "à¤‰à¤¦à¤¾à¤¹à¤°à¤£: à¤ªà¥à¤£à¥‡, à¤®à¤¹à¤¾à¤°à¤¾à¤·à¥à¤Ÿà¥à¤°",
-        "fetch_live_weather": "à¤²à¤¾à¤‡à¤µ à¤®à¥Œà¤¸à¤® à¤ªà¥à¤°à¤¾à¤ªà¥à¤¤ à¤•à¤°à¥‡à¤‚",
-        "macronutrients": "à¤ªà¥à¤°à¤®à¥à¤– à¤ªà¥‹à¤·à¤• à¤¤à¤¤à¥à¤µ (NPK)",
-        "weather_climate": "à¤®à¥Œà¤¸à¤® à¤”à¤° à¤œà¤²à¤µà¤¾à¤¯à¥",
-        "soil_ph": "à¤®à¤¿à¤Ÿà¥à¤Ÿà¥€ pH",
-        "regional_caption": "à¤šà¥à¤¨à¥‡ à¤—à¤ à¤®à¤¿à¤Ÿà¥à¤Ÿà¥€ à¤ªà¥à¤°à¤•à¤¾à¤° à¤•à¥‡ à¤²à¤¿à¤ à¤®à¤¾à¤¨ à¤¡à¥‡à¤Ÿà¤¾à¤¸à¥‡à¤Ÿ à¤¸à¥‡ à¤²à¤¿à¤ à¤—à¤ à¤¹à¥ˆà¤‚à¥¤",
-        "nitrogen_label": "à¤¨à¤¾à¤‡à¤Ÿà¥à¤°à¥‹à¤œà¤¨ (N)",
-        "phosphorus_label": "à¤«à¥‰à¤¸à¥à¤«à¥‹à¤°à¤¸ (P)",
-        "potassium_label": "à¤ªà¥‹à¤Ÿà¥ˆà¤¶à¤¿à¤¯à¤® (K)",
-        "temperature_label": "à¤¤à¤¾à¤ªà¤®à¤¾à¤¨ (C)",
-        "humidity_label": "à¤†à¤°à¥à¤¦à¥à¤°à¤¤à¤¾ (%)",
-        "rainfall_label": "à¤µà¤°à¥à¤·à¤¾ (à¤®à¤¿à¤®à¥€)",
-        "nitrogen_help": "à¤ªà¤¤à¥à¤¤à¤¿à¤¯à¥‹à¤‚ à¤•à¥€ à¤µà¥ƒà¤¦à¥à¤§à¤¿ à¤•à¥‡ à¤²à¤¿à¤ à¤†à¤µà¤¶à¥à¤¯à¤•à¥¤ à¤¸à¤¾à¤®à¤¾à¤¨à¥à¤¯ à¤¸à¥€à¤®à¤¾: 0-200à¥¤",
-        "phosphorus_help": "à¤œà¤¡à¤¼ à¤”à¤° à¤«à¥‚à¤² à¤µà¤¿à¤•à¤¾à¤¸ à¤•à¥‡ à¤²à¤¿à¤ à¤®à¤¹à¤¤à¥à¤µà¤ªà¥‚à¤°à¥à¤£à¥¤ à¤¸à¤¾à¤®à¤¾à¤¨à¥à¤¯ à¤¸à¥€à¤®à¤¾: 0-200à¥¤",
-        "potassium_help": "à¤ªà¥Œà¤§à¥‡ à¤•à¥‡ à¤¸à¥à¤µà¤¾à¤¸à¥à¤¥à¥à¤¯ à¤•à¥‡ à¤²à¤¿à¤ à¤‰à¤ªà¤¯à¥‹à¤—à¥€à¥¤ à¤¸à¤¾à¤®à¤¾à¤¨à¥à¤¯ à¤¸à¥€à¤®à¤¾: 0-200à¥¤",
-        "temperature_help": "à¤”à¤¸à¤¤ à¤¤à¤¾à¤ªà¤®à¤¾à¤¨ à¤¸à¥‡à¤²à¥à¤¸à¤¿à¤¯à¤¸ à¤®à¥‡à¤‚à¥¤",
-        "humidity_help": "à¤¸à¤¾à¤ªà¥‡à¤•à¥à¤· à¤†à¤°à¥à¤¦à¥à¤°à¤¤à¤¾ à¤ªà¥à¤°à¤¤à¤¿à¤¶à¤¤à¥¤",
-        "rainfall_help": "à¤•à¥à¤² à¤µà¤°à¥à¤·à¤¾ à¤®à¤¿à¤²à¤¿à¤®à¥€à¤Ÿà¤° à¤®à¥‡à¤‚à¥¤",
-        "soil_ph_help": "à¤®à¤¿à¤Ÿà¥à¤Ÿà¥€ pH à¤ªà¥‹à¤·à¤• à¤‰à¤ªà¤²à¤¬à¥à¤§à¤¤à¤¾ à¤•à¥‹ à¤ªà¥à¤°à¤­à¤¾à¤µà¤¿à¤¤ à¤•à¤°à¤¤à¤¾ à¤¹à¥ˆà¥¤ 6.5 à¤¸à¤‚à¤¤à¥à¤²à¤¿à¤¤ à¤¹à¥ˆà¥¤",
-        "acidic": "3.5 (à¤…à¤®à¥à¤²à¥€à¤¯)",
-        "neutral": "6.5 (à¤¸à¤‚à¤¤à¥à¤²à¤¿à¤¤)",
-        "alkaline": "9.5 (à¤•à¥à¤·à¤¾à¤°à¥€à¤¯)",
-        "crop_select": "à¤«à¤¸à¤² à¤šà¥à¤¨à¥‡à¤‚",
-        "leaf_scan": "à¤ªà¤¤à¥à¤¤à¥€ à¤¸à¥à¤•à¥ˆà¤¨",
-        "crop_for_diagnosis": "à¤¨à¤¿à¤¦à¤¾à¤¨ à¤•à¥‡ à¤²à¤¿à¤ à¤«à¤¸à¤²",
-        "upload_leaf_image": "à¤ªà¤¤à¥à¤¤à¥€ à¤›à¤µà¤¿ à¤…à¤ªà¤²à¥‹à¤¡ à¤•à¤°à¥‡à¤‚",
-        "disease": "à¤°à¥‹à¤—",
-        "severity": "à¤—à¤‚à¤­à¥€à¤°à¤¤à¤¾",
+        "soil_input_method": "Mitti Data Input Tareeka:",
+        "manual_input": "Manual Input",
+        "auto_fetch_location": "Location se Auto Fetch",
+        "regional_soil_profile": "Regional Mitti Profile",
+        "select_soil_type": "Mitti Type Chune (Dataset)",
+        "weather_expander": "Mausam aur region data auto-fill",
+        "location_label": "Sthan (City, State)",
+        "location_help": "Udaharan: Pune, Maharashtra",
+        "fetch_live_weather": "Live mausam lao",
+        "macronutrients": "Pramukh Poshak Tatva (NPK)",
+        "weather_climate": "Mausam aur Jalvayu",
+        "soil_ph": "Mitti pH",
+        "regional_caption": "Chune gaye mitti type ke liye values dataset se li gayi hain.",
+        "nitrogen_label": "Nitrogen (N)",
+        "phosphorus_label": "Phosphorus (P)",
+        "potassium_label": "Potassium (K)",
+        "temperature_label": "Taapman (C)",
+        "humidity_label": "Aardrata (%)",
+        "rainfall_label": "Varsha (mm)",
+        "nitrogen_help": "Patti vikas ke liye zaruri. Samanya range: 0-200.",
+        "phosphorus_help": "Jad aur phool vikas ke liye mahatvapurn. Samanya range: 0-200.",
+        "potassium_help": "Paudhe ke swasthya ke liye upyogi. Samanya range: 0-200.",
+        "temperature_help": "Ausat taapman Celsius me.",
+        "humidity_help": "Sapeksh aardrata pratishat me.",
+        "rainfall_help": "Kul varsha millimeter me.",
+        "soil_ph_help": "Mitti pH poshak uplabdhata ko prabhavit karta hai. 6.5 neutral hai.",
+        "acidic": "3.5 (Amliya)",
+        "neutral": "6.5 (Santulit)",
+        "alkaline": "9.5 (Kshariy)",
+        "crop_select": "Fasal Chune",
+        "leaf_scan": "Patti Scan",
+        "crop_for_diagnosis": "Nidan ke liye fasal",
+        "upload_leaf_image": "Patti image upload karein",
+        "disease": "Rog",
+        "severity": "Gambhirta",
     },
     "te": {
-        "soil_input_method": "à°¨à±‡à°² à°¡à±‡à°Ÿà°¾ à°‡à°¨à±â€Œà°ªà±à°Ÿà± à°µà°¿à°§à°¾à°¨à°‚:",
-        "manual_input": "à°®à°¾à°¨à±à°¯à±à°µà°²à± à°‡à°¨à±â€Œà°ªà±à°Ÿà±",
-        "auto_fetch_location": "à°ªà±à°°à°¾à°‚à°¤à°‚ à°¦à±à°µà°¾à°°à°¾ à°†à°Ÿà±‹ à°«à±†à°šà±",
-        "regional_soil_profile": "à°ªà±à°°à°¾à°‚à°¤à±€à°¯ à°¨à±‡à°² à°ªà±à°°à±Šà°«à±ˆà°²à±",
-        "select_soil_type": "à°¨à±‡à°² à°°à°•à°‚ à°Žà°‚à°šà±à°•à±‹à°‚à°¡à°¿ (à°¡à±‡à°Ÿà°¾à°¸à±†à°Ÿà±)",
-        "weather_expander": "à°µà°¾à°¤à°¾à°µà°°à°£à°‚ à°®à°°à°¿à°¯à± à°ªà±à°°à°¾à°‚à°¤ à°¡à±‡à°Ÿà°¾ à°†à°Ÿà±‹-à°«à°¿à°²à±",
-        "location_label": "à°ªà±à°°à°¾à°‚à°¤à°‚ (à°¨à°—à°°à°‚, à°°à°¾à°·à±à°Ÿà±à°°à°‚)",
-        "location_help": "à°‰à°¦à°¾à°¹à°°à°£: à°ªà±à°£à±‡, à°®à°¹à°¾à°°à°¾à°·à±à°Ÿà±à°°",
-        "fetch_live_weather": "à°²à±ˆà°µà± à°µà°¾à°¤à°¾à°µà°°à°£à°‚ à°ªà±Šà°‚à°¦à°‚à°¡à°¿",
-        "macronutrients": "à°®à±à°¯à°¾à°•à±à°°à±‹ à°ªà±‹à°·à°•à°¾à°²à± (NPK)",
-        "weather_climate": "à°µà°¾à°¤à°¾à°µà°°à°£à°‚ à°®à°°à°¿à°¯à± à°•à°¾à°²à°¾à°µà°¸à±à°¥",
-        "soil_ph": "à°¨à±‡à°² pH",
-        "regional_caption": "à°Žà°‚à°šà±à°•à±à°¨à±à°¨ à°¨à±‡à°² à°°à°•à°¾à°¨à°¿à°•à°¿ à°µà°¿à°²à±à°µà°²à± à°¡à±‡à°Ÿà°¾à°¸à±†à°Ÿà± à°¨à±à°‚à°šà°¿ à°¤à±€à°¸à±à°•à±‹à°¬à°¡à±à°¡à°¾à°¯à°¿.",
-        "nitrogen_label": "à°¨à±ˆà°Ÿà±à°°à±‹à°œà°¨à± (N)",
-        "phosphorus_label": "à°«à°¾à°¸à±à°«à°°à°¸à± (P)",
-        "potassium_label": "à°ªà±Šà°Ÿà°¾à°·à°¿à°¯à°‚ (K)",
-        "temperature_label": "à°‰à°·à±à°£à±‹à°—à±à°°à°¤ (C)",
-        "humidity_label": "à°†à°°à±à°¦à±à°°à°¤ (%)",
-        "rainfall_label": "à°µà°°à±à°·à°ªà°¾à°¤à°‚ (à°®à°¿à°®à±€)",
-        "nitrogen_help": "à°†à°•à± à°ªà±†à°°à±à°—à±à°¦à°²à°•à± à°…à°µà°¸à°°à°‚. à°¸à°¾à°§à°¾à°°à°£ à°ªà°°à°¿à°§à°¿: 0-200.",
-        "phosphorus_help": "à°µà±‡à°°à± à°®à°°à°¿à°¯à± à°ªà±à°·à±à°ª à°µà°¿à°•à°¾à°¸à°¾à°¨à°¿à°•à°¿ à°®à±à°–à±à°¯à°®à±ˆà°¨à°¦à°¿. à°¸à°¾à°§à°¾à°°à°£ à°ªà°°à°¿à°§à°¿: 0-200.",
-        "potassium_help": "à°®à±Šà°•à±à°• à°†à°°à±‹à°—à±à°¯à°¾à°¨à°¿à°•à°¿ à°‰à°ªà°¯à±‹à°—à°•à°°à°‚. à°¸à°¾à°§à°¾à°°à°£ à°ªà°°à°¿à°§à°¿: 0-200.",
-        "temperature_help": "à°¸à°—à°Ÿà± à°‰à°·à±à°£à±‹à°—à±à°°à°¤ à°¸à±†à°²à±à°¸à°¿à°¯à°¸à±â€Œà°²à±‹.",
-        "humidity_help": "à°¸à°¾à°ªà±‡à°•à±à°· à°†à°°à±à°¦à±à°°à°¤ à°¶à°¾à°¤à°‚.",
-        "rainfall_help": "à°®à±Šà°¤à±à°¤à°‚ à°µà°°à±à°·à°ªà°¾à°¤à°‚ à°®à°¿à°²à±à°²à±€à°®à±€à°Ÿà°°à±à°²à°²à±‹.",
-        "soil_ph_help": "à°¨à±‡à°² pH à°ªà±‹à°·à°•à°¾à°² à°²à°­à±à°¯à°¤à°¨à± à°ªà±à°°à°­à°¾à°µà°¿à°¤à°‚ à°šà±‡à°¸à±à°¤à±à°‚à°¦à°¿. 6.5 à°¸à°‚à°¤à±à°²à°¿à°¤à°‚.",
-        "acidic": "3.5 (à°†à°®à±à°²)",
-        "neutral": "6.5 (à°¸à°‚à°¤à±à°²à°¿à°¤à°‚)",
-        "alkaline": "9.5 (à°•à±à°·à°¾à°°)",
-        "crop_select": "à°ªà°‚à°Ÿ à°Žà°‚à°šà±à°•à±‹à°‚à°¡à°¿",
-        "leaf_scan": "à°†à°•à± à°¸à±à°•à°¾à°¨à±",
-        "crop_for_diagnosis": "à°¨à°¿à°°à±à°§à°¾à°°à°£ à°•à±‹à°¸à°‚ à°ªà°‚à°Ÿ",
-        "upload_leaf_image": "à°†à°•à± à°šà°¿à°¤à±à°°à°‚ à°…à°ªà±â€Œà°²à±‹à°¡à± à°šà±‡à°¯à°‚à°¡à°¿",
-        "disease": "à°°à±‹à°—à°‚",
-        "severity": "à°¤à±€à°µà±à°°à°¤",
+        "soil_input_method": "Nela Data Input Vidhanam:",
+        "manual_input": "Manual Input",
+        "auto_fetch_location": "Location dwara Auto Fetch",
+        "regional_soil_profile": "Regional Nela Profile",
+        "select_soil_type": "Nela Type Enchukondi (Dataset)",
+        "weather_expander": "Vathavaranam mariyu region data auto-fill",
+        "location_label": "Prantham (City, State)",
+        "location_help": "Udaharan: Pune, Maharashtra",
+        "fetch_live_weather": "Live weather pondandi",
+        "macronutrients": "Macro Poshakalu (NPK)",
+        "weather_climate": "Vathavaranam mariyu climate",
+        "soil_ph": "Nela pH",
+        "regional_caption": "Enchukuna nela type values dataset nundi teesukobaddayi.",
+        "nitrogen_label": "Nitrogen (N)",
+        "phosphorus_label": "Phosphorus (P)",
+        "potassium_label": "Potassium (K)",
+        "temperature_label": "Ushnograta (C)",
+        "humidity_label": "Aardrata (%)",
+        "rainfall_label": "Varshapatham (mm)",
+        "nitrogen_help": "Aaku perugudala kosam avasaram. Samanya range: 0-200.",
+        "phosphorus_help": "Veru mariyu puvvu vikasam kosam mukhyam. Samanya range: 0-200.",
+        "potassium_help": "Mokka arogyam kosam upayogakaram. Samanya range: 0-200.",
+        "temperature_help": "Sagat u ushnograta Celsius lo.",
+        "humidity_help": "Sapeksha aardrata shatam.",
+        "rainfall_help": "Mottam varshapatham millimeter lo.",
+        "soil_ph_help": "Nela pH poshaka labhyata pai prabhavam chupistundi. 6.5 neutral.",
+        "acidic": "3.5 (Amla)",
+        "neutral": "6.5 (Neutral)",
+        "alkaline": "9.5 (Kshara)",
+        "crop_select": "Panta Enchukondi",
+        "leaf_scan": "Aaku Scan",
+        "crop_for_diagnosis": "Nirdharana kosam panta",
+        "upload_leaf_image": "Aaku image upload cheyandi",
+        "disease": "Rogam",
+        "severity": "Teevrata",
     },
 }
 
 
-def _repair_mojibake_text(value):
-    if isinstance(value, dict):
-        return {k: _repair_mojibake_text(v) for k, v in value.items()}
-    if isinstance(value, list):
-        return [_repair_mojibake_text(item) for item in value]
-    if isinstance(value, tuple):
-        return tuple(_repair_mojibake_text(item) for item in value)
-    if isinstance(value, str):
-        try:
-            return value.encode("latin1").decode("utf-8")
-        except (UnicodeEncodeError, UnicodeDecodeError):
-            return value
-    return value
-
-
-FORM_I18N = _repair_mojibake_text(FORM_I18N)
+def _normalize_language(value: str | None) -> str:
+    mapping = {
+        "en": "en",
+        "english": "en",
+        "hi": "hi",
+        "hindi": "hi",
+        "te": "te",
+        "telugu": "te",
+    }
+    return mapping.get(str(value or "").strip().lower(), "en")
 
 
 def _t(key: str) -> str:
-    lang = st.session_state.get("language", "en")
+    lang = _normalize_language(st.session_state.get("language", "en"))
     return FORM_I18N.get(lang, FORM_I18N["en"]).get(key, FORM_I18N["en"].get(key, key))
 
 
@@ -313,16 +309,7 @@ def environmental_inputs(key_prefix: str = "env") -> dict[str, float]:
         st.session_state[soil_region_persist_key] = selected_label
         label_to_key = {label: key for label, key in SOIL_REGION_OPTIONS}
         regional_profile_key = label_to_key.get(selected_label)
-        st.caption(
-            "Regional soil profile values are computed from Crop recommendation dataset rows "
-            "for the selected soil type. For best accuracy, manual soil testing is recommended."
-            if st.session_state.get("language", "en") == "en"
-            else (
-                "à¤šà¥à¤¨à¥‡ à¤—à¤ à¤®à¤¿à¤Ÿà¥à¤Ÿà¥€ à¤ªà¥à¤°à¤•à¤¾à¤° à¤•à¥‡ à¤²à¤¿à¤ à¤®à¤¾à¤¨ à¤¡à¥‡à¤Ÿà¤¾à¤¸à¥‡à¤Ÿ à¤¸à¥‡ à¤¨à¤¿à¤•à¤¾à¤²à¥‡ à¤—à¤ à¤¹à¥ˆà¤‚à¥¤ à¤¬à¥‡à¤¹à¤¤à¤° à¤¸à¤Ÿà¥€à¤•à¤¤à¤¾ à¤•à¥‡ à¤²à¤¿à¤ à¤®à¤¿à¤Ÿà¥à¤Ÿà¥€ à¤ªà¤°à¥€à¤•à¥à¤·à¤£ à¤•à¤°à¥‡à¤‚à¥¤"
-                if st.session_state.get("language") == "hi"
-                else "à°Žà°‚à°šà±à°•à±à°¨à±à°¨ à°¨à±‡à°² à°°à°•à°¾à°¨à°¿à°•à°¿ à°µà°¿à°²à±à°µà°²à± à°¡à±‡à°Ÿà°¾à°¸à±†à°Ÿà± à°¨à±à°‚à°šà°¿ à°¤à±€à°¸à±à°•à±‹à°¬à°¡à±à°¡à°¾à°¯à°¿. à°®à±†à°°à±à°—à±ˆà°¨ à°–à°šà±à°šà°¿à°¤à°¤à±à°µà°‚ à°•à±‹à°¸à°‚ à°¨à±‡à°² à°ªà°°à±€à°•à±à°· à°šà±‡à°¯à°‚à°¡à°¿ã€‚"
-            )
-        )
+        st.caption(_t("regional_caption"))
 
     for state_key, default in (
         (temp_key, DEFAULT_METRICS["temperature"]),
