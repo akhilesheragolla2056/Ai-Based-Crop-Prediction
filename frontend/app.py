@@ -347,6 +347,31 @@ def language_label(code: str) -> str:
     return labels.get(code, code)
 
 
+def render_language_selector(selector_key: str, label: str) -> None:
+    options = ["en", "hi", "te"]
+    current_language = st.session_state.get("language", "en")
+    if current_language not in options:
+        current_language = "en"
+        st.session_state["language"] = "en"
+
+    if selector_key not in st.session_state or st.session_state[selector_key] not in options:
+        st.session_state[selector_key] = current_language
+    elif st.session_state[selector_key] != current_language:
+        # Keep widget state in sync when language changes from another page/selector.
+        st.session_state[selector_key] = current_language
+
+    selected = st.selectbox(
+        label,
+        options=options,
+        format_func=language_label,
+        key=selector_key,
+        label_visibility="collapsed",
+    )
+    if selected != current_language:
+        st.session_state["language"] = selected
+        st.rerun()
+
+
 def get_text(key: str) -> str:
     """Get translated text based on current language."""
     lang = st.session_state.get("language", "en")
@@ -783,13 +808,7 @@ def render_header():
     col_spacer, col_lang = st.columns([6, 1])
 
     with col_lang:
-        st.selectbox(
-            get_text("language"),
-            options=["en", "hi", "te"],
-            format_func=language_label,
-            key="language",
-            label_visibility="collapsed",
-        )
+        render_language_selector("header_language_selector", get_text("language"))
 
     # Centered header with green FasalSaarthi title
     st.markdown("---")
@@ -2150,13 +2169,7 @@ def main() -> None:
                 )
             with col_lang:
                 st.markdown("<div class='lang-compact'>", unsafe_allow_html=True)
-                st.selectbox(
-                    get_text("language"),
-                    options=["en", "hi", "te"],
-                    format_func=language_label,
-                    key="language",
-                    label_visibility="collapsed",
-                )
+                render_language_selector("main_language_selector", get_text("language"))
                 st.markdown("</div>", unsafe_allow_html=True)
             st.markdown("</div>", unsafe_allow_html=True)
         st.markdown("<hr style='margin: 1.4rem auto 1.8rem auto; border: 0; height: 1px; background: rgba(148, 163, 184, 0.35); max-width: 820px;'>", unsafe_allow_html=True)
